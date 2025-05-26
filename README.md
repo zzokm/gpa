@@ -9,7 +9,7 @@ A modern, interactive GPA calculator web application designed specifically for F
 
 - **Intuitive Course Management**: Add, edit, and remove courses with ease
 - **Grade Selection**: Choose from standard letter grades (A+ to F)
-- **Credit Hour Selection**: Specify credit hours for each course (1-3)
+- **Credit Hour Selection**: Specify credit hours for each course (0-3)
 - **Real-time GPA Calculation**: Instantly see your GPA update as you modify courses
 - **Course Import**: Import your registered courses directly from the university portal
 - **Local Storage**: Your courses are saved in your browser for future visits
