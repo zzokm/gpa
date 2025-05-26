@@ -213,7 +213,7 @@ The GitHub Actions workflow will automatically build and deploy the application.
 
 ## Technical Specifications
 
-- **Grading System**: Based on FCAI - Cairo University's 4.0 scale ([Faculty Bylaw PDF](docs/newBylaw_2024.pdf))
+- **Grading System**: Based on FCAI - Cairo University's 4.0 scale ([Faculty Bylaw PDF](docs/newBylaw_2024.pdf)) (Refer to page 11)
 - **Browser Support**: Modern browsers with localStorage and ES6+ support
 - **Responsive Design**: Works on devices from mobile phones to desktops
 - **Accessibility**: Keyboard navigation and screen reader support
