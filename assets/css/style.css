@@ -1,0 +1,199 @@
+/* Import Sora font is now done via index.html links */
+
+:root {
+  --primary-color: #ff7955;
+  --accent-color: #ff7955;
+  --bg-color: #f9f9f9;
+  --white: #fff;
+  --text-color: #000000;
+}
+
+/* Reset */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Global Styles */
+
+body {
+  font-family: 'Sora', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 25px;
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+/* Top Box & Table Box */
+
+.top-box, .table-box {
+  background-color: var(--white);
+  border-radius: 45px;
+  padding: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin-bottom: 20px;
+}
+
+/* Top Box Rows */
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  flex-wrap: wrap;
+  align-content: center;
+  flex-direction: row;
+}
+
+.row-label {
+  min-width: 30px;
+  text-align: left;
+  margin-right: 10px;
+  font-weight: 700;
+}
+
+.row input[type="text"], .row input[type="number"], .row select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 10px;
+  min-width: 150px;
+  font-size: 0.95rem;
+}
+
+.row label {
+  margin: 0 10px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+/* Buttons */
+
+#doImportBtn, #cancelImportBtn {
+  padding: 12px 20px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  /*margin-top: 10px;*/
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+#importCoursesBtn {
+  padding: 12px 20px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  /*margin-top: 10px;*/
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+#addCourseBtn, #calculateGpaBtn {
+  padding: 12px 20px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+#addCourseBtn:hover, #calculateGpaBtn:hover {
+  background-color: var(--accent-color);
+}
+
+/* Table Styling */
+
+.table-box thead {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.table-box table {
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: separate;
+  border-spacing: 5px 20px;
+}
+
+.table-box th, .table-box td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 0 10px;
+}
+
+/* Ensure each row is positioned relative for the pseudo-element */
+
+.table-box table tr {
+  position: relative;
+}
+
+/* Add a line after each row except the last */
+
+.table-box table tr:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 0%;
+  width: 100%;
+  bottom: -10px;
+  border-bottom: 0.1px solid #ccc;
+}
+
+/* Remove Icon Button */
+
+.remove-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  justify-content: center;
+}
+
+.remove-icon-btn:hover {
+  opacity: 0.7;
+}
+
+.remove-icon-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: #e74c3c;
+  margin: 0 auto;
+}
+
+/* GPA Box */
+
+#gpaBox {
+  background-color: var(--white);
+  border-radius: 60px;
+  padding: 10px 15px;
+  width: 25vh;
+  margin: 20px auto 0;
+  font-weight: 700;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  color: var(--accent-color);
+}
+
