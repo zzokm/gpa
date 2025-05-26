@@ -4,6 +4,7 @@ A modern, interactive GPA calculator web application designed specifically for F
 
 ![GPA Calculator Screenshot](https://github.com/zzokm/gpa/raw/main/screenshot.png)
 
+
 ## Features
 
 - **Intuitive Course Management**: Add, edit, and remove courses with ease
@@ -17,15 +18,15 @@ A modern, interactive GPA calculator web application designed specifically for F
 
 ## Live Demo
 
-You can try the calculator at: [https://zzokm.github.io/gpa/](https://zzokm.github.io/gpa/)
+You can try the calculator at: [https://zokm.me/gpa/](https://zokm.me/gpa/)
 
 ## How to Use
 
 ### Adding Courses Manually
 
 1. Enter your course name (optional)
-2. Select the number of credit hours (1-3)
-3. Choose a grade (default is A+)
+2. Select the number of credit hours (0-3)
+3. Choose a grade
 4. Click "Add Course"
 
 ### Importing Courses from the Portal
@@ -212,7 +213,7 @@ The GitHub Actions workflow will automatically build and deploy the application.
 
 ## Technical Specifications
 
-- **Grading System**: Based on FCAI - Cairo University's 4.0 scale
+- **Grading System**: Based on FCAI - Cairo University's 4.0 scale ([Faculty Bylaw PDF](docs/newBylaw_2024.pdf))
 - **Browser Support**: Modern browsers with localStorage and ES6+ support
 - **Responsive Design**: Works on devices from mobile phones to desktops
 - **Accessibility**: Keyboard navigation and screen reader support
@@ -234,4 +235,4 @@ This project is released under the MIT License - see the LICENSE file for detail
 
 ---
 
-Created by [Your Name] for FCAI - Cairo University students
+Created by Yehia for FCAI - Cairo University students
