@@ -1,13 +1,15 @@
-{
-  "name": "gpa-calculator",
+{  "name": "gpa-calculator",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://zzokm.github.io/gpa",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@types/bootstrap": "^5.2.10",
@@ -27,6 +29,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "gh-pages": "^6.3.0",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
   }

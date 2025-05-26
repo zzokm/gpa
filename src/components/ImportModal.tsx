@@ -94,13 +94,11 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport }) => 
     <>
       {show && (
         <div className="modal-overlay" onClick={handleClose}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>            <div className="modal-header">
               <h2 className="modal-title">Import Registered Courses</h2>
               <button className="modal-close" onClick={handleClose} aria-label="Close">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M8 0C3.589 0 0 3.589 0 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8zm0 14c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6z"/>
-                  <path d="M10.122 4.465 8 6.586 5.878 4.465 4.464 5.879 6.586 8l-2.122 2.121 1.414 1.414L8 9.414l2.122 2.121 1.414-1.414L9.414 8l2.122-2.121z"/>
+                  <path d="M14.7 1.3c-.4-.4-1-.4-1.4 0L8 6.6 2.7 1.3c-.4-.4-1-.4-1.4 0s-.4 1 0 1.4L6.6 8l-5.3 5.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3L8 9.4l5.3 5.3c.2.2.5.3.7.3.2 0 .5-.1.7-.3.4-.4.4-1 0-1.4L9.4 8l5.3-5.3c.4-.4.4-1 0-1.4z"/>
                 </svg>
               </button>
             </div>
