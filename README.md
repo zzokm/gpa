@@ -18,7 +18,7 @@ A modern, interactive GPA calculator web application designed specifically for F
 
 ## Live Demo
 
-You can try the calculator at: [https://zokm.me/gpa/](https://zokm.me/gpa/)
+You can try the calculator at: [http://zokm.me/gpa/](http://zokm.me/gpa/)
 
 ## How to Use
 
@@ -235,4 +235,4 @@ This project is released under the MIT License - see the LICENSE file for detail
 
 ---
 
-Created by Yehia for FCAI - Cairo University students
+Created by Yehia Elzokm for FCAI - Cairo University students
