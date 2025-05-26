@@ -33,9 +33,50 @@ You can try the calculator at: [http://zokm.me/gpa/](http://zokm.me/gpa/)
 
 1. Click the "Import Courses" button
 2. Go to the [FCAI Course Registration Portal](http://newecom.fci.cu.edu.eg/#/courses-per-students)
-3. Copy the HTML content of your registered courses page
+3. Copy the HTML content of your registered courses page (instructions below)
 4. Paste it into the import dialog
 5. Click "Import Courses"
+
+#### How to Copy HTML Content
+
+**Windows/Mac - Chrome:**
+- **Method 1:** Install the [Copy HTML extension](https://chromewebstore.google.com/detail/copy-html/indfogjkdbmkihaohndcnkoaheopbhjf)
+  1. Right-click on the page area containing your courses
+  2. Select "Copy HTML"
+  3. The HTML is now in your clipboard
+
+- **Method 2:** Using Developer Tools
+  1. Right-click on the page area containing your courses
+  2. Select "Inspect" or press `Ctrl+Shift+I` (Windows) / `Cmd+Option+I` (Mac)
+  3. In the Elements panel, locate the table element containing your courses
+  4. Right-click on the element and select "Copy" → "Copy outerHTML"
+
+**Windows/Mac - Firefox:**
+1. Right-click on the page area containing your courses
+2. Select "Inspect Element" or press `Ctrl+Shift+I` (Windows) / `Cmd+Option+I` (Mac)
+3. In the Inspector panel, locate the table element containing your courses
+4. Right-click on the element and select "Copy" → "Outer HTML"
+
+**iOS - Safari:**
+1. Install the [Web Inspector app](https://apps.apple.com/us/app/web-inspector/id1584825745)
+2. Navigate to the course registration page
+3. Tap the puzzle piece icon to the left of the URL
+4. Select "Web Inspector"
+5. Tap the pencil icon at the top
+6. Tap anywhere in the page content
+7. Use "Select All" and "Copy"
+
+**Android:**
+For Android users, the easiest method is to use Chrome and request the desktop site:
+1. Open Chrome and navigate to the portal
+2. Tap the three dots menu → "Desktop site"
+3. Follow the Chrome instructions above
+
+#### Pasting in the GPA Calculator
+
+1. Click the "Import Courses" button in the GPA Calculator
+2. In the import dialog, click "Paste" button or use `Ctrl+V` (Windows) / `Cmd+V` (Mac)
+3. Click "Import Courses"
 
 ### Managing Courses
 
