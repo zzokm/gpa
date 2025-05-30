@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap';
 import CourseForm from './components/CourseForm';
 import CourseTable from './components/CourseTable';
 import GPADisplay from './components/GPADisplay';
+import DownloadButton from './components/DownloadButton'; // Import DownloadButton
 import ImportModal from './components/ImportModal';
 import ThreeJSBackground from './components/ThreeJSBackground';
 import { Course, Grade } from './types/Course';
@@ -112,14 +113,17 @@ const App: React.FC = () => {
         <CourseForm
           onAddCourse={addCourse}
           onShowImport={() => setShowImportModal(true)}
-        />        <CourseTable
-          courses={courses}
-          onRemoveCourse={removeCourse}
+        />
+        <div id="report-content">
+          <CourseTable
+            courses={courses}
+            onRemoveCourse={removeCourse}
           onUpdateGrade={updateCourseGrade}
         />
 
         <GPADisplay gpa={gpa} />
-
+        </div>
+        <DownloadButton /> {/* Add DownloadButton here */}
         <ImportModal
           show={showImportModal}
           onHide={() => setShowImportModal(false)}
