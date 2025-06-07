@@ -1,0 +1,176 @@
+/* Course Table Fixed Spacing Styles */
+
+/* Define responsive spacing variables that scale with viewport width */
+:root {
+  /* Responsive spacing units that scale with viewport width */
+  --spacing-x: clamp(12px, 1.5vw, 24px);     /* Distance from rightmost end of row to remove button */
+  --spacing-y: clamp(16px, 2vw, 32px);       /* Distance between remove button and grade dropdown */
+  --spacing-l: clamp(20px, 2.5vw, 40px);     /* Distance between grade tag and credit hours */
+  --spacing-m: clamp(24px, 3vw, 48px);       /* Distance between credit hours and course name */
+  
+  /* Fixed Z-distance that never changes regardless of device size */
+  --spacing-z: 8px;                          /* Fixed distance between dropdown and grade badge */
+  
+  /* Component sizing */
+  --remove-btn-size: clamp(24px, 3vw, 32px);         /* Size of remove button */
+  --grade-dropdown-width: clamp(20px, 2.5vw, 24px);  /* Width of grade dropdown trigger */
+  --grade-badge-width: clamp(40px, 5vw, 46px);       /* Width of grade badge */
+  --credits-width: clamp(60px, 7vw, 80px);           /* Width of credits display */
+  
+  /* Combined widths for cell sizing */
+  --grade-cell-width: calc(var(--grade-badge-width) + var(--spacing-z) + var(--grade-dropdown-width));
+}
+
+/* Course table row container with fixed grid layout */
+.course-table tbody tr {
+  display: grid;
+  grid-template-columns: 
+    1fr                      /* Course name (flexible width) */
+    var(--spacing-m)         /* Distance M between name and credits */
+    var(--credits-width)     /* Credits column (fixed width) */
+    var(--spacing-l)         /* Distance L between credits and grade */
+    var(--grade-cell-width)  /* Grade cell (combined badge + dropdown width) */
+    var(--spacing-y)         /* Distance Y between grade dropdown and remove button */
+    var(--remove-btn-size)   /* Remove button column (fixed width) */
+    var(--spacing-x);        /* Distance X from remove button to end of row */
+  grid-template-areas: 
+    ".     .       credits .     grade   .     remove .";
+  width: 100%;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.15);
+  transition: var(--transition-base);
+  position: relative;
+  padding: 0;
+}
+
+/* Course name cell */
+.course-table td.course-name {
+  grid-column: 1 / 3;        /* Span from start to before spacing M */
+  text-align: left;
+  padding: var(--space-md) 0 var(--space-md) var(--space-md); /* No right padding, controlled by grid */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Credit hours cell */
+.course-table td.course-hours {
+  grid-column: 3 / 4;        /* Credits column */
+  text-align: center;
+  padding: var(--space-md) 0;  /* No horizontal padding, controlled by grid */
+  white-space: nowrap;
+}
+
+/* Grade cell contains both the badge and dropdown */
+.course-table td:nth-child(3) {
+  grid-column: 5 / 6;        /* Grade column */
+  padding: var(--space-md) 0;  /* No horizontal padding, controlled by grid */
+}
+
+/* Remove button cell */
+.course-table td:nth-child(4) {
+  grid-column: 7 / 8;        /* Remove button column */
+  padding: var(--space-md) 0;  /* No horizontal padding, controlled by grid */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Grade cell components layout */
+.grade-cell {
+  display: flex;
+  flex-direction: row;          /* Badge first (left), then dropdown (right) */
+  gap: var(--spacing-z);        /* Fixed Z distance that never changes */
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Grade badge container */
+.grade-badge-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--grade-badge-width);
+  min-width: var(--grade-badge-width);
+  flex-shrink: 0;  /* Prevent from shrinking */
+}
+
+/* Dropdown positioning */
+.grade-dropdown {
+  position: relative;
+  width: var(--grade-dropdown-width);
+  min-width: var(--grade-dropdown-width);
+  flex-shrink: 0;  /* Prevent from shrinking */
+}
+
+/* Style for the remove button to ensure consistent size */
+.course-table td:nth-child(4) .remove-btn {
+  width: var(--remove-btn-size);
+  height: var(--remove-btn-size);
+  min-width: var(--remove-btn-size);
+  min-height: var(--remove-btn-size);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style overrides for grade dropdown elements within the table */
+.course-table .grade-dropdown {
+  width: var(--grade-dropdown-width);
+  min-width: var(--grade-dropdown-width);
+  flex-shrink: 0;
+}
+
+.course-table .grade-dropdown-trigger {
+  width: var(--grade-dropdown-width);
+  height: var(--grade-dropdown-width);
+  min-width: var(--grade-dropdown-width);
+  min-height: var(--grade-dropdown-width);
+  margin: 0;
+  padding: 0;
+}
+
+.course-table .course-grade-badge {
+  width: var(--grade-badge-width);
+  min-width: var(--grade-badge-width);
+  margin: 0;
+  padding: 0;
+}
+
+/* Small screen adjustments - maintain exact same layout but with scaled values */
+@media (max-width: 768px) {
+  .course-table tbody tr {
+    /* Grid template columns remains the same, using scaled variables */
+    grid-template-columns: 
+      1fr                      /* Course name (flexible width) */
+      var(--spacing-m)         /* Distance M between name and credits */
+      var(--credits-width)     /* Credits column (fixed width) */
+      var(--spacing-l)         /* Distance L between credits and grade */
+      var(--grade-cell-width)  /* Grade cell (combined badge + dropdown width) */
+      var(--spacing-y)         /* Distance Y between grade dropdown and remove button */
+      var(--remove-btn-size)   /* Remove button column (fixed width) */
+      var(--spacing-x);        /* Distance X from remove button to end of row */
+    
+    /* Reduce vertical padding slightly */
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+  
+  /* Adjust vertical padding on all cells */
+  .course-table td {
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-sm);
+  }
+}
+
+/* Extra small screen adjustments - maintain same layout structure with further scaled values */
+@media (max-width: 480px) {
+  .course-table td.course-name {
+    padding-left: var(--space-sm); /* Reduce left padding for course name */
+  }
+}

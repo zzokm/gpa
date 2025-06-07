@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import CourseForm from './components/CourseForm';
-import CourseTable from './components/CourseTable';
+import GroupedCourseTable from './components/GroupedCourseTable';
 import GPADisplay from './components/GPADisplay';
 import ImportModal from './components/ImportModal';
 import ThreeJSBackground from './components/ThreeJSBackground';
@@ -30,14 +30,14 @@ const App: React.FC = () => {
     show: false,
     message: ''
   });
-
   const addCourse = useCallback((course: Course) => {
     // Auto-generate course name if not provided
     const courseName = course.name.trim() || `Course ${courses.length + 1}`;
     setCourses(prev => [...prev, { 
       ...course, 
       name: courseName,
-      id: Date.now().toString() 
+      id: Date.now().toString(),
+      isImported: false // Mark as manually added
     }]);
   }, [courses.length]);
   const removeCourse = useCallback((id: string) => {
@@ -112,14 +112,13 @@ const App: React.FC = () => {
         <CourseForm
           onAddCourse={addCourse}
           onShowImport={() => setShowImportModal(true)}
-        />        <CourseTable
+        />        <GroupedCourseTable
           courses={courses}
           onRemoveCourse={removeCourse}
           onUpdateGrade={updateCourseGrade}
         />
 
-        <GPADisplay gpa={gpa} />
-
+        <GPADisplay gpa={gpa} />        {/* The ImportModal is now using a portal, so it will render at body level */}
         <ImportModal
           show={showImportModal}
           onHide={() => setShowImportModal(false)}

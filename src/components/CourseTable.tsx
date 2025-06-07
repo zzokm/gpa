@@ -2,6 +2,7 @@ import React from 'react';
 import { Course, Grade } from '../types/Course';
 import { getGradeStyles } from '../utils/gradeUtils';
 import GradeDropdown from './GradeDropdown';
+import './CourseTableStyles.css'; // Import the fixed spacing styles
 
 interface CourseTableProps {
   courses: Course[];

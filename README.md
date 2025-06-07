@@ -12,6 +12,8 @@ A modern, interactive GPA calculator web application designed specifically for F
 - **Credit Hour Selection**: Specify credit hours for each course (0-3)
 - **Real-time GPA Calculation**: Instantly see your GPA update as you modify courses
 - **Course Import**: Import your registered courses directly from the university portal
+- **Course Grouping**: Imported courses are automatically grouped by term and level
+- **Collapsible Groups**: Expand/collapse course groups with saved state
 - **Local Storage**: Your courses are saved in your browser for future visits
 - **Modern UI**: Clean, responsive design with animated interactions
 - **Dynamic Background**: Subtle animated background using Three.js

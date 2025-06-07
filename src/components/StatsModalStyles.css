@@ -1,0 +1,366 @@
+/* StatsModal Styles for course statuses and credit display */
+
+/* ========================================
+   StatsModal Main Layout & Grid
+   ======================================== */
+
+/* Stats Grid - 3-column layout for statistics */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  padding: 0;
+}
+
+/* Individual statistic cards - Enhanced glassmorphism */
+.stat-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-md);
+  text-align: center;
+  transition: var(--transition-base);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 1px 8px rgba(255, 255, 255, 0.1) inset,
+    0 -1px 0px rgba(0, 0, 0, 0.05);
+  /* Center content vertically and horizontally */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 121, 85, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.1), 
+    0 1px 12px rgba(255, 255, 255, 0.15) inset,
+    0 -1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Statistic values */
+.stat-value {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--primary-600);
+  margin-bottom: var(--space-xs);
+  line-height: 1.2;
+}
+
+/* Statistic labels */
+.stat-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* ========================================
+   Course List Container
+   ======================================== */
+
+.course-list {
+  margin-top: var(--space-md);
+  position: relative;
+}
+
+.course-list h3 {
+  font-size: var(--text-lg);
+  font-weight: 650;
+  color: var(--text-color);
+  margin: 0 0 var(--space-md) 0;
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--border-light);
+}
+
+/* ========================================
+   Scrollable Course Items Container
+   ======================================== */
+
+.course-items {
+  max-height: 260px; /* Reduced from 280px to allow for spacing */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: var(--space-xs);
+  margin-bottom: var(--space-lg); /* Added space below courses list */
+  
+  /* Hide scrollbar completely while keeping scroll functionality */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  
+  /* Enable mouse wheel scrolling */
+  overscroll-behavior: contain;
+}
+
+/* Hide scrollbar for webkit browsers */
+.course-items::-webkit-scrollbar {
+  display: none;
+}
+
+/* ========================================
+   Course Item Styling
+   ======================================== */
+
+.course-item {
+    padding: var(--space-md);
+    margin-bottom: var(--space-sm);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-md);
+    /* box-shadow: 
+        0 2px 10px rgba(0, 0, 0, 0.06),
+        0 1px 3px rgba(0, 0, 0, 0.03); */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: var(--transition-base);
+    
+    /* CSS Grid layout for perfect alignment */
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-gap: var(--space-md);
+    align-items: center;
+    position: relative;
+}
+
+.course-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Remove hover effects as requested */
+/* .course-item:hover styles removed */
+
+.course-name {
+  font-weight: 600;
+  color: var(--text-color);
+  text-align: left;
+  grid-column: 1;
+}
+
+.course-credits {
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: left;
+  grid-column: 2;
+}
+
+.course-status-container {
+  grid-column: 3;
+  text-align: center;
+}
+
+.course-status-container {
+  grid-column: 3;
+  text-align: center;
+}
+
+/* ========================================
+   Floating Scroll Arrow
+   ======================================== */
+
+.scroll-down-arrow {
+  position: absolute;
+  bottom: 15%; /* Move lower down (from 25% to 15%) */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Perfect horizontal centering */
+  width: 36px; /* Bigger size */
+  height: 36px; /* Bigger size */
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.98;
+  border: 1px solid rgba(0, 0, 0, 0.15); /* Refined black stroke */
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.12), 
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset,
+    0 -1px 0 rgba(255, 255, 255, 0.2) inset; /* Layered shadows for depth */
+  /* Subtle gradient overlay */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.1)
+  );
+}
+
+/* Removed hover animation */
+
+.scroll-down-arrow svg {
+  color: var(--primary-600);
+  width: 20px; /* Bigger icon */
+  height: 20px; /* Bigger icon */
+}
+
+/* ========================================
+   Modal Body Spacing Reduction
+   ======================================== */
+
+/* Reduce spacing between modal content and buttons but add bottom padding */
+.modal-body {
+    padding: var(--space-xs) var(--space-lg) calc(var(--space-xs) - 6px) !important; /* Slightly reduced bottom padding */
+}
+
+/* ========================================
+   Course Status & Credits Styling
+   ======================================== */
+
+/* Course status styles */
+.course-status {
+  font-weight: 600;
+  font-size: var(--text-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
+  margin-left: var(--space-sm);
+  display: inline-block;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  letter-spacing: 0.02em;
+}
+
+.course-status.passed {
+  background-color: rgba(22, 163, 74, 0.18);
+  color: #15803d; /* green-700 for better contrast */
+  border: 1px solid rgba(22, 163, 74, 0.35);
+  box-shadow: 
+    0 1px 5px rgba(22, 163, 74, 0.15),
+    0 0 0 1px rgba(22, 163, 74, 0.08) inset;
+}
+
+.course-status.failed {
+  background-color: rgba(185, 28, 28, 0.18);
+  color: #b91c1c; /* red-700 */
+  border: 1px solid rgba(185, 28, 28, 0.35);
+  box-shadow: 
+    0 1px 5px rgba(185, 28, 28, 0.15),
+    0 0 0 1px rgba(185, 28, 28, 0.08) inset;
+}
+
+.course-status.pending {
+  background-color: rgba(107, 114, 128, 0.18);
+  color: #4b5563; /* gray-600 for better contrast */
+  border: 1px solid rgba(107, 114, 128, 0.35);
+  box-shadow: 
+    0 1px 5px rgba(107, 114, 128, 0.15),
+    0 0 0 1px rgba(107, 114, 128, 0.08) inset;
+}
+
+/* Credits split display */
+.credits-split {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.passed-credits {
+  color: #16a34a; /* green-600 */
+  font-weight: 700;
+}
+
+.separator {
+  margin: 0 var(--space-xs);
+  color: var(--text-secondary);
+}
+
+.failed-credits {
+  color: #b91c1c; /* red-700 */
+  font-weight: 700;
+}
+
+/* Course details styles */
+.course-details {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+  color: var(--text-secondary);
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+  
+  .stat-card {
+    padding: var(--space-md) var(--space-sm);
+  }
+  
+  .stat-value {
+    font-size: var(--text-xl);
+  }
+  
+  .course-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .course-details {
+    margin-top: var(--space-xs);
+  }  .course-items {
+    max-height: 180px; /* Reduced to keep space at bottom */
+    margin-bottom: var(--space-md); /* Slightly less margin on mobile */
+  }  .scroll-down-arrow {
+    width: 24px;
+    height: 24px;
+    bottom: 10%; /* Lower position on mobile */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Perfect horizontal centering */
+    border: 1px solid rgba(0, 0, 0, 0.15); /* Refined black stroke */
+    box-shadow: 
+      0 2px 6px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.3),
+      rgba(255, 255, 255, 0.1)
+    );
+  }
+  
+  .scroll-down-arrow svg {
+    width: 14px;
+    height: 14px;
+    color: var(--primary-600);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    gap: var(--space-sm);
+  }
+  
+  .stat-card {
+    padding: var(--space-sm);
+  }
+  
+  .stat-value {
+    font-size: var(--text-lg);
+  }
+  
+  .stat-label {
+    font-size: var(--text-xs);
+  }
+  
+  .course-list h3 {
+    font-size: var(--text-base);
+  }
+}
