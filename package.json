@@ -1,8 +1,7 @@
 {  "name": "gpa-calculator",
-  "private": true,
-  "version": "0.0.0",
+  "private": true,  "version": "0.0.0",
   "type": "module",
-  "homepage": "https://zzokm.github.io/gpa",
+  "homepage": "https://zzokm.github.io/gpa/beta",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
