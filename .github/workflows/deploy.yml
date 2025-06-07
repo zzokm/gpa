@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+workflow_dispatch:  # Allows manual triggering from GitHub UI
 
 permissions:
   contents: write
