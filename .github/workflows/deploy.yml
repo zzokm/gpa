@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - Feature-Testing
 
 permissions:
   contents: write
