@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - Feature-Testing
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
 
 permissions:
   contents: write
@@ -25,12 +26,43 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
+      # Set base path based on branch
+      - name: Set Vite base path for main branch
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "export default {
+            base: '/gpa/'
+          }" > vite.base.js
+          
+      - name: Set Vite base path for Feature-Testing branch
+        if: github.ref == 'refs/heads/Feature-Testing'
+        run: |
+          echo "export default {
+            base: '/gpa/beta/'
+          }" > vite.base.js
+          
+      # Merge the base path with the original Vite config
+      - name: Update Vite config
+        run: |
+          sed -i 's|base: .*,|base: require("./vite.base.js").default.base,|' vite.config.ts
+          
       - name: Build
         run: npm run build
         
-      - name: Deploy
+      # Deploy to different target folders based on branch
+      - name: Deploy to root (main branch)
+        if: github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean: false  # Don't remove existing files
+          
+      - name: Deploy to beta folder (Feature-Testing branch)
+        if: github.ref == 'refs/heads/Feature-Testing'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
           branch: gh-pages
           target-folder: beta  # Deploy to /gpa/beta subdirectory
+          clean: false  # Don't remove existing files
