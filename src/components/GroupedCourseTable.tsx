@@ -4,6 +4,7 @@ import { getGradeStyles, calculateGPA } from '../utils/gradeUtils';
 import GradeDropdown from './GradeDropdown';
 import StatsModal from './StatsModal';
 import './CourseTableStyles.css'; // Import the fixed spacing styles
+import './GroupedCourseTableFixes.css';
 
 interface GroupedCourseTableProps {
   courses: Course[];

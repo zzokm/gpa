@@ -1,0 +1,67 @@
+/* GroupedCourseTable animation fixes */
+
+/* Fix for double animation issue on collapse/expand */
+.table-container {
+  overflow: hidden;
+  animation-fill-mode: forwards !important;
+  /* Removed transition property to avoid conflicts */
+}
+
+/* Animation improvements */
+.table-container.expanded {
+  animation: expandTableAnimation 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  max-height: 2000px;
+  opacity: 1;
+}
+
+.table-container.collapsed {
+  animation: collapseTableAnimation 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  max-height: 0;
+  opacity: 0;
+}
+
+@keyframes expandTableAnimation {
+  0% {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes collapseTableAnimation {
+  0% {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Specific fixes for level and term containers */
+.level-container,
+.term-container {
+  animation-fill-mode: forwards !important;
+  /* Removed transition property to avoid conflicts */
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 480px) {
+  /* Speed up animations on mobile */
+  .table-container.expanded,
+  .table-container.collapsed,
+  .level-container.expanded,
+  .level-container.collapsed,
+  .term-container.expanded,
+  .term-container.collapsed {
+    animation-duration: 0.25s !important;
+  }
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Course, Grade } from '../types/Course';
 import { getGradeStyles, calculateGPA } from '../utils/gradeUtils';
 import GradeDropdown from './GradeDropdown';
+import './GroupedCourseTableFixes.css';
 
 interface GroupedCourseTableProps {
   courses: Course[];
