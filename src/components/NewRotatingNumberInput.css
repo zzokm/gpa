@@ -1,0 +1,512 @@
+/* Rotating Number Input with Glass Overlay - Enhanced Version */
+
+/* The main wrapper that contains the dial and the glass overlay */
+.credit-hours-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 200px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.4); /* More transparent background */
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.08), 0 2px 6px -4px rgba(0, 0, 0, 0.07);
+  transition: var(--transition-base);
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  /* Remove main backdrop filter to apply it more granularly */
+}
+
+.credit-hours-input:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.15);
+}
+
+/* The perspective container for 3D transforms */
+.perspective-container {
+  perspective: 1000px;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  /* This gives the 3D effect more depth */
+  perspective-origin: 50% 50%;
+}
+
+/* The viewport for the number dial */
+.number-dial-viewport {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* Ensure items inside are centered */
+  overflow: visible;
+}
+
+/* The strip containing all numbers - enhanced for perfect alignment */
+.number-strip {
+  display: flex;
+  transform-style: preserve-3d;
+  /* Updated transition with bouncy cubic-bezier - MOVED TO ConsolidatedFixes.css */
+  /* transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); */
+  position: absolute;
+  height: 100%;
+  align-items: center;
+  width: max-content; /* Allow it to grow based on content */
+  /* Center origin for more natural rotation */
+  transform-origin: 50% 50%;
+  will-change: transform; /* Performance optimization */
+  /* Proper z-index for 3D context */
+  z-index: 1;
+  /* Force GPU acceleration for smoother animations */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+  left: 0;
+  top: 0;
+}
+
+/* Individual number styling - enhanced for perfect centering and visibility */
+.number-item {
+  /* Fixed exact width to match center window */
+  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
+  /* Full height to use all available space */
+  height: 100%;
+  /* Perfect centering of number in its container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Optimal font size for visibility without overflow */
+  font-size: 1.2rem; /* Reduced from 2.2rem */
+  /* Bold text for better visibility */
+  font-weight: 800;
+  /* Dark text for maximum contrast */
+  color: #1f2937;
+  /* Prevent 3D elements from showing backface */
+  backface-visibility: hidden;
+  /* Updated transitions for transform, color, and opacity - MOVED TO ConsolidatedFixes.css */
+  /* transition:
+    transform 0.6s ease,
+    color 0.6s ease,
+    opacity 0.6s ease, 
+    text-shadow 0.3s ease, 
+    background 0.3s ease; */
+  position: relative;
+  /* Default scale - will be overridden by active/inactive states */
+  transform: scale(1);
+  opacity: 1;
+  /* Enforce box model to prevent sizing issues */
+  box-sizing: border-box;
+  /* No margins or padding that could affect centering */
+  margin: 0;
+  padding: 0;
+  /* Subtle shadow for visual depth */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  /* Guarantee perfect horizontal centering of text */
+  text-align: center;
+  /* Fixed width with no flex adjustments */
+  flex: 0 0 50px;
+  /* Optimize text rendering quality during transforms */
+  font-smooth: always;
+  -webkit-font-smoothing: subpixel-antialiased;
+  /* Prevent user selection of text */
+  user-select: none;
+}
+
+/* Active number highlight */
+.number-item.active {
+  opacity: 1;
+  transform: translateZ(15px) scale(1.15);
+  color: #111827; /* Darkest for the active number */
+  position: relative;
+  font-weight: 800;
+  letter-spacing: -0.02em; /* Slightly tighter letter spacing for better appearance */
+  /* Enhanced text shadow for better pop effect */
+  text-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* Add a subtle glow effect to active number */
+.number-item.active::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.6) 5%, /* Softer and slightly smaller bright center */
+    rgba(255, 255, 255, 0) 65%  /* Smoother fade to transparent */
+  );
+  pointer-events: none;
+  opacity: 0.7;
+  z-index: -1;
+  animation: pulse 2.5s infinite alternate ease-in-out; /* Slower, more subtle pulsing glow */
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+}
+
+/* Previous and next number items with improved 3D positioning */
+.number-item.prev {
+  opacity: 0.65;
+  transform: translateX(-60px) translateZ(-30px) scale(0.7);
+  color: #4b5563; /* Medium gray for inactive */
+  filter: blur(0.5px);
+  /* Subtle text emboss for depth */
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.number-item.next {
+  opacity: 0.65;
+  transform: translateX(60px) translateZ(-30px) scale(0.7);
+  color: #4b5563; /* Medium gray for inactive */
+  filter: blur(0.5px);
+  /* Subtle text emboss for depth */
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Full component overlay with blur - improved realistic effect */
+.glass-pane-left,
+.glass-pane-right {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  /* Perfect width calculation based on center window width */
+  width: calc(50% - 25px); /* Cover everything except center window */
+    /* Enhanced realistic glass effect with stronger blur and better Safari support */
+  background: rgba(235, 245, 255, 0.2);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%); /* Enhanced Safari compatibility */
+  -webkit-transform: translateZ(0); /* Force GPU rendering on Safari */
+  transform: translateZ(0); /* Force GPU rendering */
+  
+  /* Subtle lighting effects for more realistic glass */
+  box-shadow: 
+    inset 0 0 12px rgba(255, 255, 255, 0.5),
+    inset 0 0 3px rgba(255, 255, 255, 0.8);
+}
+
+.glass-pane-left {
+  left: 0;
+  border-right: 1px solid rgba(200, 220, 240, 0.3);
+  /* Add gradient that transitions to white at the left edge to blend with the arrow button */
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(240, 248, 255, 0.35) 15%,
+    rgba(220, 235, 255, 0.25) 100%
+  );
+}
+
+.glass-pane-right {
+  right: 0;
+  border-left: 1px solid rgba(200, 220, 240, 0.3);
+  /* Add gradient that transitions to white at the right edge to blend with the arrow button */
+  background-image: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(240, 248, 255, 0.35) 15%,
+    rgba(220, 235, 255, 0.25) 100%
+  );
+}
+
+/* Central viewing window with completely clear area and precise borders */
+.center-window {
+  position: absolute;
+  width: 50px; /* Exact width to match number items */
+  height: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* Ensure exact positioning */
+  top: 0;
+  margin: 0;
+  
+  /* Nearly invisible background but with subtle highlighting */
+  background: rgba(255, 255, 255, 0.05);
+    /* Remove border lines that cause the thin line in the center */
+  border-left: none;
+  border-right: none;
+  
+  /* Completely clear center - no blur effect */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  
+  pointer-events: none;
+  z-index: 4;
+  
+  /* Enhanced light effects for better visibility */
+  box-shadow: 
+    0 0 18px rgba(255, 255, 255, 0.7),
+    inset 0 0 5px rgba(255, 255, 255, 0.9);
+}
+
+/* Enhanced semi-transparent arrow styling to better see numbers below */
+.credit-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  min-width: 40px;
+  flex-shrink: 0;
+  height: 100%;
+  
+  /* Very transparent background - almost invisible */
+  background: rgba(255, 255, 255, 0.15);
+  
+  /* Light blur effect to blend with numbers beneath */
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px); /* For Safari compatibility */
+  
+  border: none;
+  cursor: pointer;
+  
+  /* Updated transition for transform and background-color - MOVED TO ConsolidatedFixes.css */
+  /* transition: transform 0.2s ease, background-color 0.2s ease; */
+  
+  /* More visible arrow color with transparency */
+  color: rgba(60, 70, 90, 0.8);
+  
+  position: relative;
+  z-index: 6;
+  
+  /* Refined shadow effects for depth */
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    
+  border-radius: var(--radius-sm);
+  
+  /* Subtle gradient for better depth perception */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+.credit-arrow:hover {
+  /* Slightly more visible on hover, but still see-through */
+  background: rgba(255, 255, 255, 0.25);
+  color: rgba(50, 60, 80, 0.95);
+  
+  /* Same blur effect but with slight color shift */
+  backdrop-filter: blur(5px) saturate(150%);
+  -webkit-backdrop-filter: blur(5px) saturate(150%);
+  
+  /* Add a subtle transform effect */
+  transform: translateY(-1px);
+}
+
+.credit-arrow:hover:not(:disabled) {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 140, 110, 0.25) 0%,
+    rgba(255, 121, 85, 0.2) 100%
+  );
+  transform: scale(1.05);
+  box-shadow: 
+    0 2px 12px rgba(255, 120, 85, 0.15),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.credit-arrow:active:not(:disabled) {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 121, 85, 0.25) 0%,
+    rgba(255, 100, 70, 0.3) 100%
+  );
+  transform: scale(0.95);
+  transition: all 0.1s ease;
+}
+
+.credit-arrow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--text-muted);
+  backdrop-filter: blur(3px); /* Less blur when disabled */
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.credit-arrow svg {
+  width: 20px;
+  height: 20px;
+  /* Add subtle shadow to the icon for better visibility */
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+}
+
+.credit-arrow-left {
+  border-right: 1px solid rgba(200, 220, 240, 0.3); /* Subtle blue-ish border */
+  /* Create gradient for seamless transition with glass pane */
+  background-image: linear-gradient(
+    to left, /* Gradient from right (inner) to left (outer) */
+    rgba(255, 255, 255, 0.4) 0%,       /* Outer edge of arrow: semi-transparent white */
+    rgba(255, 255, 255, 1) 80%,      /* Inner edge of arrow (meeting glass): opaque white */
+    rgba(255, 255, 255, 1) 100%      /* Ensure full opaque white at the very edge */
+  );
+  /* Use a pseudoelement to create a subtle gradient shine */
+  position: relative;
+  overflow: hidden;
+}
+
+.credit-arrow-left::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%);
+  pointer-events: none;
+}
+
+.credit-arrow-right {
+  border-left: 1px solid rgba(200, 220, 240, 0.3); /* Subtle blue-ish border */
+  /* Create gradient for seamless transition with glass pane */
+  background-image: linear-gradient(
+    to right, /* Gradient from left (inner) to right (outer) */
+    rgba(255, 255, 255, 1) 0%,        /* Inner edge of arrow (meeting glass): opaque white */
+    rgba(255, 255, 255, 1) 20%,       /* Ensure full opaque white extends a bit */
+    rgba(255, 255, 255, 0.4) 100%     /* Outer edge of arrow: semi-transparent white */
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+.credit-arrow-right::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(225deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%);
+  pointer-events: none;
+}
+
+/* Enhanced mobile responsiveness with stricter rules to prevent element collapse */
+@media (max-width: 480px) {
+  .credit-hours-input {
+    height: 40px !important; /* Match other mobile input heights */
+    min-width: 130px !important; /* Further increased minimum width to prevent disappearing */
+    width: auto !important; /* Allow it to fill available space */
+    flex-shrink: 0 !important; /* Prevent shrinking below min-width */
+    padding: 0 !important; /* Remove padding that could affect layout */
+    display: flex !important; /* Ensure flex layout is maintained */
+    align-items: center !important; /* Keep items centered vertically */
+    justify-content: space-between !important; /* Maintain space between elements */
+  }
+  
+  .number-item {
+    font-size: 1.6rem !important; /* Reduced from 1.8rem */
+    width: 36px !important; /* Adjusted to match smaller font */
+    min-width: 36px !important;
+    max-width: 36px !important;
+    flex: 0 0 36px !important;
+  }
+  
+  .glass-pane-left,
+  .glass-pane-right {
+    width: calc(50% - 18px) !important; /* Adjusted for new number item width */
+    display: block !important; /* Ensure panes are visible */
+    opacity: 1 !important; /* Ensure panes are visible */
+  }
+  
+  .center-window {
+    width: 36px !important; /* Adjusted to match new number item width */
+    display: block !important; /* Ensure center window is visible */
+  }
+  
+  .credit-arrow {
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    flex: 0 0 32px !important;
+    flex-shrink: 0 !important; /* Prevent arrows from shrinking */
+    height: 100% !important; /* Ensure full height */
+    display: flex !important; /* Ensure flex layout */
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .credit-arrow svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  /* Ensure the perspective container doesn't collapse */
+  .perspective-container {
+    min-width: 60px !important; /* Increased minimum width to display the number */
+    flex: 1 !important;
+    display: flex !important; /* Ensure flex layout */
+  }
+}
+
+/* Even smaller screens with enhanced protection against collapse */
+@media (max-width: 360px) {
+  .credit-hours-input {
+    min-width: 110px !important; /* Increased minimum width even on very small screens */
+    flex-shrink: 0 !important; /* Prevent shrinking below min-width */
+    height: 36px !important; /* Slightly smaller height for very small screens */
+  }
+  
+  .number-item {
+    font-size: 1.4rem !important; /* Reduced from 1.6rem */
+    width: 32px !important; /* Adjusted to match smaller font */
+    min-width: 32px !important;
+    max-width: 32px !important;
+    flex: 0 0 32px !important;
+  }
+  
+  .center-window {
+    width: 32px !important; /* Adjusted to match new number item width */
+  }
+  
+  .credit-arrow {
+    width: 28px !important;
+    min-width: 28px !important;
+    max-width: 28px !important;
+    flex: 0 0 28px !important;
+  }
+  
+  .credit-arrow svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  
+  /* Ensure the perspective container doesn't collapse */
+  .perspective-container {
+    min-width: 45px !important; /* Increased minimum width to ensure stability */
+  }
+  
+  /* Ensure glass panes adjust properly */
+  .glass-pane-left,
+  .glass-pane-right {
+    width: calc(50% - 16px) !important; /* Adjusted for new number item width */
+  }
+}

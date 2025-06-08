@@ -1,0 +1,114 @@
+/* Consolidated fixes for the rotating number input component */
+
+/* ===== 1. Remove thin line in center window ===== */
+.center-window {
+  /* Remove borders that cause the thin line in the center */
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* ===== 2. Improve blur backdrop filter effects with Safari compatibility ===== */
+.glass-pane-left,
+.glass-pane-right {
+  backdrop-filter: blur(10px) saturate(120%) !important; /* Increased blur to 10px */
+  -webkit-backdrop-filter: blur(10px) saturate(120%) !important; /* Increased blur to 10px and made consistent */
+  -webkit-transform: translateZ(0) !important; /* Force GPU rendering on Safari */
+  transform: translateZ(0) !important; /* Force GPU rendering */
+}
+
+/* ===== 3. Smooth transitions for number switching ===== */
+/* Default transition for number strip - "bouncy" */
+.number-strip {
+  /* Latest user request for "bouncy" transition */
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) !important;
+  /* Retain performance properties from WrapAroundTransitionFix.css */
+  transform-origin: center center !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  -webkit-transform-style: preserve-3d !important;
+  transform-style: preserve-3d !important;
+  -webkit-perspective: 1000 !important;
+  perspective: 1000 !important;
+  will-change: transform, opacity !important;
+}
+
+/* Wrap-around animation for number strip (from JS/WrapAroundTransitionFix.css) */
+.number-strip.animating {
+  transition: transform 1s cubic-bezier(0.16, 1.32, 0.3, 1.1) !important;
+}
+
+/* Default transition for number items - "ease" */
+.number-item {
+  /* Latest user request for "ease" transitions, plus existing text-shadow/background */
+  transition: 
+    transform 0.6s ease,
+    color 0.6s ease,
+    opacity 0.6s ease,
+    text-shadow 0.3s ease, /* Kept from original NewRotatingNumberInput.css */
+    background 0.3s ease !important; /* Ensured important */
+  /* Retain performance properties from WrapAroundTransitionFix.css */
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  will-change: transform, opacity !important;
+}
+
+/* Wrap-around animation for number items (from WrapAroundTransitionFix.css) */
+.animating .number-item {
+  transition: 
+    transform 0.85s cubic-bezier(0.16, 1.32, 0.3, 1.1),
+    opacity 0.5s cubic-bezier(0.16, 1.32, 0.3, 1.1),
+    color 0.4s cubic-bezier(0.16, 1.32, 0.3, 1.1) !important;
+}
+
+/* ===== Arrow button transitions (New Addition) ===== */
+.credit-arrow {
+  /* Assuming other .credit-arrow styles are defined in NewRotatingNumberInput.css */
+  /* This adds/overrides only the transition property */
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.credit-arrow:active {
+  /* This adds/overrides only the transform property for the active state */
+  transform: scale(0.9);
+  /* Other :active styles might exist in NewRotatingNumberInput.css */
+}
+
+/* ===== 4. Mobile display fixes ===== */
+/* Force minimum widths to prevent collapsing */
+.perspective-container {
+  min-width: 60px !important;
+  flex: 1 !important;
+}
+
+.credit-hours-input {
+  min-width: 130px !important;
+  display: flex !important;
+  flex-shrink: 0 !important;
+}
+
+.credit-arrow {
+  flex-shrink: 0 !important;
+}
+
+/* Enhanced mobile fixes */
+@media (max-width: 480px) {
+  .credit-hours-input {
+    height: 40px !important;
+    min-width: 130px !important;
+  }
+  
+  .perspective-container {
+    min-width: 60px !important;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .credit-hours-input {
+    min-width: 110px !important;
+  }
+  
+  .perspective-container {
+    min-width: 45px !important;
+  }
+}

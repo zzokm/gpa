@@ -102,7 +102,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ modalData, onClose }) => {
                   <span className="separator">/</span>
                   <span className="failed-credits">{modalData.stats.failedCredits}</span>
                 </div>
-                <div className="stat-label">Credits (Passed/Failed)</div>
+                <div className="stat-label">Credits (Pass/Fail)</div>
               </div>
             ) : (
               <div className="stat-card">
