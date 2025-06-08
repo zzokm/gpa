@@ -148,13 +148,12 @@ body {
   .course-table td {
     padding: var(--space-md) var(--space-sm);
   }
-  
-  /* Fix form field heights to be consistent */
+    /* Fix form field heights to be consistent */
   .form-input,
   .form-select,
   .credit-hours-input,
   .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
-    height: 45px !important;
+    height: 40px !important;
   }
   
   /* Ensure full-height arrows for credit hours on mobile */
@@ -269,23 +268,23 @@ body {
     margin-bottom: 4px !important;
     font-size: 0.9rem !important;
   }
-  
-  /* Fix height and appearance of all input types */
+    /* Fix height and appearance of all input types */
   .form-input,
   .form-select,
   .credit-hours-input,
   .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
     width: 100% !important;
     min-width: 0 !important;
-    height: 45px !important;
+    height: 40px !important;
     font-size: 0.95rem !important;
     padding: 8px 12px !important;
   }
-  
-  /* Credit hours input fixes */
+    /* Credit hours input fixes */
   .credit-hours-input {
     display: flex !important;
     width: 100% !important;
+    box-sizing: border-box !important;
+    max-height: 40px !important;
   }
   
   .credit-hours-container {
@@ -553,11 +552,10 @@ body {
     .table-box {
       padding: var(--space-md) var(--space-sm) !important;
     }
-    
-    .form-input, 
+      .form-input, 
     .form-select,
     .credit-hours-input {
-      height: 40px !important;
+      height: 36px !important;
       font-size: 0.8rem !important;
     }
   }
