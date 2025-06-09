@@ -45,13 +45,12 @@
     color 0.6s ease,
     opacity 0.6s ease,
     text-shadow 0.3s ease, /* Kept from original NewRotatingNumberInput.css */
-    background 0.3s ease !important; /* Ensured important */
-  /* Retain performance properties from WrapAroundTransitionFix.css */
+    background 0.3s ease !important; /* Ensured important */  /* Retain performance properties from WrapAroundTransitionFix.css */
   -webkit-backface-visibility: hidden !important;
   backface-visibility: hidden !important;
   will-change: transform, opacity !important;
   /* Responsive font size: scales based on viewport width, smaller on phones */
-  font-size: clamp(0.5rem, calc(0.5rem + 1.5vw), 1.0rem) !important;
+  font-size: 1.0rem !important;
 }
 
 /* Wrap-around animation for number items (from WrapAroundTransitionFix.css) */
@@ -102,6 +101,18 @@
   .perspective-container {
     min-width: 60px !important;
   }
+  
+  /* Smaller font for mobile devices */
+  .number-item {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 393px) {
+  .number-item {
+    font-size: 0.4rem !important;
+  }
 }
 
 /* Very small screens */
@@ -112,6 +123,10 @@
   
   .perspective-container {
     min-width: 45px !important;
+  }
+  
+  .number-item {
+    font-size: 0.4rem !important;
   }
 }
 
