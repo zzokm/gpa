@@ -198,10 +198,9 @@
   z-index: 5;
   /* Perfect width calculation based on center window width */
   width: calc(50% - 25px); /* Cover everything except center window */
-    /* Enhanced realistic glass effect with stronger blur and better Safari support */
-  background: rgba(235, 245, 255, 0.2);
-  backdrop-filter: blur(8px) saturate(120%);
-  -webkit-backdrop-filter: blur(8px) saturate(120%); /* Enhanced Safari compatibility */
+  /* Enhanced realistic glass effect with less blur to match ConsolidatedFixes.css */
+  background: rgba(235, 245, 255, 0.2); /* Lower opacity in base styles, ConsolidatedFixes.css will override */
+  /* backdrop-filter and -webkit-backdrop-filter moved to ConsolidatedFixes.css */
   -webkit-transform: translateZ(0); /* Force GPU rendering on Safari */
   transform: translateZ(0); /* Force GPU rendering */
   
