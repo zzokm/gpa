@@ -104,14 +104,14 @@
   
   /* Smaller font for mobile devices */
   .number-item {
-    font-size: 0.7rem !important;
+    font-size: 0.65rem !important;
   }
 }
 
 /* Mobile phones */
 @media (max-width: 393px) {
   .number-item {
-    font-size: 0.4rem !important;
+    font-size: 0.5rem !important; /* Even smaller */
   }
 }
 
@@ -126,7 +126,7 @@
   }
   
   .number-item {
-    font-size: 0.4rem !important;
+    font-size: 0.45rem !important; /* Further reduced */
   }
 }
 
@@ -138,5 +138,9 @@
   
   .perspective-container {
     min-width: 30px !important;
+  }
+  
+  .number-item {
+    font-size: 0.4rem !important; /* Minimum size for smallest screens */
   }
 }
