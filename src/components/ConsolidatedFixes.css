@@ -1,4 +1,17 @@
-/* Consolidated fixes for the rotating number input component */
+/* Consolidated fixes for the rotating /* Default transition for number items - "ease" */
+.number-item {
+  /* Latest user request for "ease" transitions, plus existing text-shadow/background */
+  transition: 
+    transform 0.6s ease,
+    color 0.6s ease,
+    opacity 0.6s ease,
+    text-shadow 0.3s ease, /* Kept from original NewRotatingNumberInput.css */
+    background 0.3s ease !important; /* Ensured important */  /* Retain performance properties from WrapAroundTransitionFix.css */
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  will-change: transform, opacity !important;
+  /* Base font size for desktop only */
+  font-size: 1.0rem !important;omponent */
 
 /* ===== 1. Remove thin line in center window ===== */
 .center-window {
@@ -101,17 +114,16 @@
   .perspective-container {
     min-width: 60px !important;
   }
-  
-  /* Smaller font for mobile devices */
-  .number-item {
-    font-size: 0.2rem !important;
+    /* Smaller font for mobile devices with increased specificity */
+  html body .perspective-container .number-item {
+    font-size: 0.4rem !important; /* Reduced further and increased specificity */
   }
 }
 
 /* Mobile phones */
-@media (max-width: 415px) {
-  .number-item {
-    font-size: 0.2rem !important; /* Even smaller */
+@media (max-width: 393px) {
+  html body .perspective-container .number-item {
+    font-size: 0.35rem !important; /* Increased specificity and reduced size */
   }
 }
 
@@ -120,13 +132,12 @@
   .credit-hours-input {
     min-width: 110px !important;
   }
-  
-  .perspective-container {
+    .perspective-container {
     min-width: 45px !important;
   }
   
-  .number-item {
-    font-size: 0.2rem !important; /* Further reduced */
+  html body .perspective-container .number-item {
+    font-size: 0.3rem !important; /* Increased specificity and reduced size */
   }
 }
 
@@ -139,8 +150,5 @@
   .perspective-container {
     min-width: 30px !important;
   }
-  
-  .number-item {
-    font-size: 0.2rem !important; /* Minimum size for smallest screens */
-  }
+}
 }
