@@ -50,7 +50,7 @@
   backface-visibility: hidden !important;
   will-change: transform, opacity !important;
   /* Responsive font size: scales based on viewport width, smaller on phones */
-  font-size: 1.0rem !important;
+  font-size: 1.2rem !important;
 }
 
 /* Wrap-around animation for number items (from WrapAroundTransitionFix.css) */
@@ -104,14 +104,14 @@
   
   /* Smaller font for mobile devices */
   .number-item {
-    font-size: 0.65rem !important;
+    font-size: 0.2rem !important;
   }
 }
 
 /* Mobile phones */
-@media (max-width: 393px) {
+@media (max-width: 415px) {
   .number-item {
-    font-size: 0.5rem !important; /* Even smaller */
+    font-size: 0.2rem !important; /* Even smaller */
   }
 }
 
@@ -126,7 +126,7 @@
   }
   
   .number-item {
-    font-size: 0.45rem !important; /* Further reduced */
+    font-size: 0.2rem !important; /* Further reduced */
   }
 }
 
@@ -141,6 +141,6 @@
   }
   
   .number-item {
-    font-size: 0.4rem !important; /* Minimum size for smallest screens */
+    font-size: 0.2rem !important; /* Minimum size for smallest screens */
   }
 }
