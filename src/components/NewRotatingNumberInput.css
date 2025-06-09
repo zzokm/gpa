@@ -87,7 +87,7 @@
   justify-content: center;
   align-items: center;
   /* Optimal font size for visibility without overflow */
-  font-size: 1.2rem; /* Reduced from 2.2rem */
+  /* font-size: 1.2rem; /* Reduced from 2.2rem - Now handled by ConsolidatedFixes.css */
   /* Bold text for better visibility */
   font-weight: 800;
   /* Dark text for maximum contrast */
@@ -423,7 +423,7 @@
   }
   
   .number-item {
-    font-size: 1.6rem !important; /* Reduced from 1.8rem */
+    /* font-size: 1.6rem !important; /* Reduced from 1.8rem - Now handled by ConsolidatedFixes.css */
     width: 36px !important; /* Adjusted to match smaller font */
     min-width: 36px !important;
     max-width: 36px !important;
@@ -476,7 +476,7 @@
   }
   
   .number-item {
-    font-size: 1.4rem !important; /* Reduced from 1.6rem */
+    /* font-size: 1.4rem !important; /* Reduced from 1.6rem - Now handled by ConsolidatedFixes.css */
     width: 32px !important; /* Adjusted to match smaller font */
     min-width: 32px !important;
     max-width: 32px !important;

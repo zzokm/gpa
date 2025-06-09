@@ -50,6 +50,8 @@
   -webkit-backface-visibility: hidden !important;
   backface-visibility: hidden !important;
   will-change: transform, opacity !important;
+  /* Responsive font size: scales between 1.0rem and 1.2rem based on viewport width */
+  font-size: clamp(1.0rem, calc(0.6rem + 2vw), 1.2rem) !important;
 }
 
 /* Wrap-around animation for number items (from WrapAroundTransitionFix.css) */
@@ -110,5 +112,16 @@
   
   .perspective-container {
     min-width: 45px !important;
+  }
+}
+
+/* Ultra small screens emergency override */
+@media (max-width: 320px) {
+  .credit-hours-input {
+    min-width: 90px !important;
+  }
+  
+  .perspective-container {
+    min-width: 30px !important;
   }
 }
