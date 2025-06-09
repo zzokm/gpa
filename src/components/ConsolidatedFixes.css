@@ -50,8 +50,8 @@
   -webkit-backface-visibility: hidden !important;
   backface-visibility: hidden !important;
   will-change: transform, opacity !important;
-  /* Responsive font size: scales between 1.0rem and 1.2rem based on viewport width */
-  font-size: clamp(1.0rem, calc(0.6rem + 2vw), 1.2rem) !important;
+  /* Responsive font size: scales based on viewport width, smaller on phones */
+  font-size: clamp(0.5rem, calc(0.5rem + 1.5vw), 1.0rem) !important;
 }
 
 /* Wrap-around animation for number items (from WrapAroundTransitionFix.css) */
