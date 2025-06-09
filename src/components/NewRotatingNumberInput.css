@@ -194,7 +194,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  pointer-events: none;
+  pointer-events: auto; /* Enable click events */
   z-index: 5;
   /* Perfect width calculation based on center window width */
   width: calc(50% - 25px); /* Cover everything except center window */

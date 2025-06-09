@@ -255,21 +255,8 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
     }
     
     onChange(newValue);
-  };
-  return (
+  };  return (
     <div className="credit-hours-input">      
-      <button
-        type="button"
-        className="credit-arrow credit-arrow-left"
-        onClick={handlePrev}
-        disabled={disabled} 
-        aria-label="Previous value"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </button>
-      
       <div className="perspective-container">
         <div className="number-dial-viewport">
           <div ref={stripRef} id="number-strip" className="number-strip" style={{ '--x-offset': '0px' } as React.CSSProperties}>
@@ -287,26 +274,25 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
             ))}
           </div>
         </div>
-        
-        {/* The Glass Overlay Panes */}
-        <div className="glass-pane-left"></div>
-        <div className="glass-pane-right"></div>
+          {/* The Glass Overlay Panes with integrated arrows */}
+        <div className="glass-pane-left" onClick={handlePrev} style={{ pointerEvents: disabled ? 'none' : 'auto', cursor: disabled ? 'not-allowed' : 'pointer' }}>
+          <div className="arrow-button" style={{ left: '5px' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div className="glass-pane-right" onClick={handleNext} style={{ pointerEvents: disabled ? 'none' : 'auto', cursor: disabled ? 'not-allowed' : 'pointer' }}>
+          <div className="arrow-button" style={{ right: '5px' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        </div>
         
         {/* Central viewing window with thin border */}
         <div className="center-window"></div>
       </div>
-      
-      <button
-        type="button"
-        className="credit-arrow credit-arrow-right"
-        onClick={handleNext}
-        disabled={disabled}
-        aria-label="Next value"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button>
     </div>
   );
 };

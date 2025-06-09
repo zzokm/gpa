@@ -5,20 +5,71 @@
   /* Remove borders that cause the thin line in the center */
   border-left: none !important;
   border-right: none !important;
+  z-index: 50 !important; /* Below the glass panes but above the number strip */
+  position: absolute !important; /* Ensure proper stacking */
 }
 
 /* ===== 2. Improve blur backdrop filter effects with Safari compatibility ===== */
 .glass-pane-left,
 .glass-pane-right {
-  /* Less blur as per user request */
-  backdrop-filter: blur(5px) saturate(120%) !important; 
-  -webkit-backdrop-filter: blur(5px) saturate(120%) !important;
-  /* Stronger background to ensure blur is visible */
-  background: rgba(235, 245, 255, 0.5) !important; /* Increased opacity from 0.2 to 0.5 */
+  /* Glass pane styling from the new example */
+  position: absolute !important;
+  top: 0 !important;
+  height: 100% !important;
+  cursor: pointer !important;
+  transition: background-color 0.25s ease !important;
+  -webkit-tap-highlight-color: transparent !important;
+  /* The corrected glass morphism effect */
+  background-color: rgba(230, 235, 250, 0.3) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  z-index: 100 !important; /* Higher z-index to ensure it's above other elements */
+  pointer-events: auto !important; /* Ensure click events work */
   -webkit-transform: translateZ(0) !important; /* Force GPU rendering on Safari */
   transform: translateZ(0) !important; /* Force GPU rendering */
-  /* Make sure our styles have higher priority */
-  z-index: 5 !important;
+}
+
+.glass-pane-left:hover,
+.glass-pane-right:hover {
+  background-color: rgba(230, 235, 250, 0.5) !important;
+}
+
+/* Positioning for glass panes */
+.glass-pane-left {
+  left: 0 !important;
+  width: calc(50% - 25px) !important; /* Match existing size to cover left area */
+  border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+.glass-pane-right {
+  right: 0 !important;
+  width: calc(50% - 25px) !important; /* Match existing size to cover right area */
+  border-left: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Arrow button styling from the example */
+.arrow-button {
+  position: absolute !important;
+  top: 0 !important;
+  height: 100% !important;
+  width: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 101 !important; /* Above the glass pane */
+  pointer-events: none !important; /* Let clicks pass through to the pane */
+}
+
+.arrow-button svg {
+  transition: transform 0.25s ease !important;
+  color: #2d3748 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.glass-pane-left:hover .arrow-button svg,
+.glass-pane-right:hover .arrow-button svg {
+  transform: scale(1.1) !important;
 }
 
 /* ===== 3. Smooth transitions for number switching ===== */
@@ -56,7 +107,7 @@
   backface-visibility: hidden !important;
   will-change: transform, opacity !important;
   /* Base font size for desktop only */
-  font-size: 1.0rem !important;
+  font-size: 1.25rem !important;
 }
 
 /* Wrap-around animation for number items (from WrapAroundTransitionFix.css) */
@@ -85,6 +136,8 @@
 .perspective-container {
   min-width: 60px !important;
   flex: 1 !important;
+  z-index: 1 !important; /* Lower z-index than glass panes */
+  position: relative !important;
 }
 
 .credit-hours-input {
