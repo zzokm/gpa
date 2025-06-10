@@ -5,7 +5,7 @@
   /* Width proportions */
   --level-width: 100%;
   --term-width: 94%;
-  --term-indent:  3%;
+  --term-indent: 3%;
   --course-width: 100%;
   --stats-button-right-distance: 0px;
 }
@@ -355,8 +355,8 @@
 /* ===== Responsive Adjustments ===== */
 @media (max-width: 768px) {
   :root {
-    --term-width: 76%;
-    --term-indent: 12%;
+    --term-width: 95%;
+    --term-indent: 2.5%;
   }
   
   .term-group {
@@ -381,6 +381,7 @@
   /* Responsive adjustments for groups (moved from index.css) */
   .group-header {
     padding: var(--space-sm) var(--space-md);
+    min-height: 48px; /* Make headers a bit higher */
   }
   
   .group-title {
@@ -399,10 +400,17 @@
   }
 }
 
+@media (max-width: 600px) {
+  :root {
+    --term-width: 96%;
+    --term-indent: 2%;
+  }
+}
+
 @media (max-width: 480px) {
   :root {
-    --term-width: 82%;
-    --term-indent: 9%;
+    --term-width: 97%;
+    --term-indent: 1.5%;
   }
   
   .term-group {
@@ -413,12 +421,41 @@
   .term-title {
     font-size: 0.95rem;
   }
+
+  /* Make group headers higher on smaller devices */
+  .group-header {
+    min-height: 52px;
+  }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 430px) {
+  /* Make info button smaller - size of arrow svg as reference */
+  .info-btn {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+  }
+
+  .info-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Adjust group title padding for smaller info button */
+  .group-title {
+    padding-right: calc(24px + var(--stats-button-right-distance) * 2);
+  }
+
+  /* Make group headers even higher */
+  .group-header {
+    min-height: 56px;
+  }
+}
+
+@media (max-width: 400px) {
   :root {
-    --term-width: 88%;
-    --term-indent: 6%;
+    --term-width: 98%;
+    --term-indent: 1%;
   }
   
   /* Further reduce spacing for tiny screens */
@@ -430,4 +467,13 @@
   .term-title {
     font-size: 0.85rem;
   }
+
+  /* Maximum height for smallest screens */
+  .group-header {
+    min-height: 60px;
+  }
+}
+
+@media (max-width: 380px) {
+  /* Keep the same settings as 400px for very small screens */
 }
