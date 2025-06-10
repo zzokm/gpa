@@ -232,7 +232,10 @@ jspm_packages/
 web_modules/
 .docusaurus/
 
-
+# ===================================
+# Additional files to ignore
+# ===================================
 src/components/ImportModal.tsx.bak2
 package-lock.json
 src/components/ConsolidatedFixes.bak2
+list.exe

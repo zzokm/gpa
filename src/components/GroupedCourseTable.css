@@ -1,0 +1,433 @@
+/* GroupedCourseTable.css - Combined styles for the grouped course table component */
+
+/* ===== Variables for responsive sizing ===== */
+:root {
+  /* Width proportions */
+  --level-width: 100%;
+  --term-width: 94%;
+  --term-indent:  3%;
+  --course-width: 100%;
+  --stats-button-right-distance: 0px;
+}
+
+/* ===== Animation styling ===== */
+.table-container {
+  overflow: hidden;
+  transition: max-height 0.5s var(--ease-out), opacity 0.4s var(--ease-out), transform 0.5s var(--ease-out);
+  transform-origin: top;
+  will-change: max-height, opacity, transform;
+  animation-fill-mode: forwards !important;
+}
+
+/* Animation improvements */
+.table-container.expanded {
+  animation: expandAnimation 0.5s var(--ease-out) forwards;
+  max-height: 2000px; /* Large enough to accommodate content */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.table-container.collapsed {
+  animation: collapseAnimation 0.5s var(--ease-out) forwards;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@keyframes expandAnimation {
+  0% {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  30% {
+    opacity: 0.7;
+  }
+  100% {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes collapseAnimation {
+  0% {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 0.7;
+  }
+  100% {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Specific fixes for level and term containers */
+.level-container,
+.term-container {
+  animation-fill-mode: forwards !important;
+}
+
+/* ===== Level Group Styling ===== */
+.level-group {
+  width: var(--level-width);
+  margin-bottom: var(--space-md);
+  position: relative;
+}
+
+.level-group:last-child {
+  margin-bottom: 0;
+}
+
+.level-header {
+  width: var(--level-width);
+  margin-bottom: var(--space-xs);
+}
+
+/* ===== Term Group Styling ===== */
+.level-container > .term-group {
+  width: var(--term-width) !important;
+  margin-left: var(--term-indent) !important;
+  margin-right: var(--term-indent) !important;
+  margin-bottom: var(--space-xs);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.term-group:first-child {
+  margin-top: var(--space-xs);
+}
+
+.term-group:last-child {
+  margin-bottom: 0;
+}
+
+.term-group:not(:first-child) {
+  margin-top: var(--space-xs);
+}
+
+.level-container > .term-group .group-header {
+  width: 100% !important; /* Term header takes full width of term container */
+}
+
+/* More specific selector for term headers */
+.table-box .course-group.level-group .level-container .term-group .term-header {
+  width: 100% !important;
+}
+
+/* Fix for title alignment in group headers */
+.term-title {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* Position the info button to the right */
+.group-title .info-btn {
+  position: absolute;
+  right: var(--stats-button-right-distance);
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: auto;
+  padding: 4px;
+  border: 0;
+  border-radius: 50%;
+  background-color: transparent;
+  overflow: visible;
+}
+
+/* Info button hover effect with stroke - using ::after pseudo-element for animation */
+.group-title .info-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(255, 121, 85, 0);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  opacity: 0;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out, border-color 0.2s;
+  pointer-events: none;
+}
+
+/* Animate the stroke on hover */
+.group-title .info-btn:hover::after {
+  transform: translate(-50%, -50%) scale(0.9);
+  opacity: 1;
+  border-color: rgba(255, 121, 85, 0.7);
+  box-shadow: 0 0 8px rgba(255, 121, 85, 0.4);
+}
+
+/* ===== Course Table Styling ===== */
+.term-group .table-container {
+  width: 100%;
+}
+
+.course-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.level-container > .term-group .table-container table,
+.term-group .table-container .course-table,
+.table-box .course-group.term-group .table-container table {
+  width: 100% !important; /* Table takes full width of its container */
+  max-width: 100% !important;
+}
+
+/* Override any existing margins */
+.term-group .term-header,
+.term-group .table-container,
+.term-group .table-container table {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* Force all tables to match term width, regardless of nesting level */
+.table-box table.course-table {
+  max-width: var(--term-width) !important;
+  width: 100% !important;
+}
+
+/* Clear any unwanted margins for all header elements */
+.level-group .level-header {
+  margin-right: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Ensure manually added courses section follows the same indentation */
+.course-group.level-group > .table-container > .course-container {
+  width: var(--term-width) !important;
+  margin-left: var(--term-indent) !important;
+  margin-right: var(--term-indent) !important;
+}
+
+/* Reset any grid settings that might affect our layout */
+.term-group .course-table tbody tr {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Make sure the manual courses follow the same pattern */
+.course-group.level-group > .table-container > .course-container > .course-table {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* ===== Course Group Base Styling (moved from index.css) ===== */
+.course-group {
+  margin-bottom: var(--space-xl);
+}
+
+.course-group:last-child {
+  margin-bottom: 0;
+}
+
+.group-header {
+  margin-bottom: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  transition: var(--transition-base);
+  /* No shadow */
+}
+
+.group-header.clickable {
+  cursor: pointer;
+  user-select: none;
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 1;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.group-header.clickable * {
+  pointer-events: none;
+}
+
+.group-header.clickable .info-btn {
+  pointer-events: auto;
+}
+
+.group-toggle {
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--primary-color);
+  border-radius: var(--radius-full);
+  transition: var(--transition-base);
+  flex-shrink: 0;
+}
+
+.group-name {
+  flex: 1;
+}
+
+/* Base group-title styling (moved from index.css) */
+.group-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: var(--text-lg);
+  font-weight: 650;
+  color: var(--text-color);
+  margin: 0;
+  letter-spacing: 0.025em;
+  width: 100%;
+  /* Layout positioning for info button */
+  padding-right: calc(36px + var(--stats-button-right-distance) * 2);
+  position: relative;
+  text-align: left;
+}
+
+.group-toggle svg {
+  width: 16px;
+  height: 16px;
+  fill: white;
+  transition: var(--transition-base);
+}
+
+.group-toggle.expanded svg {
+  transform: rotate(180deg);
+}
+
+.group-toggle.collapsed svg {
+  transform: rotate(0deg);
+}
+
+/* Smooth expand/collapse animation */
+.course-group .course-table {
+  overflow: hidden;
+  transition: all 0.3s var(--ease-out);
+}
+
+/* Enhanced info button isolation */
+.info-btn {
+  position: relative;
+  z-index: 2; /* Higher than parent group header */
+  pointer-events: auto !important;
+  background: transparent;
+  border: none;
+  padding: var(--space-xs);
+  margin-right: 5px;
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.info-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Term title styling */
+.term-title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 768px) {
+  :root {
+    --term-width: 76%;
+    --term-indent: 12%;
+  }
+  
+  .term-group {
+    margin-bottom: 6px;
+  }
+  
+  /* Ensure tables maintain fixed width in term container */
+  .term-group .table-container table {
+    width: 100% !important;
+  }
+  
+  /* Speed up animations on mobile */
+  .table-container.expanded,
+  .table-container.collapsed,
+  .level-container.expanded,
+  .level-container.collapsed,
+  .term-container.expanded,
+  .term-container.collapsed {
+    animation-duration: 0.25s !important;
+  }
+
+  /* Responsive adjustments for groups (moved from index.css) */
+  .group-header {
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .group-title {
+    font-size: var(--text-base);
+    gap: var(--space-sm);
+  }
+  
+  .group-toggle {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .group-toggle svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --term-width: 82%;
+    --term-indent: 9%;
+  }
+  
+  .term-group {
+    margin-bottom: 4px;
+  }
+  
+  /* Make term titles more compact on mobile */
+  .term-title {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --term-width: 88%;
+    --term-indent: 6%;
+  }
+  
+  /* Further reduce spacing for tiny screens */
+  .term-group {
+    margin-bottom: 3px;
+  }
+  
+  /* Make term titles even more compact on very small screens */
+  .term-title {
+    font-size: 0.85rem;
+  }
+}

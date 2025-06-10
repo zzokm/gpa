@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 import { Course, Grade } from '../types/Course';
 
 import GradeDropdown from './GradeDropdown';
-import EnhancedRotatingNumberInput from './EnhancedRotatingNumberInput';
+import EnhancedRotatingNumberInput from './RotatingNumberInput';
 
 interface CourseFormProps {
   onAddCourse: (course: Course) => void;
