@@ -377,6 +377,7 @@
     min-width: 36px !important;
     max-width: 36px !important;
     flex: 0 0 36px !important;
+    font-size: 1.1rem !important; /* Increased font size for mobile */
   }
   .glass-pane-left,
   .glass-pane-right {
@@ -409,12 +410,12 @@
     display: flex !important;
   }
   html body .perspective-container .number-item {
-    font-size: 0.65rem !important;
+    font-size: 1rem !important; /* Increased from 0.65rem for better readability */
   }
 }
 @media (max-width: 393px) {
   html body .perspective-container .number-item {
-    font-size: 0.5rem !important;
+    font-size: 0.85rem !important; /* Increased from 0.5rem */
   }
 }
 @media (max-width: 360px) {
@@ -428,6 +429,7 @@
     min-width: 32px !important;
     max-width: 32px !important;
     flex: 0 0 32px !important;
+    font-size: 0.95rem !important; /* Increased font size for very small screens */
   }
   .center-window {
     width: 32px !important;
@@ -449,6 +451,9 @@
   .glass-pane-right {
     width: calc(50% - 16px) !important;
   }
+  html body .perspective-container .number-item {
+    font-size: 0.8rem !important; /* Increased from 0.45rem */
+  }
 }
 @media (max-width: 320px) {
   .credit-hours-input {
@@ -458,6 +463,6 @@
     min-width: 30px !important;
   }
   html body .perspective-container .number-item {
-    font-size: 0.4rem !important;
+    font-size: 0.7rem !important; /* Increased from 0.4rem */
   }
 }
