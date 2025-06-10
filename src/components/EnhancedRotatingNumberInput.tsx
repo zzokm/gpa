@@ -1,10 +1,6 @@
 // EnhancedRotatingNumberInput.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import './NewRotatingNumberInput.css';
-// import './CreditHoursInputFix.css'; // Now part of ConsolidatedFixes.css
-// import './FinalCenteringFix.css'; // Now part of ConsolidatedFixes.css
-// import './WrapAroundTransitionFix.css'; // Now part of ConsolidatedFixes.css
-import './ConsolidatedFixes.css'; // Import all consolidated fixes
 
 interface RotatingNumberInputProps {
   value: number;
