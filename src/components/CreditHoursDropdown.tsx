@@ -156,7 +156,6 @@ const CreditHoursDropdown: React.FC<CreditHoursDropdownProps> = ({
   courseId, 
   courseName, 
   onSelectCreditHours, 
-  currentHours
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

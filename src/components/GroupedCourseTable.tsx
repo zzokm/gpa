@@ -420,11 +420,20 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
           </div>
         );
       })}      {/* Reset button at the bottom right */}
-      <div className="reset-button-container">        <button 
+      <div className="reset-button-container">
+        <button 
           className="reset-button"
           onClick={() => setShowConfirmModal(true)}
-          title="Reset all courses"        >
-          Reset Courses
+          title="Reset all courses"
+          aria-label="Reset all courses"
+        >
+          <svg width="14" height="14" viewBox="0 0 21.00 21.00" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" stroke="#ffffff" strokeWidth="2.1" transform="rotate(90)" style={{ marginRight: '6px' }}>
+            <g fill="none" fillRule="evenodd" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" transform="translate(2 2)">
+              <path d="m4.5 1.5c-2.4138473 1.37729434-4 4.02194088-4 7 0 4.418278 3.581722 8 8 8s8-3.581722 8-8-3.581722-8-8-8"></path>
+              <path d="m4.5 5.5v-4h-4"></path>
+            </g>
+          </svg>
+          Reset
         </button>
       </div>
       

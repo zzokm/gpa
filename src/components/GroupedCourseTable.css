@@ -16,71 +16,126 @@
 /* Reset button styles */
 .reset-button-container {
   position: absolute;
-  top: 15px;
+  top: 20px;
   right: 15px;
-  z-index: 5;
+  z-index: 10;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  pointer-events: auto;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.08));
 }
 
 .reset-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xs) var(--space-md);
-  background: transparent;
-  color: #e53935;
-  border: none;  border-radius: var(--radius-md);  font-size: var(--text-base);
-  font-weight: 900; /* Already at max weight */
+  padding: 0.5rem 0.85rem;
+  background: rgba(240, 30, 30, 0.9);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 500;
   font-family: "Sora", sans-serif;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s ease;
-  letter-spacing: 0.05em;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  letter-spacing: 0.04em;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(240, 30, 30, 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Inner highlight effect - lighter gradient */
+.reset-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 100%);
+  pointer-events: none;
+}
+
+/* Hover glow effect */
+.reset-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
 }
 
 .reset-button:hover {
-  color: #f44336;
-  transform: translateY(-1px);
-  text-shadow: 0 1px 2px rgba(229, 57, 53, 0.2);
+  background: rgba(255, 40, 40, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 50, 50, 0.5);
+}
+
+.reset-button:hover::after {
+  box-shadow: 0 0 25px 8px rgba(255, 50, 50, 0.4);
+  opacity: 1;
 }
 
 .reset-button:active {
   transform: translateY(1px);
+  background: rgb(230, 30, 30);
+  box-shadow: 0 2px 8px rgba(230, 30, 30, 0.35);
+}
+
+.reset-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7), 0 0 0 4px rgba(255, 40, 40, 0.45);
 }
 
 /* Responsive styles for reset button */
 @media (max-width: 768px) {
   .reset-button-container {
-    top: 12px;
+    top: 15px;
     right: 12px;
   }
   
   .reset-button {
-    font-size: var(--text-sm);
-    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.75rem;
+    padding: 0.4rem 0.7rem;
   }
   
   .group-header {
-    margin-top: 12px;
+    margin-top: 22px; /* Updated to maintain spacing with the new button position */
   }
 }
 
 @media (max-width: 480px) {
   .reset-button-container {
-    top: 10px;
+    top: 12px;
     right: 10px;
   }
   
   .reset-button {
-    font-size: var(--text-xs);
-    padding: var(--space-2xs) var(--space-xs);
+    font-size: 0.7rem;
+    padding: 0.35rem 0.6rem;
+    letter-spacing: 0.03em;
   }
   
   .group-header {
-    margin-top: 8px;
+    margin-top: 18px; /* Updated to maintain spacing with the new button position */
+  }
+}
+
+@media (max-width: 380px) {
+  .reset-button {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.5rem;
   }
 }
 
@@ -310,7 +365,7 @@
 
 .group-header {
   margin-bottom: 0; /* Removed bottom spacing */
-  margin-top: 25px; /* Increased margin to provide more space above the course table */
+  margin-top: 35px; /* Further increased margin to provide more space for the reset button */
   padding: var(--space-md) var(--space-lg);
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(12px);
