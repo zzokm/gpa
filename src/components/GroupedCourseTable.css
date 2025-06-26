@@ -8,11 +8,85 @@
   --term-indent: 3%;
   --course-width: 100%;
   --stats-button-right-distance: 0px;
+    /* Button sizing - match grade badge height */
+  --remove-btn-base-size: 30px;  /* Match grade badge height for consistency */
+  --remove-btn-size: clamp(28px, 3.5vw, var(--remove-btn-base-size));  /* Size of remove button - same height as grade badge */
+}
+
+/* Reset button styles */
+.reset-button-container {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.reset-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs) var(--space-md);
+  background: transparent;
+  color: #e53935;
+  border: none;  border-radius: var(--radius-md);  font-size: var(--text-base);
+  font-weight: 900; /* Already at max weight */
+  font-family: "Sora", sans-serif;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: visible;
+}
+
+.reset-button:hover {
+  color: #f44336;
+  transform: translateY(-1px);
+  text-shadow: 0 1px 2px rgba(229, 57, 53, 0.2);
+}
+
+.reset-button:active {
+  transform: translateY(1px);
+}
+
+/* Responsive styles for reset button */
+@media (max-width: 768px) {
+  .reset-button-container {
+    top: 12px;
+    right: 12px;
+  }
+  
+  .reset-button {
+    font-size: var(--text-sm);
+    padding: var(--space-xs) var(--space-sm);
+  }
+  
+  .group-header {
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reset-button-container {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .reset-button {
+    font-size: var(--text-xs);
+    padding: var(--space-2xs) var(--space-xs);
+  }
+  
+  .group-header {
+    margin-top: 8px;
+  }
 }
 
 /* ===== Animation styling ===== */
 .table-container {
-  overflow: hidden;
+  overflow: visible;  /* Allow remove button drop shadow to show */
   transition: max-height 0.5s var(--ease-out), opacity 0.4s var(--ease-out), transform 0.5s var(--ease-out);
   transform-origin: top;
   will-change: max-height, opacity, transform;
@@ -75,7 +149,7 @@
 /* ===== Level Group Styling ===== */
 .level-group {
   width: var(--level-width);
-  margin-bottom: var(--space-md);
+  margin-bottom: 0; /* Removed bottom spacing */
   position: relative;
 }
 
@@ -93,7 +167,7 @@
   width: var(--term-width) !important;
   margin-left: var(--term-indent) !important;
   margin-right: var(--term-indent) !important;
-  margin-bottom: var(--space-xs);
+  margin-bottom: 0; /* Removed bottom spacing */
   position: relative;
   box-sizing: border-box;
 }
@@ -175,6 +249,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  overflow: visible;  /* Allow remove button drop shadow to show */
 }
 
 .level-container > .term-group .table-container table,
@@ -226,7 +301,7 @@
 
 /* ===== Course Group Base Styling (moved from index.css) ===== */
 .course-group {
-  margin-bottom: var(--space-xl);
+  margin-bottom: 0; /* Removed bottom spacing */
 }
 
 .course-group:last-child {
@@ -234,7 +309,8 @@
 }
 
 .group-header {
-  margin-bottom: var(--space-md);
+  margin-bottom: 0; /* Removed bottom spacing */
+  margin-top: 25px; /* Increased margin to provide more space above the course table */
   padding: var(--space-md) var(--space-lg);
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(12px);
@@ -358,9 +434,8 @@
     --term-width: 95%;
     --term-indent: 2.5%;
   }
-  
-  .term-group {
-    margin-bottom: 6px;
+    .term-group {
+    margin-bottom: 0; /* Removed bottom spacing */
   }
   
   /* Ensure tables maintain fixed width in term container */
@@ -412,9 +487,8 @@
     --term-width: 97%;
     --term-indent: 1.5%;
   }
-  
-  .term-group {
-    margin-bottom: 4px;
+    .term-group {
+    margin-bottom: 0; /* Removed bottom spacing */
   }
   
   /* Make term titles more compact on mobile */
@@ -457,10 +531,9 @@
     --term-width: 98%;
     --term-indent: 1%;
   }
-  
-  /* Further reduce spacing for tiny screens */
+    /* Further reduce spacing for tiny screens */
   .term-group {
-    margin-bottom: 3px;
+    margin-bottom: 0; /* Removed bottom spacing */
   }
   
   /* Make term titles even more compact on very small screens */

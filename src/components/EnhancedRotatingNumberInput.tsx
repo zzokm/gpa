@@ -95,29 +95,43 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
       item.style.justifyContent = 'center';
       item.style.alignItems = 'center';
     });
-    
-    // Apply styling based on position relative to active number
+      // Apply styling based on position relative to active number
     numberItems.forEach((item) => {
       const itemValue = parseInt(item.dataset.value || '0', 10);
       
       if (itemValue === value) {
         // Active number styling
-        item.style.transform = 'translateZ(15px) scale(1.15)';
+        item.style.transform = 'translateZ(20px) scale(1.2)';
         item.style.color = '#111827';
         item.style.fontWeight = '800';
         item.style.opacity = '1';
-        item.style.textShadow = '0 1px 3px rgba(0, 0, 0, 0.2)';
+        item.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.15), 0 0 15px rgba(255, 255, 255, 0.6)';
         item.style.background = 'radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)';
+        item.style.filter = 'none';
       } else {
         // Inactive number styling
         const distance = Math.abs(itemValue - value);
-        const scale = Math.max(0.5, 1 - (distance * 0.15));
-        const opacity = Math.max(0.3, 1 - (distance * 0.22));
         
-        item.style.transform = `scale(${scale}) translateZ(-${distance * 12}px)`;
-        item.style.color = distance <= 1 ? '#2d3748' : '#4b5563';
-        item.style.fontWeight = distance <= 1 ? '500' : '400';
-        item.style.opacity = opacity.toString();
+        // Create smoother transitions between numbers with more gradual scaling
+        const scale = Math.max(0.6, 1 - (distance * 0.125));
+        const opacity = Math.max(0.4, 1 - (distance * 0.17));
+        
+        if (distance === 1) {
+          // Direct neighbors - more visible
+          item.style.transform = `translateX(${itemValue < value ? -55 : 55}px) translateZ(-25px) scale(0.75)`;
+          item.style.color = '#4b5563';
+          item.style.fontWeight = '600';
+          item.style.opacity = '0.7';
+          item.style.filter = 'opacity(0.85) blur(0.3px)';
+        } else {
+          // Further items - gradually fade out
+          item.style.transform = `scale(${scale}) translateZ(-${distance * 10}px)`;
+          item.style.color = '#4b5563';
+          item.style.fontWeight = distance <= 2 ? '500' : '400';
+          item.style.opacity = opacity.toString();
+          item.style.filter = distance <= 2 ? 'opacity(0.7) blur(0.5px)' : 'opacity(0.5) blur(1px)';
+        }
+        
         item.style.textShadow = 'none';
         item.style.background = 'none';
       }
@@ -206,10 +220,9 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
     requestAnimationFrame(() => {
       if (stripRef.current) {
         // Add animation class for enhanced transitions
-        stripRef.current.classList.add('animating');
-          // Apply enhanced elastic animation with more exaggerated bounce effect
-        stripRef.current.style.transition = 'transform 1s cubic-bezier(0.16, 1.32, 0.3, 1.1)';
-          // Slightly longer delay for more dramatic animation
+        stripRef.current.classList.add('animating');        // Apply smooth transition with a more natural easing
+        stripRef.current.style.transition = 'transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1)';
+          // Small delay for proper animation flow
         setTimeout(() => {
           // Update the display to calculate and set the correct final position
           updateDisplay();
@@ -219,7 +232,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
             if (stripRef.current) {
               stripRef.current.classList.remove('animating');
             }
-          }, 1000); // Match the enhanced animation duration (1s)
+          }, 800); // Match the updated animation duration (0.8s)
         }, 20);
       }
     });

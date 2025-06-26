@@ -2,14 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Course, Grade } from '../types/Course';
 import { getGradeStyles, calculateGPA } from '../utils/gradeUtils';
 import GradeDropdown from './GradeDropdown';
+import CreditHoursDropdown from './CreditHoursDropdown';
 import StatsModal from './StatsModal';
+import ConfirmationModal from './ConfirmationModal';
 import './CourseTableStyles.css'; // Import the fixed spacing styles
 import './GroupedCourseTable.css'; // Import consolidated styles
+import './CreditHoursDropdownStyles.css'; // Unified CSS for all dropdowns
 
 interface GroupedCourseTableProps {
   courses: Course[];
   onRemoveCourse: (id: string) => void;
   onUpdateGrade: (id: string, grade: Grade) => void;
+  onUpdateCreditHours: (id: string, hours: number) => void;
+  onClearCourses: () => void;
 }
 
 interface NestedGroupedCourses {
@@ -42,11 +47,14 @@ const GROUP_STATE_KEY = 'gpa-calculator-group-states';
 const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({ 
   courses, 
   onRemoveCourse, 
-  onUpdateGrade 
+  onUpdateGrade,
+  onUpdateCreditHours,
+  onClearCourses
 }) => {
   const [groupStates, setGroupStates] = useState<GroupState>({});
   const [modalData, setModalData] = useState<ModalData | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   // Load group states from localStorage on component mount and initialize missing ones
   useEffect(() => {
@@ -186,11 +194,21 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
     const levelData = nestedGroupedCourses[level];
     return Object.values(levelData).flat();
   };
-
   const renderCourseRow = (course: Course) => (
     <tr key={course.id}>
-      <td className="course-name">{course.name}</td>
-      <td className="course-hours">{course.hours}</td>
+      <td className="course-name">{course.name}</td>      <td className="course-hours">
+        <div className="credit-hours-cell">
+          <div className="credit-hours-value-container">
+            <span className="credit-hours-value">{course.hours}</span>
+          </div>
+          <CreditHoursDropdown
+            courseId={course.id!}
+            courseName={course.name}
+            onSelectCreditHours={onUpdateCreditHours}
+            currentHours={course.hours}
+          />
+        </div>
+      </td>
       <td>
         <div className="grade-cell">
           <div className="grade-badge-container">
@@ -219,17 +237,20 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
         <button
           className="remove-btn"
           onClick={() => onRemoveCourse(course.id!)}
-          aria-label={`Remove ${course.name}`}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-            <path d="M8 0C3.589 0 0 3.589 0 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8zm0 14c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6z"/>
-            <path d="M10.122 4.465 8 6.586 5.878 4.465 4.464 5.879 6.586 8l-2.122 2.121 1.414 1.414L8 9.414l2.122 2.121 1.414-1.414L9.414 8l2.122-2.121z"/>
+          aria-label={`Remove ${course.name}`}        >
+          <svg fill="#ffffff" viewBox="-230 -230 1460.00 1460.00" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" stroke-width="5">
+            <g id="SVGRepo_bgCarrier" stroke-width="0" transform="translate(0,0), scale(1)">
+              <rect x="-230" y="-230" width="1460.00" height="1460.00" rx="730" fill="#e81717" strokeWidth="0"></rect>
+            </g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="2"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path d="M767 336H233q-12 0-21 9t-9 21l38 505q1 13 12 21.5t30 8.5h434q18 0 29-8.5t13-21.5l38-505q0-12-9-21t-21-9zM344 841q-10 0-18-9t-8-21l-26-386q0-12 9-20.5t21-8.5 21 8.5 9 20.5l18 386q0 12-7.5 21t-18.5 9zm182-31q0 13-7.5 22t-18.5 9-18.5-9-7.5-22l-4-385q0-12 9-20.5t21-8.5 21 8.5 9 20.5zm156 1q0 12-8 21t-18 9q-11 0-18.5-9t-7.5-21l18-386q0-12 9-20.5t21-8.5 21 8.5 9 20.5zm101-605l-179-30q-12-2-15-15l-8-33q-4-20-14-26-6-3-22-3h-90q-16 0-23 3-10 6-13 26l-8 33q-2 13-15 15l-179 30q-19 3-31.5 14.5T173 249v28q0 9 6.5 15t15.5 6h610q9 0 15.5-6t6.5-15v-28q0-17-12.5-28.5T783 206z"></path>
+            </g>
           </svg>
         </button>
       </td>
     </tr>
   );
-
   if (courses.length === 0) {
     return (
       <div className="table-box">
@@ -243,8 +264,7 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
         </div>
       </div>
     );
-  }
-  return (
+  }  return (
     <div className="table-box">
       {/* Render manually added courses first */}
       {manualCourses.length > 0 && (
@@ -399,9 +419,32 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
             </div>
           </div>
         );
-      })}
+      })}      {/* Reset button at the bottom right */}
+      <div className="reset-button-container">        <button 
+          className="reset-button"
+          onClick={() => setShowConfirmModal(true)}
+          title="Reset all courses"        >
+          Reset Courses
+        </button>
+      </div>
+      
       {/* Statistics Modal using Portal */}
       <StatsModal modalData={modalData} onClose={closeModal} />
+      
+      {/* Confirmation Modal for Reset */}
+      <ConfirmationModal
+        show={showConfirmModal}
+        title="Reset All Courses"
+        message="Are you sure you want to delete all courses? This action cannot be undone."
+        confirmText="Reset All"
+        cancelText="Cancel"
+        onConfirm={() => {
+          onClearCourses();
+          setShowConfirmModal(false);
+        }}
+        onCancel={() => setShowConfirmModal(false)}
+        isDanger={true}
+      />
     </div>
   );
 };

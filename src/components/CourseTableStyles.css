@@ -1,18 +1,15 @@
 /* Course Table Fixed Spacing Styles */
 
 /* Define responsive spacing variables that scale with viewport width */
-:root {
-  /* Responsive spacing units that scale with viewport width */
-  --spacing-x: clamp(12px, 1.5vw, 24px);     /* Distance from rightmost end of row to remove button */
+:root {  /* Responsive spacing units that scale with viewport width */
+  --spacing-x: clamp(8px, 1vw, 12px);        /* Distance from rightmost end of row to remove button - reduced to align with course edge */
   --spacing-y: clamp(16px, 2vw, 32px);       /* Distance between remove button and grade dropdown */
-  --spacing-l: clamp(20px, 2.5vw, 40px);     /* Distance between grade tag and credit hours */
+  --spacing-l: clamp(12px, 1.5vw, 24px);     /* Distance between grade tag and credit hours - reduced from clamp(20px, 2.5vw, 40px) to bring closer */
   --spacing-m: clamp(24px, 3vw, 48px);       /* Distance between credit hours and course name */
   
-  /* Fixed Z-distance that never changes regardless of device size */
-  --spacing-z: 8px;                          /* Fixed distance between dropdown and grade badge */
+  /* Fixed Z-distance that never changes regardless of device size */  --spacing-z: 8px;                          /* Fixed distance between dropdown and grade badge */
   
-  /* Component sizing */
-  --remove-btn-size: clamp(24px, 3vw, 32px);         /* Size of remove button */
+  /* Component sizing - using global variable from GroupedCourseTable.css */
   --grade-dropdown-width: clamp(20px, 2.5vw, 24px);  /* Width of grade dropdown trigger */
   --grade-badge-width: clamp(40px, 5vw, 46px);       /* Width of grade badge */
   --credits-width: clamp(60px, 7vw, 80px);           /* Width of credits display */
@@ -42,6 +39,7 @@
   transition: var(--transition-base);
   position: relative;
   padding: 0;
+  overflow: visible;         /* Allow remove button ring effect to show */
 }
 
 /* Course name cell */
@@ -75,6 +73,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: visible;         /* Allow ring effect to show fully */
+  position: relative;        /* Ensure proper stacking context */
+  padding-right: 4px;        /* Minimal right padding for perfect alignment */
+  z-index: 12;              /* Higher z-index for the cell */
 }
 
 /* Grade cell components layout */
@@ -113,10 +115,11 @@
   min-width: var(--remove-btn-size);
   min-height: var(--remove-btn-size);
   padding: 0;
-  margin: 0;
+  margin: 0 2px 0 0;  /* Minimal right margin for perfect alignment */
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 /* Style overrides for grade dropdown elements within the table */

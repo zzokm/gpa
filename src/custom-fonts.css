@@ -1,0 +1,21 @@
+/* Preserve gradient and styling from the main app-title */
+.app-title {
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+  font-weight: 700;
+  color: var(--primary-color);
+  text-align: center;
+  margin: 0;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-title {
+    font-size: clamp(var(--text-xl), 4vw, var(--text-2xl));
+  }
+}

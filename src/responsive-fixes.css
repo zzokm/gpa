@@ -1,7 +1,8 @@
 /* Mobile Responsiveness Fixes */
 
 /* === Rotating Number Input Centering Fix === */
-/* Critical fixes to ensure proper display and centering */
+/* IMPORTANT: Main credit-hours-input styling has been moved to RotatingNumberInput.css */
+/* and MobileCreditHoursOverride.css to prevent conflicts and ensure proper mobile display */
 
 /* Core fixes for the number strip */
 .number-strip {
@@ -50,31 +51,13 @@
 }
 
 /* Fix for credit hours input to ensure it's always visible */
-.credit-hours-input {
-  min-width: 120px !important; /* Never smaller than this to prevent collapse */
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-}
+/* Rules moved to RotatingNumberInput.css - this file now defers to component CSS */
 
 /* Global mobile fixes */
-@media (max-width: 480px) {
-  .credit-hours-input {
-    min-width: 120px !important;
-    height: 40px !important;
-  }
-  
-  .perspective-container {
-    min-width: 60px !important; /* Minimum space for the viewport */
-  }
-  
-  .credit-arrow {
-    flex-shrink: 0 !important;
-  }
-}
+/* Rules moved to RotatingNumberInput.css for better organization */
 
 /* === Critical Mobile Fixes === */
-/* These !important overrides ensure mobile display works properly */
+/* Credit hours input rules moved to RotatingNumberInput.css for better organization */
 
 /* Critical mobile fixes to prevent disappearing inputs */
 @media (max-width: 480px) {
@@ -82,45 +65,6 @@
   .course-form {
     display: flex !important;
     flex-wrap: wrap !important;
-  }
-
-  /* Ensure proper sizing */
-  .credit-hours-input {
-    min-width: 120px !important;
-    width: auto !important; 
-    height: 40px !important;
-    flex: 1 !important;
-    min-height: 40px !important;
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  
-  /* Force arrows to maintain proper width */
-  .credit-arrow {
-    width: 32px !important;
-    min-width: 32px !important;
-    max-width: 32px !important;
-    flex-shrink: 0 !important;
-    flex: 0 0 32px !important;
-    height: 100% !important;
-  }
-  
-  /* Force perspective container to maintain minimum width */
-  .perspective-container {
-    flex: 1 !important;
-    min-width: 56px !important;
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-  /* Force number items to have proper size */
-  .number-item {
-    width: 40px !important;
-    min-width: 40px !important;
-    max-width: 40px !important;
-    flex: 0 0 40px !important;
-    /* font-size: 1.8rem !important; */ /* Removed to prevent conflict with ConsolidatedFixes.css */
   }
 }
 

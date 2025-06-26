@@ -6,9 +6,10 @@ interface ImportModalProps {
   show: boolean;
   onHide: () => void;
   onImport: (courses: Course[]) => void;
+  currentCourses: Course[]; // Add current courses as a prop
 }
 
-const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport }) => {
+const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, currentCourses }) => {
   const [importText, setImportText] = useState('');
   // To handle modal open/close animations
   const [mounted, setMounted] = useState(false);
@@ -74,7 +75,8 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport }) => 
       const courseName = data[1] ? data[1].innerText.trim() : '';
       const courseHours = data[3] ? data[3].innerText.trim() : '';
       let courseGrade: Grade | null = null;
-      let courseTerm: Term | undefined = undefined;      let courseLevel: Level | undefined = undefined;
+      let courseTerm: Term | undefined = undefined;      
+      let courseLevel: Level | undefined = undefined;
       
       if (data[6]) {
         const gradeElement = data[6].querySelector('p');
@@ -149,11 +151,41 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport }) => 
     });
     
     if (importedCourses.length > 0) {
-      onImport(importedCourses);
+      // Process imported courses
+      const finalCourses = processCourses(importedCourses);
+      onImport(finalCourses);
       setImportText('');
     } else {
       alert('No valid courses found in the imported HTML.');
     }
+  };
+  
+  // Process imported courses, handling duplicates
+  const processCourses = (importedCourses: Course[]): Course[] => {
+    // Create a Map of current courses by name for easy lookup
+    const courseMap = new Map<string, Course>();
+    currentCourses.forEach(course => {
+      courseMap.set(course.name, course);
+    });
+    
+    // Create result array with all imported courses
+    const resultCourses: Course[] = [];
+    
+    // Process imported courses
+    importedCourses.forEach(importedCourse => {
+      // Always add the imported course, whether it's new or a replacement
+      resultCourses.push(importedCourse);
+      
+      // Remove from map if it was a duplicate (we've replaced it)
+      courseMap.delete(importedCourse.name);
+    });
+    
+    // Add remaining courses that weren't replaced
+    courseMap.forEach(course => {
+      resultCourses.push(course);
+    });
+    
+    return resultCourses;
   };
   
   const handleClose = () => {

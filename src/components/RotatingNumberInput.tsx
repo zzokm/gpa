@@ -1,6 +1,7 @@
 // EnhancedRotatingNumberInput.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import './RotatingNumberInput.css';
+import './MobileCreditHoursOverride.css'; // Mobile override to fix display issues
 
 interface RotatingNumberInputProps {
   value: number;
@@ -95,31 +96,35 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
       item.style.justifyContent = 'center';
       item.style.alignItems = 'center';
     });
-    
-    // Apply styling based on position relative to active number
+      // Apply styling based on position relative to active number
     numberItems.forEach((item) => {
       const itemValue = parseInt(item.dataset.value || '0', 10);
       
       if (itemValue === value) {
-        // Active number styling
+        // Active number styling - clear and prominent
         item.style.transform = 'translateZ(15px) scale(1.15)';
         item.style.color = '#111827';
         item.style.fontWeight = '800';
         item.style.opacity = '1';
         item.style.textShadow = '0 1px 3px rgba(0, 0, 0, 0.2)';
         item.style.background = 'radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)';
+        item.style.filter = 'none'; // Clear any blur effects on active number
       } else {
-        // Inactive number styling
+        // Inactive number styling with enhanced blur
         const distance = Math.abs(itemValue - value);
-        const scale = Math.max(0.5, 1 - (distance * 0.15));
-        const opacity = Math.max(0.3, 1 - (distance * 0.22));
+        const scale = Math.max(0.4, 1 - (distance * 0.2));
+        const opacity = Math.max(0.2, 1 - (distance * 0.35));
         
-        item.style.transform = `scale(${scale}) translateZ(-${distance * 12}px)`;
-        item.style.color = distance <= 1 ? '#2d3748' : '#4b5563';
+        // Apply much stronger blur for numbers behind glass panes
+        const blurAmount = distance <= 1 ? 4 : 6; // Increased blur strength
+        
+        item.style.transform = `scale(${scale}) translateZ(-${distance * 15}px)`;
+        item.style.color = distance <= 1 ? '#4b5563' : '#6b7280';
         item.style.fontWeight = distance <= 1 ? '500' : '400';
         item.style.opacity = opacity.toString();
         item.style.textShadow = 'none';
         item.style.background = 'none';
+        item.style.filter = `blur(${blurAmount}px) opacity(${opacity})`;
       }
     });
   };// Enhanced effect for perfect positioning in all scenarios
@@ -160,7 +165,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
       window.clearTimeout(quickUpdateTimer);
       window.clearTimeout(finalUpdateTimer);
     };
-  }, [value, numbers, min, max]); // Added min/max to dependencies for better handling of range changes  // Enhanced function to create a seamless wrap-around animation effect with better class handling
+  }, [value, numbers, min, max]); // Added min/max to dependencies for better handling of range changes  // Enhanced function to create a seamless wrap-around animation effect
   const animateWrapAround = (direction: 'left' | 'right') => {
     if (!stripRef.current) return;
     
@@ -170,57 +175,81 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
     
     // Get responsive width using the enhanced function
     const getResponsiveWidth = () => {
-      // Use safer window measurements
       const screenWidth = Math.min(
         window.innerWidth || Infinity,
         document.documentElement.clientWidth || Infinity,
         document.body.clientWidth || Infinity
       );
       
-      if (screenWidth <= 360) return 36;
+      if (screenWidth <= 360) return 35;
       if (screenWidth <= 480) return 40;
       return 50;
     };
     
     const itemWidth = getResponsiveWidth();
+    const totalNumbers = (max - min + 1);
+    const totalWidth = totalNumbers * itemWidth;
     
-    // Calculate the total range width of all numbers
-    const totalNumbersWidth = (max - min + 1) * itemWidth;
+    // Calculate animation distance for smooth wrap-around
+    const animationDistance = direction === 'left' 
+      ? -(totalWidth + containerWidth) // Move far left for 3→0 animation
+      : (totalWidth + containerWidth);  // Move far right for 0→3 animation
     
-    // Determine the precise animation distance
-    const animationOffset = direction === 'left' 
-      ? containerWidth + itemWidth // Move entire strip left, beyond the left edge
-      : -totalNumbersWidth - itemWidth; // Move entire strip right, beyond the right edge
-    
-    // Remove animation class first to ensure clean state
+    // Remove animation class first
     stripRef.current.classList.remove('animating');
     
-    // Perform the animation in two phases
-    // First phase: Instantly move to the start position (no animation)
+    // Phase 1: Instantly position at start of animation
     stripRef.current.style.transition = 'none';
-    stripRef.current.style.setProperty('--x-offset', `${animationOffset}px`);
-    stripRef.current.style.transform = `translateY(-50%) translateX(${animationOffset}px)`;
-      // Force browser to apply the style change before next frame
+    stripRef.current.style.setProperty('--x-offset', `${animationDistance}px`);
+    stripRef.current.style.transform = `translateY(-50%) translateX(${animationDistance}px)`;
+    
+    // Force reflow
     stripRef.current.offsetHeight;
-      // Second phase: Smoothly animate to the correct final position
+    
+    // Phase 2: Add animation class and animate to final position
     requestAnimationFrame(() => {
       if (stripRef.current) {
-        // Add animation class for enhanced transitions
         stripRef.current.classList.add('animating');
-          // Apply enhanced elastic animation with more exaggerated bounce effect
-        stripRef.current.style.transition = 'transform 1s cubic-bezier(0.16, 1.32, 0.3, 1.1)';
-          // Slightly longer delay for more dramatic animation
+        stripRef.current.style.transition = 'transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        
+        // Short delay then animate to final position
         setTimeout(() => {
-          // Update the display to calculate and set the correct final position
-          updateDisplay();
+          updateDisplay(); // This calculates and sets the correct final position
           
-          // Remove the animation class after the transition is complete
+          // Add subtle bounce effect
           setTimeout(() => {
             if (stripRef.current) {
-              stripRef.current.classList.remove('animating');
+              stripRef.current.style.transition = 'transform 0.15s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+              
+              // Get current final position
+              const currentOffset = stripRef.current.style.getPropertyValue('--x-offset') || '0px';
+              const numericOffset = parseFloat(currentOffset);
+              
+              // Small overshoot effect
+              const overshoot = direction === 'left' ? -4 : 4;
+              const overshootOffset = `${numericOffset + overshoot}px`;
+              
+              stripRef.current.style.setProperty('--x-offset', overshootOffset);
+              stripRef.current.style.transform = `translateY(-50%) translateX(${overshootOffset})`;
+              
+              // Settle back to final position
+              setTimeout(() => {
+                if (stripRef.current) {
+                  stripRef.current.style.setProperty('--x-offset', currentOffset);
+                  stripRef.current.style.transform = `translateY(-50%) translateX(${currentOffset})`;
+                  
+                  // Clean up animation class
+                  setTimeout(() => {
+                    if (stripRef.current) {
+                      stripRef.current.classList.remove('animating');
+                      stripRef.current.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    }
+                  }, 150);
+                }
+              }, 120);
             }
-          }, 1000); // Match the enhanced animation duration (1s)
-        }, 20);
+          }, 80);
+        }, 25);
       }
     });
   };
