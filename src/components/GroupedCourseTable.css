@@ -1,5 +1,20 @@
 /* GroupedCourseTable.css - Combined styles for the grouped course table component */
 
+/* Table box container */
+.table-box {
+  position: relative;
+  padding-top: 20px; /* Space at the top for the reset button */
+  padding-right: 20px; /* Equal padding on the right to match top */
+  padding-left: 20px; /* Balance with right padding */
+}
+
+.table-container.expanded {
+  animation: expandAnimation 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  display: block;
+  /* Let the animation handle other properties */
+  pointer-events: auto;
+}
+
 /* ===== Variables for responsive sizing ===== */
 :root {
   /* Width proportions */
@@ -19,119 +34,103 @@
 /* Reset button styles */
 .reset-button-container {
   position: absolute;
-  top: 20px;
-  right: 15px;
+  top: 20px;  /* Equal distance from top */
+  right: 20px; /* Equal distance from right edge to match top spacing */
   z-index: 10;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   pointer-events: auto;
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.08));
 }
 
 .reset-button {
+  /* Layout & Font */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 0.85rem;
-  background: rgba(240, 30, 30, 0.9);
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: 0.8rem;
-  font-weight: 500;
-  font-family: "Sora", sans-serif;
-  text-transform: uppercase;
+  gap: 8px;
+  font-weight: 700;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  
+  /* Appearance */
+  color: #ff7955;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg); /* Using the same radius as group headers */
+  
+  /* Glass Effect */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: none;
+  
+  /* Behavior */
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  letter-spacing: 0.04em;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(240, 30, 30, 0.3);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-/* Inner highlight effect - lighter gradient */
-.reset-button::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 100%);
-  pointer-events: none;
-}
-
-/* Hover glow effect */
-.reset-button::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: inherit;
-  box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
-  opacity: 0;
-  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  pointer-events: none;
+  transition: background 0.2s ease;
 }
 
 .reset-button:hover {
-  background: rgba(255, 40, 40, 1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 50, 50, 0.5);
-}
-
-.reset-button:hover::after {
-  box-shadow: 0 0 25px 8px rgba(255, 50, 50, 0.4);
-  opacity: 1;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .reset-button:active {
-  transform: translateY(1px);
-  background: rgb(230, 30, 30);
-  box-shadow: 0 2px 8px rgba(230, 30, 30, 0.35);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .reset-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7), 0 0 0 4px rgba(255, 40, 40, 0.45);
+  box-shadow: 0 0 0 2px rgba(255, 121, 85, 0.2);
+}
+
+.reset-button svg {
+  width: 16px;
+  height: 16px;
+  color: #ff7955; /* Match text color */
 }
 
 /* Responsive styles for reset button */
 @media (max-width: 768px) {
   .reset-button-container {
     top: 15px;
-    right: 12px;
+    right: 15px; /* Keep consistent distance from right */
   }
   
   .reset-button {
-    font-size: 0.75rem;
-    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    gap: 6px;
+  }
+  
+  .reset-button svg {
+    width: 14px;
+    height: 14px;
   }
   
   .group-header {
-    margin-top: 22px; /* Updated to maintain spacing with the new button position */
+    margin-top: 30px; /* Increased spacing for the reset button */
   }
 }
 
 @media (max-width: 480px) {
   .reset-button-container {
     top: 12px;
-    right: 10px;
+    right: 12px; /* Keep consistent proportion from right */
   }
   
   .reset-button {
-    font-size: 0.7rem;
-    padding: 0.35rem 0.6rem;
-    letter-spacing: 0.03em;
+    font-size: 0.75rem;
+    padding: 0.45rem 0.9rem;
+    gap: 5px;
+  }
+  
+  .reset-button svg {
+    width: 13px;
+    height: 13px;
   }
   
   .group-header {
-    margin-top: 18px; /* Updated to maintain spacing with the new button position */
+    margin-top: 25px; /* Adjusted spacing for mobile */
   }
   
   /* Ensure remove button is large enough on mobile */
@@ -154,8 +153,13 @@
 
 @media (max-width: 380px) {
   .reset-button {
-    font-size: 0.65rem;
-    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.35rem 0.7rem;
+  }
+  
+  .reset-button svg {
+    width: 12px;
+    height: 12px;
   }
   
   /* Even smaller screens get slightly larger buttons for easier tapping */
@@ -167,41 +171,50 @@
 /* ===== Animation styling ===== */
 .table-container {
   overflow: visible;  /* Allow remove button drop shadow to show */
-  transition: max-height 0.5s var(--ease-out), opacity 0.4s var(--ease-out), transform 0.5s var(--ease-out);
+  transition: max-height 0.6s cubic-bezier(0.19, 1, 0.22, 1), 
+              opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+              transform 0.6s cubic-bezier(0.19, 1, 0.22, 1),
+              visibility 0.1s cubic-bezier(0.19, 1, 0.22, 1);
   transform-origin: top;
-  will-change: max-height, opacity, transform;
+  will-change: max-height, opacity, transform, visibility;
   animation-fill-mode: forwards !important;
 }
 
 /* Animation improvements */
 .table-container.expanded {
-  animation: expandAnimation 0.5s var(--ease-out) forwards;
+  animation: expandAnimation 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
   max-height: 2000px; /* Large enough to accommodate content */
   opacity: 1;
   transform: translateY(0);
 }
 
 .table-container.collapsed {
-  animation: collapseAnimation 0.5s var(--ease-out) forwards;
+  animation: collapseAnimation 0.5s cubic-bezier(0.55, 0, 0.1, 1) forwards;
   pointer-events: none; /* Disable all interactions */
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-10px);
+  /* Don't set max-height, opacity, or transform directly here 
+     as they will override the animation values */
 }
 
 @keyframes expandAnimation {
   0% {
     max-height: 0;
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-15px); /* Increased distance */
+    visibility: visible;
   }
-  30% {
-    opacity: 0.7;
+  20% {
+    opacity: 0.5;
+    max-height: 100px; /* Gradual height increase */
+  }
+  60% {
+    opacity: 0.9;
+    max-height: 1000px;
   }
   100% {
     max-height: 2000px;
     opacity: 1;
     transform: translateY(0);
+    visibility: visible;
   }
 }
 
@@ -210,14 +223,28 @@
     max-height: 2000px;
     opacity: 1;
     transform: translateY(0);
+    visibility: visible;
   }
-  30% {
-    opacity: 0.7;
+  20% {
+    opacity: 0.8;
+    visibility: visible;
+  }
+  60% {
+    opacity: 0.2;
+    max-height: 100px; /* Gradual height reduction */
+    visibility: visible;
+  }
+  99% {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-15px);
+    visibility: visible;
   }
   100% {
     max-height: 0;
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-15px);
+    visibility: hidden;
   }
 }
 
@@ -225,6 +252,9 @@
 .level-container,
 .term-container {
   animation-fill-mode: forwards !important;
+  transition: max-height 0.6s cubic-bezier(0.19, 1, 0.22, 1), 
+              opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+              transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 /* ===== Level Group Styling ===== */
@@ -235,9 +265,9 @@
   margin-top: 10px; /* Reduced top margin for tighter spacing */
 }
 
-/* First level group shouldn't have top margin */
+/* First level group should have top margin to make room for the reset button */
 .level-group:first-child {
-  margin-top: 0;
+  margin-top: 50px; /* Increased to match exact top spacing (20px button + 10px + 20px space to group) */
 }
 
 .level-group:last-child {
@@ -260,15 +290,15 @@
 }
 
 .term-group:first-child {
-  margin-top: 5px; /* Reduced spacing above first term group */
+  margin-top: 10px; /* Increased spacing above first term group */
 }
 
 .term-group:last-child {
-  margin-bottom: 0;
+  margin-bottom: 10px; /* Add space at the bottom */
 }
 
 .term-group:not(:first-child) {
-  margin-top: 6px; /* Minimal spacing between term groups */
+  margin-top: 15px; /* Increased spacing between term groups */
 }
 
 .level-container > .term-group .group-header {
@@ -334,6 +364,7 @@
 /* ===== Course Table Styling ===== */
 .term-group .table-container {
   width: 100%;
+  padding-top: 12px; /* Increased space between term header and first course */
 }
 
 .course-container {
@@ -419,7 +450,7 @@
 
 /* Fix spacing between group headers and their content */
 .course-group.level-group > .group-header {
-  margin-bottom: 5px; /* Reduced space between level header and its content */
+  margin-bottom: 15px; /* Increased space between level header and its content */
 }
 
 .group-header.clickable {
@@ -494,7 +525,9 @@
 /* Smooth expand/collapse animation */
 .course-group .course-table {
   overflow: hidden;
-  transition: all 0.3s var(--ease-out);
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  padding-top: 8px; /* More space between container and table */
+  padding-bottom: 8px; /* More space at the bottom */
 }
 
 /* Enhanced info button isolation */
@@ -538,9 +571,21 @@
     --term-width: 95%;
     --term-indent: 2.5%;
   }
+  
+  /* Adjust table padding for smaller screens */
+  .table-box {
+    padding-top: 15px;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
   .term-group {
     margin-bottom: 0; /* Removed bottom spacing */
     margin-top: 15px !important; /* Reduced top margin to fix spacing */
+  }
+  
+  /* Adjust first level group margin for reset button on mobile */
+  .level-group:first-child {
+    margin-top: 45px; /* Keep the same proportion as desktop spacing */
   }
   
   /* Ensure tables maintain fixed width in term container */
@@ -548,14 +593,36 @@
     width: 100% !important;
   }
   
-  /* Speed up animations on mobile */
+  /* Speed up animations on mobile but keep smooth */
   .table-container.expanded,
   .table-container.collapsed,
   .level-container.expanded,
   .level-container.collapsed,
   .term-container.expanded,
   .term-container.collapsed {
-    animation-duration: 0.25s !important;
+    animation-duration: 0.4s !important;
+  }
+  
+  /* Keep consistent spacing on mobile */
+  .course-group.level-group > .group-header {
+    margin-bottom: 12px;
+  }
+  
+  .term-group:not(:first-child) {
+    margin-top: 12px;
+  }
+  
+  .term-group:last-child {
+    margin-bottom: 8px;
+  }
+  
+  .term-group .table-container {
+    padding-top: 10px; /* Slightly less padding on mobile but still visible */
+  }
+  
+  .course-group .course-table {
+    padding-top: 4px;
+    padding-bottom: 4px;
   }
 
   /* Responsive adjustments for groups (moved from index.css) */
@@ -639,6 +706,13 @@
   :root {
     --term-width: 97%;
     --term-indent: 1.5%;
+  }
+  
+  /* Adjust table padding for mobile screens */
+  .table-box {
+    padding-top: 12px;
+    padding-right: 12px;
+    padding-left: 12px;
   }
   .term-group {
     margin-bottom: 0; /* Removed bottom spacing */
@@ -730,9 +804,14 @@
     --term-width: 98%;
     --term-indent: 1%;
   }
-    /* Further reduce spacing for tiny screens */
-  .term-group {
-    margin-bottom: 0; /* Removed bottom spacing */
+  
+  /* Maintain spacing proportion even on smaller screens */
+  .term-group:not(:first-child) {
+    margin-top: 10px;
+  }
+  
+  .course-group.level-group > .group-header {
+    margin-bottom: 10px;
   }
   
   /* Make term titles even more compact on very small screens */
@@ -774,20 +853,18 @@
 
 /* ===== Hide interactive elements when collapsed ===== */
 .table-container.collapsed {
-  animation: collapseAnimation 0.5s var(--ease-out) forwards;
+  animation: collapseAnimation 0.5s cubic-bezier(0.55, 0, 0.1, 1) forwards;
   pointer-events: none; /* Disable all interactions */
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-10px);
+  /* Let the animation handle these properties */
 }
 
 /* Hide and disable interactive elements when courses are collapsed */
 .table-container.collapsed .course-table,
 .table-container.collapsed .course-container {
-  visibility: hidden; /* Hide content completely */
-  height: 0; /* Reduce height to 0 */
   overflow: hidden; /* Hide any overflow */
   pointer-events: none; /* Disable all interactions */
+  transition: opacity 0.4s cubic-bezier(0.55, 0, 0.1, 1), height 0.5s cubic-bezier(0.55, 0, 0.1, 1), visibility 0.1s 0.4s;
+  /* Let the animation handle visibility and height */
 }
 
 /* Specific handling for interactive elements */

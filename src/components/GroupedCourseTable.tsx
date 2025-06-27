@@ -419,7 +419,7 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
             </div>
           </div>
         );
-      })}      {/* Reset button at the bottom right */}
+      })}      {/* Reset button at the top right */}
       <div className="reset-button-container">
         <button 
           className="reset-button"
@@ -427,13 +427,10 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
           title="Reset all courses"
           aria-label="Reset all courses"
         >
-          <svg width="14" height="14" viewBox="0 0 21.00 21.00" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" stroke="#ffffff" strokeWidth="2.1" transform="rotate(90)" style={{ marginRight: '6px' }}>
-            <g fill="none" fillRule="evenodd" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" transform="translate(2 2)">
-              <path d="m4.5 1.5c-2.4138473 1.37729434-4 4.02194088-4 7 0 4.418278 3.581722 8 8 8s8-3.581722 8-8-3.581722-8-8-8"></path>
-              <path d="m4.5 5.5v-4h-4"></path>
-            </g>
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.49 15C19.841 16.831 18.612 18.4108 16.9875 19.492C15.363 20.5732 13.4312 21.0972 11.4831 20.9851C9.5349 20.873 7.67594 20.1308 6.18628 18.8704C4.69663 17.61 3.65698 15.8996 3.22398 13.997C2.79098 12.0944 2.98809 10.1026 3.78562 8.32177C4.58314 6.54091 5.93787 5.06746 7.64568 4.12343C9.35349 3.17941 11.3219 2.81593 13.2542 3.08779C16.5167 3.54676 18.6721 5.91142 21 8M21 8V2M21 8H15" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"></path>
           </svg>
-          Reset
+          <span>Reset All</span>
         </button>
       </div>
       
