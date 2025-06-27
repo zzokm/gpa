@@ -794,6 +794,8 @@ select {
   height: calc(var(--remove-btn-size) * 0.9);
   transition: filter 0.2s ease;
   flex-shrink: 0;  /* Prevent SVG from shrinking */
+  min-width: 24px; /* Ensure minimum size for icon */
+  min-height: 24px;
 }
 
 .remove-btn:hover svg {

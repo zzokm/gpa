@@ -8,9 +8,12 @@
   --term-indent: 3%;
   --course-width: 100%;
   --stats-button-right-distance: 0px;
-    /* Button sizing - match grade badge height */
+  /* Spacing between groups - consistent spacing */
+  --group-spacing: 0px; /* Space between level-term and term-term */
+  /* Button sizing - match grade badge height */
   --remove-btn-base-size: 30px;  /* Match grade badge height for consistency */
-  --remove-btn-size: clamp(28px, 3.5vw, var(--remove-btn-base-size));  /* Size of remove button - same height as grade badge */
+  --remove-btn-size: clamp(30px, 3.5vw, var(--remove-btn-base-size));  /* Size of remove button - same height as grade badge */
+  --remove-btn-min-size: 42px;  /* Increased minimum size for remove button on mobile */
 }
 
 /* Reset button styles */
@@ -130,12 +133,34 @@
   .group-header {
     margin-top: 18px; /* Updated to maintain spacing with the new button position */
   }
+  
+  /* Ensure remove button is large enough on mobile */
+  :root {
+    --remove-btn-min-size: 36px;  /* Minimum size for remove button on mobile */
+  }
+  
+  .remove-btn {
+    width: var(--remove-btn-min-size);
+    height: var(--remove-btn-min-size);
+    min-width: var(--remove-btn-min-size);
+    min-height: var(--remove-btn-min-size);
+  }
+  
+  .remove-btn svg {
+    width: calc(var(--remove-btn-min-size) * 0.9);
+    height: calc(var(--remove-btn-min-size) * 0.9);
+  }
 }
 
 @media (max-width: 380px) {
   .reset-button {
     font-size: 0.65rem;
     padding: 0.3rem 0.5rem;
+  }
+  
+  /* Even smaller screens get slightly larger buttons for easier tapping */
+  :root {
+    --remove-btn-min-size: 40px;  /* Larger for very small screens for better touch targets */
   }
 }
 
@@ -158,6 +183,7 @@
 
 .table-container.collapsed {
   animation: collapseAnimation 0.5s var(--ease-out) forwards;
+  pointer-events: none; /* Disable all interactions */
   max-height: 0;
   opacity: 0;
   transform: translateY(-10px);
@@ -206,6 +232,12 @@
   width: var(--level-width);
   margin-bottom: 0; /* Removed bottom spacing */
   position: relative;
+  margin-top: 10px; /* Reduced top margin for tighter spacing */
+}
+
+/* First level group shouldn't have top margin */
+.level-group:first-child {
+  margin-top: 0;
 }
 
 .level-group:last-child {
@@ -214,7 +246,7 @@
 
 .level-header {
   width: var(--level-width);
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--group-spacing); /* Consistent spacing between level and term */
 }
 
 /* ===== Term Group Styling ===== */
@@ -228,7 +260,7 @@
 }
 
 .term-group:first-child {
-  margin-top: var(--space-xs);
+  margin-top: 5px; /* Reduced spacing above first term group */
 }
 
 .term-group:last-child {
@@ -236,7 +268,7 @@
 }
 
 .term-group:not(:first-child) {
-  margin-top: var(--space-xs);
+  margin-top: 6px; /* Minimal spacing between term groups */
 }
 
 .level-container > .term-group .group-header {
@@ -255,20 +287,24 @@
   display: flex;
   align-items: center;
   position: relative;
+  height: 100%;
 }
 
-/* Position the info button to the right */
+/* Position the info button correctly */
 .group-title .info-btn {
-  position: absolute;
-  right: var(--stats-button-right-distance);
-  top: 50%;
-  transform: translateY(-50%);
+  /* No longer positioned absolutely */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-left: auto;
   padding: 4px;
   border: 0;
   border-radius: 50%;
   background-color: transparent;
   overflow: visible;
+  position: relative;
+  top: 0;
+  transform: none;
 }
 
 /* Info button hover effect with stroke - using ::after pseudo-element for animation */
@@ -365,7 +401,7 @@
 
 .group-header {
   margin-bottom: 0; /* Removed bottom spacing */
-  margin-top: 35px; /* Further increased margin to provide more space for the reset button */
+  margin-top: 16px; /* Significantly reduced spacing for more compact layout */
   padding: var(--space-md) var(--space-lg);
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(12px);
@@ -374,6 +410,16 @@
   border-radius: var(--radius-lg);
   transition: var(--transition-base);
   /* No shadow */
+  
+  /* Improved alignment of header content */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Fix spacing between group headers and their content */
+.course-group.level-group > .group-header {
+  margin-bottom: 5px; /* Reduced space between level header and its content */
 }
 
 .group-header.clickable {
@@ -424,11 +470,10 @@
   color: var(--text-color);
   margin: 0;
   letter-spacing: 0.025em;
-  width: 100%;
-  /* Layout positioning for info button */
-  padding-right: calc(36px + var(--stats-button-right-distance) * 2);
+  /* Removed padding-right to fix alignment issues */
   position: relative;
   text-align: left;
+  flex: 1;
 }
 
 .group-toggle svg {
@@ -457,18 +502,22 @@
   position: relative;
   z-index: 2; /* Higher than parent group header */
   pointer-events: auto !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: var(--space-sm);
   background: transparent;
   border: none;
   padding: var(--space-xs);
   margin-right: 5px;
   cursor: pointer;
   border-radius: var(--radius-full);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 36px;
   height: 36px;
   flex-shrink: 0;
+  align-self: center; /* Center vertically in flex container */
+  top: 0;
+  transform: none;
 }
 
 .info-btn svg {
@@ -489,8 +538,9 @@
     --term-width: 95%;
     --term-indent: 2.5%;
   }
-    .term-group {
+  .term-group {
     margin-bottom: 0; /* Removed bottom spacing */
+    margin-top: 15px !important; /* Reduced top margin to fix spacing */
   }
   
   /* Ensure tables maintain fixed width in term container */
@@ -511,22 +561,70 @@
   /* Responsive adjustments for groups (moved from index.css) */
   .group-header {
     padding: var(--space-sm) var(--space-md);
-    min-height: 48px; /* Make headers a bit higher */
+    min-height: 52px; /* Make headers a bit higher */
+    display: flex;
+    align-items: center !important; /* Force align center */
+    justify-content: space-between !important;
   }
   
   .group-title {
     font-size: var(--text-base);
     gap: var(--space-sm);
+    display: flex;
+    align-items: center !important;
   }
   
   .group-toggle {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .group-toggle svg {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Ensure remove button is properly sized on mobile */
+  .remove-btn {
+    width: var(--remove-btn-min-size);
+    height: var(--remove-btn-min-size);
+    min-width: var(--remove-btn-min-size);
+    min-height: var(--remove-btn-min-size);
+  }
+  
+  .remove-btn svg {
+    width: calc(var(--remove-btn-min-size) * 0.7);
+    height: calc(var(--remove-btn-min-size) * 0.7);
+  }
+  
+  /* Fix info button alignment and size */
+  .info-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: 0;
+    transform: none;
+    align-self: center;
+  }
+  
+  .info-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Ensure group titles have proper centering */
+  .group-title, .term-title {
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
 }
 
@@ -542,7 +640,7 @@
     --term-width: 97%;
     --term-indent: 1.5%;
   }
-    .term-group {
+  .term-group {
     margin-bottom: 0; /* Removed bottom spacing */
   }
   
@@ -555,29 +653,75 @@
   .group-header {
     min-height: 52px;
   }
+  
+  /* Ensure remove button is large enough on mobile */
+  :root {
+    --remove-btn-min-size: 44px;  /* Increased size for remove button on mobile */
+  }
+  
+  .remove-btn {
+    width: var(--remove-btn-min-size);
+    height: var(--remove-btn-min-size);
+    min-width: var(--remove-btn-min-size);
+    min-height: var(--remove-btn-min-size);
+  }
+  
+  .remove-btn svg {
+    width: calc(var(--remove-btn-min-size) * 0.9);
+    height: calc(var(--remove-btn-min-size) * 0.9);
+  }
+  
+  /* Make info button larger and more prominent on mobile */
+  .info-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+  
+  .info-btn svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 @media (max-width: 430px) {
-  /* Make info button smaller - size of arrow svg as reference */
+  /* Improve info button size and positioning - align with arrow svg */
   .info-btn {
-    width: 20px;
-    height: 20px;
-    padding: 2px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: 0;
+    transform: none;
+    align-self: center;
   }
 
   .info-btn svg {
-    width: 16px;
-    height: 16px;
+    width: 22px;
+    height: 22px;
   }
 
-  /* Adjust group title padding for smaller info button */
+  /* Adjust group title for better balance */
   .group-title {
-    padding-right: calc(24px + var(--stats-button-right-distance) * 2);
+    padding-right: var(--stats-button-right-distance);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
   }
 
-  /* Make group headers even higher */
+  /* Make group headers even higher for better touch targets */
   .group-header {
     min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-md);
   }
 }
 
@@ -604,4 +748,74 @@
 
 @media (max-width: 380px) {
   /* Keep the same settings as 400px for very small screens */
+  /* Even larger on very small screens */
+  .info-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    padding: 5px;
+  }
+  
+  .info-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Make remove buttons even bigger for the smallest screens */
+  :root {
+    --remove-btn-min-size: 46px;  /* Maximum size for smallest screens */
+  }
+  
+  .group-header {
+    min-height: 62px; /* Extra height for better touch targets */
+  }
+}
+
+/* ===== Hide interactive elements when collapsed ===== */
+.table-container.collapsed {
+  animation: collapseAnimation 0.5s var(--ease-out) forwards;
+  pointer-events: none; /* Disable all interactions */
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Hide and disable interactive elements when courses are collapsed */
+.table-container.collapsed .course-table,
+.table-container.collapsed .course-container {
+  visibility: hidden; /* Hide content completely */
+  height: 0; /* Reduce height to 0 */
+  overflow: hidden; /* Hide any overflow */
+  pointer-events: none; /* Disable all interactions */
+}
+
+/* Specific handling for interactive elements */
+.table-container.collapsed .credit-hours-dropdown-trigger,
+.table-container.collapsed .grade-dropdown-trigger,
+.table-container.collapsed td:last-child .remove-button,
+.table-container.collapsed .dropdown-menu,
+.table-container.collapsed .dropdown-content {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; /* Disable all click events */
+  position: absolute;
+  z-index: -1; /* Move below other elements */
+}
+
+/* Only enable interactions when expanded */
+.table-container.expanded .course-table {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.table-container.expanded .credit-hours-dropdown-trigger,
+.table-container.expanded .grade-dropdown-trigger,
+.table-container.expanded td:last-child .remove-button {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto; /* Enable click events */
+  position: relative;
+  z-index: auto;
+  transition: opacity 0.2s var(--ease-out) 0.1s; /* Slight delay for better animation */
 }

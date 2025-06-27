@@ -437,16 +437,20 @@ body {
   /* Term groups more compact */
   .term-group {
     margin-left: var(--space-sm) !important;
-    margin-bottom: 4px !important;
+    margin-bottom: 0 !important;
+    margin-top: 5px !important; /* Minimal spacing between groups */
   }
   
   .term-group .group-header {
     width: 100% !important;
     margin-right: 0 !important;
+    display: flex;
+    align-items: center !important;
+    justify-content: space-between !important;
   }
   
   .term-title {
-    font-size: 0.85rem !important;
+    font-size: 0.9rem !important;
   }
   
   /* Tables inside term groups */

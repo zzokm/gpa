@@ -1,0 +1,67 @@
+/* GPADisplayStyles.css */
+
+.gpa-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1rem 0;
+}
+
+.gpa-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+  margin-bottom: 0.25rem;
+}
+
+.gpa-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.gpa-scale {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-bottom: 0.75rem;
+}
+
+.gpa-assessment {
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.3rem 1rem;
+  border-radius: 3rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .gpa-value {
+    font-size: 2.2rem;
+  }
+  
+  .gpa-assessment {
+    font-size: 1rem;
+    padding: 0.25rem 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gpa-value {
+    font-size: 2rem;
+  }
+  
+  .gpa-assessment {
+    font-size: 0.9rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
