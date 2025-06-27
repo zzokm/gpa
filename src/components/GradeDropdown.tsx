@@ -49,7 +49,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
       const triggerRect = triggerRef.current!.getBoundingClientRect();
       const dropdownWidth = 165; // Match width in CSS
         // Calculate position relative to viewport
-      let top = triggerRect.bottom + 8; // Increased gap to match CSS
+      let top = triggerRect.bottom + 8; // Closer to the arrow but still with some visual separation
       let left = triggerRect.left + (triggerRect.width / 2) - (dropdownWidth / 2); // Center without transform
         // Ensure dropdown stays within viewport horizontally
       const viewportWidth = document.documentElement.clientWidth;
@@ -67,7 +67,8 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
       
       if (top + estimatedDropdownHeight > viewportHeight) {
         // Show dropdown above the trigger if not enough space below
-        top = Math.max(10, triggerRect.top - estimatedDropdownHeight);
+        // Adjusted spacing to match the bottom spacing
+        top = Math.max(10, triggerRect.top - estimatedDropdownHeight - 8);
       }
       
       // Position the portal container at the scroll position

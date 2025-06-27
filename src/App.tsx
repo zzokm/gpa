@@ -134,6 +134,9 @@ const App: React.FC = () => {
     }
   }, [courses]);
 
+  // The default background color is now handled via CSS in index.css
+  // This ensures the color is applied immediately during page load without flickering
+
   const gpa = calculateGPA(courses);
   return (
     <>      <Container className="container">

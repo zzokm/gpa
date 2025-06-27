@@ -121,6 +121,11 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Default body background color to match ThreeJS gradient */
+  background-color: #fcede9; /* Soft orange background that blends with ThreeJS gradient */
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 img,

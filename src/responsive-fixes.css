@@ -657,3 +657,21 @@ body {
     }
   }
 }
+
+/* === Remove Button Mobile Styling === */
+@media (max-width: 480px) {
+  /* Remove shadow and transform effects on mobile, only keep glow effect */
+  .remove-btn:hover {
+    transform: none !important; /* No upward movement on hover */
+    filter: none !important; /* No drop shadow on mobile */
+  }
+  
+  .remove-btn:hover svg {
+    filter: brightness(1.2) !important; /* Only enhance the brightness for glow effect */
+  }
+  
+  /* Always show the remove button on mobile */
+  td .remove-btn {
+    opacity: 1 !important;
+  }
+}

@@ -289,16 +289,21 @@
   box-sizing: border-box;
 }
 
+.term-group {
+  margin-top: 0 !important; /* Reset all margins */
+  margin-bottom: 0 !important;
+}
+
 .term-group:first-child {
-  margin-top: 10px; /* Increased spacing above first term group */
+  margin-top: 6px !important; /* Reduced spacing for first term */
 }
 
 .term-group:last-child {
-  margin-bottom: 10px; /* Add space at the bottom */
+  margin-bottom: 10px !important; /* Space at the bottom */
 }
 
 .term-group:not(:first-child) {
-  margin-top: 15px; /* Increased spacing between term groups */
+  margin-top: 6px !important; /* Reduced spacing between terms */
 }
 
 .level-container > .term-group .group-header {
@@ -364,7 +369,7 @@
 /* ===== Course Table Styling ===== */
 .term-group .table-container {
   width: 100%;
-  padding-top: 12px; /* Increased space between term header and first course */
+  padding-top: 6px !important; /* Reduced space between term header and first course */
 }
 
 .course-container {
@@ -580,7 +585,7 @@
   }
   .term-group {
     margin-bottom: 0; /* Removed bottom spacing */
-    margin-top: 15px !important; /* Reduced top margin to fix spacing */
+    /* Removed margin-top here as we control it through other selectors */
   }
   
   /* Adjust first level group margin for reset button on mobile */
@@ -605,11 +610,15 @@
   
   /* Keep consistent spacing on mobile */
   .course-group.level-group > .group-header {
-    margin-bottom: 12px;
+    margin-bottom: 6px !important; /* Reduced spacing for level header */
   }
   
   .term-group:not(:first-child) {
-    margin-top: 12px;
+    margin-top: 6px !important; /* Reduced spacing between terms */
+  }
+  
+  .term-group:first-child {
+    margin-top: 6px !important; /* Same reduced spacing for first term */
   }
   
   .term-group:last-child {
@@ -617,7 +626,7 @@
   }
   
   .term-group .table-container {
-    padding-top: 10px; /* Slightly less padding on mobile but still visible */
+    padding-top: 4px !important; /* Reduced padding for mobile */
   }
   
   .course-group .course-table {
@@ -807,11 +816,15 @@
   
   /* Maintain spacing proportion even on smaller screens */
   .term-group:not(:first-child) {
-    margin-top: 10px;
+    margin-top: 4px !important; /* Further reduced for very small screens */
+  }
+  
+  .term-group:first-child {
+    margin-top: 4px !important; /* Match the other term spacing */
   }
   
   .course-group.level-group > .group-header {
-    margin-bottom: 10px;
+    margin-bottom: 4px !important; /* Matching spacing for consistency */
   }
   
   /* Make term titles even more compact on very small screens */
@@ -849,6 +862,22 @@
   .group-header {
     min-height: 62px; /* Extra height for better touch targets */
   }
+}
+
+/* Override any responsive-fixes.css margins for terms */
+.term-group {
+  margin-top: 6px !important;
+}
+
+/* Term group in responsive-fixes.css has margin-top 5px - override it */
+body .term-group {
+  margin-top: 6px !important;
+  margin-bottom: 0 !important;
+}
+
+/* Even more specific override to ensure we win specificity wars */
+body .level-container .term-group {
+  margin-top: 6px !important;
 }
 
 /* ===== Hide interactive elements when collapsed ===== */
