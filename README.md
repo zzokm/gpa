@@ -9,18 +9,22 @@ A modern, interactive GPA calculator web application designed specifically for F
 
 - **Intuitive Course Management**: Add, edit, and remove courses with ease
 - **Grade Selection**: Choose from standard letter grades (A+ to F)
-- **Credit Hour Selection**: Specify credit hours for each course (0-3)
+- **Enhanced Credit Hour Selection**: Interactive rotating number input for credit hours (0-3)
 - **Real-time GPA Calculation**: Instantly see your GPA update as you modify courses
+- **Visual Grade Assessment**: Color-coded grade indicators with descriptive assessments
 - **Course Import**: Import your registered courses directly from the university portal
 - **Course Grouping**: Imported courses are automatically grouped by term and level
+- **Group Statistics**: View detailed stats for each course group (GPA, credits, pass/fail metrics)
 - **Collapsible Groups**: Expand/collapse course groups with saved state
-- **Local Storage**: Your courses are saved in your browser for future visits
-- **Modern UI**: Clean, responsive design with animated interactions
-- **Dynamic Background**: Subtle animated background using Three.js
+- **Local Storage**: Your courses and group states saved in your browser for future visits
+- **Modern Glassmorphism UI**: Clean, responsive design with animated interactions and blur effects
+- **Dynamic Background**: Subtle animated background using Three.js with custom GLSL shaders
+- **Confirmation Dialogs**: Prevent accidental data loss with confirmation modals
+- **Mobile Optimization**: Responsive design works on all device sizes with specialized mobile fixes
 
 ## Live Demo
 
-You can try the calculator at: [http://zokm.me/gpa/](http://zokm.me/gpa/)
+You can try the calculator at: [https://zzokm.github.io/gpa/](https://zzokm.github.io/gpa/)
 
 ## How to Use
 
@@ -36,8 +40,14 @@ You can try the calculator at: [http://zokm.me/gpa/](http://zokm.me/gpa/)
 1. Click the "Import Courses" button
 2. Go to the [FCAI Course Registration Portal](http://newecom.fci.cu.edu.eg/#/courses-per-students)
 3. Copy the HTML content of your registered courses page (instructions below)
-4. Paste it into the import dialog
+4. Paste it into the import dialog (one-click paste button available)
 5. Click "Import Courses"
+
+The application will automatically:
+- Extract course names, credit hours, and grades
+- Organize courses by level and term
+- Handle duplicate courses intelligently
+- Preserve your existing course data
 
 #### How to Copy HTML Content
 
@@ -82,37 +92,54 @@ For Android users, the easiest method is to use Chrome and request the desktop s
 
 ### Managing Courses
 
-- Change a course's grade by clicking the grade indicator
-- Remove a course by clicking the X button
-- Your GPA is automatically calculated based on your courses
+- Change a course's grade by clicking the grade indicator/badge
+- Update credit hours by clicking the credit hours value
+- Remove a course by clicking the delete button
+- View detailed statistics by clicking on group headers
+- Expand/collapse course groups by clicking the arrow indicators
+- Clear all courses with confirmation dialog (Reset All)
+- Your GPA is automatically calculated and updated in real-time with visual assessment indicators (Good, Excellent, etc.)
 
 ## Technical Overview
 
 This application is built using modern web technologies:
 
 - **React**: Front-end library for building the user interface
-- **TypeScript**: For type-safe code
-- **Vite**: Build tool and development server
-- **Three.js**: 3D graphics for the background animation
-- **Local Storage API**: For persisting data between sessions
+- **TypeScript**: For type-safe code with interfaces and type definitions
+- **Vite**: Fast build tool and development server
+- **Three.js**: 3D graphics for the dynamic background animation with GLSL shaders
+- **React Portals**: For properly positioned dropdowns and modals
+- **CSS Variables**: For consistent design system and theming
+- **Local Storage API**: For persisting courses and UI state between sessions
+- **Responsive Design**: Mobile-first approach with device-specific optimizations
+- **Glassmorphism UI**: Modern UI with backdrop filters and transparency effects
 
 ## Project Structure
 
 ```
 src/
-├── components/           # React components
-│   ├── CourseForm.tsx    # Form for adding courses
-│   ├── CourseTable.tsx   # Display of added courses
-│   ├── GPADisplay.tsx    # GPA visualization
-│   ├── GradeDropdown.tsx # Grade selection dropdown
-│   ├── ImportModal.tsx   # Course import functionality
-│   └── ThreeJSBackground.tsx # Animated background
+├── components/                      # React components
+│   ├── ConfirmationModal.tsx        # Reusable confirmation dialog component
+│   ├── CourseForm.tsx               # Form for adding courses
+│   ├── CreditHoursDropdown.tsx      # Interactive credit hours selector
+│   ├── EnhancedRotatingNumberInput.tsx # Animated number input component
+│   ├── GPADisplay.tsx               # GPA visualization with assessment
+│   ├── GradeDropdown.tsx            # Enhanced grade selection dropdown
+│   ├── GroupedCourseTable.tsx       # Hierarchical course table with grouping
+│   ├── ImportModal.tsx              # Course import functionality
+│   ├── RotatingNumberInput.tsx      # Base component for number selection
+│   ├── StatsModal.tsx               # Statistics display for course groups
+│   └── ThreeJSBackground.tsx        # Animated background with GLSL shaders
 ├── types/
-│   └── Course.ts         # TypeScript interfaces and types
+│   └── Course.ts                    # TypeScript interfaces and types
 ├── utils/
-│   └── gradeUtils.ts     # GPA calculation and grade utilities
-├── App.tsx               # Main application component
-└── main.tsx              # Application entry point
+│   ├── dropdownManager.ts           # Dropdown coordination utilities
+│   ├── gradeUtils.ts                # GPA calculation and grade utilities
+│   └── visibilityUtils.ts           # DOM visibility helpers
+├── App.tsx                          # Main application component
+├── index.css                        # Global styles and design system
+├── responsive-fixes.css             # Mobile-specific style adjustments
+└── main.tsx                         # Application entry point
 ```
 
 ## Detailed Component Functionality
@@ -123,6 +150,8 @@ The main component that:
 - Manages the application state (courses, modals)
 - Handles data persistence using local storage
 - Orchestrates the interactions between components
+- Provides save notifications for user actions
+- Manages clear/delete functionality with confirmations
 
 ### Course Management
 
@@ -130,22 +159,38 @@ The main component that:
 
 Handles course creation with:
 - Input validation for course details
-- Animated credit hour selection
-- Grade selection via dropdown
+- Enhanced rotating credit hour selection with animations
+- Grade selection via styled dropdown
+- Course name autogeneration for empty fields
 
-#### `CourseTable.tsx`
+#### `GroupedCourseTable.tsx`
 
-Displays added courses with:
+Displays courses in a hierarchical structure with:
+- Automatic grouping by level and term
+- Collapsible groups with persistent state
+- Group statistics with GPA and credit metrics
 - Color-coded grade badges
-- Inline grade editing
+- Inline grade and credit hour editing
 - Course removal functionality
+- Empty state handling
 
 #### `ImportModal.tsx`
 
 Provides functionality to:
 - Import courses in bulk from the university portal
 - Parse HTML content to extract course information
+- Clipboard paste integration
+- Smart duplicate handling
 - Validate imported data before adding to the course list
+- Show modal with fade animations
+
+#### `ConfirmationModal.tsx`
+
+A reusable confirmation dialog that:
+- Prevents accidental data loss with user confirmation
+- Supports danger mode for critical actions
+- Uses React Portal for proper DOM positioning
+- Includes animations and keyboard interactions
 
 ### GPA Calculation (`gradeUtils.ts`)
 
@@ -195,22 +240,84 @@ export function calculateGPA(courses: Course[]): number {
 }
 ```
 
+### Utilities & Helpers
+
+#### `dropdownManager.ts`
+
+Singleton utility that:
+- Manages active dropdown state across the application
+- Prevents multiple dropdowns from being open simultaneously
+- Coordinates dropdown opening and closing
+- Handles outside click detection
+
+#### `gradeUtils.ts`
+
+Core grade calculation utilities:
+- Converts letter grades to GPA points
+- Calculates GPA from course arrays
+- Generates color schemes for grade display
+- Provides helper functions for grade manipulation
+
+#### `visibilityUtils.ts`
+
+DOM visibility helpers that:
+- Track element visibility in viewport
+- Handle scroll position calculations
+- Support modal positioning and interactions
+
 ### UI Enhancements
 
-#### `GradeDropdown.tsx`
+#### `GradeDropdown.tsx` & `CreditHoursDropdown.tsx`
 
-A sophisticated dropdown component that:
-- Uses React portals for proper stacking context
-- Includes color-coded grade options
-- Adjusts position automatically to stay within viewport
-- Prevents table row hover effects during interaction
+Sophisticated dropdown components that:
+- Use React portals for proper stacking context
+- Include color-coded grade options
+- Adjust position automatically to stay within viewport
+- Prevent table row hover effects during interaction
+- Coordinate with the dropdown manager to avoid conflicts
+
+#### `EnhancedRotatingNumberInput.tsx`
+
+An intuitive input component for selecting numeric values:
+- Interactive left/right controls
+- Smooth sliding animations between values
+- Boundary limits with shake animations
+- Accessibility features for keyboard navigation
+- Mobile optimization with touch-friendly controls
+
+#### `StatsModal.tsx`
+
+Detailed statistics visualization for course groups:
+- Summarizes course performance metrics
+- Calculates GPA for specific course groups
+- Displays credit hour distribution
+- Shows passed/failed credit metrics
+- Lists all courses in the group with details
+- Includes scroll indicators for large lists
+
+#### `GPADisplay.tsx`
+
+Enhanced GPA visualization:
+- Color-coded assessment based on GPA value:
+  - Excellent (3.5-4.0): Purple
+  - Very Good (3.0-3.5): Blue 
+  - Good (2.5-3.0): Green
+  - Acceptable (2.0-2.5): Gold
+  - Poor (1.0-2.0): Orange
+  - Very Poor (0-1.0): Red
+- Dynamic text that reflects academic standing
+- Visual hierarchy with typography scale
+- Glassmorphism effect for modern UI
+- Responsive layout for all device sizes
 
 #### `ThreeJSBackground.tsx`
 
 Creates an engaging background using Three.js:
 - GLSL shaders for smooth color transitions
+- Customizable uniforms for visual effects
 - Responsive canvas that adjusts to window size
-- Optimized performance with minimal rendering
+- Optimized performance with render loop management
+- Multiple meshes with varying visual properties
 
 ## Development
 
@@ -257,10 +364,34 @@ The GitHub Actions workflow will automatically build and deploy the application.
 ## Technical Specifications
 
 - **Grading System**: Based on FCAI - Cairo University's 4.0 scale ([Faculty Bylaw PDF](docs/newBylaw_2024.pdf)) (Refer to page 11)
+- **Course Structure**: 
+  - Total Credit Hours for Bachelor's Degree: 135 hours
+  - Course categorization by level and term
+  - Support for custom course naming and credit hour allocation
 - **Browser Support**: Modern browsers with localStorage and ES6+ support
-- **Responsive Design**: Works on devices from mobile phones to desktops
-- **Accessibility**: Keyboard navigation and screen reader support
-- **Performance**: Optimized animations and rendering for smooth experience
+- **Responsive Design**: Works on devices from mobile phones to desktops with optimized layouts
+- **Mobile Optimization**: Special handling for touch interfaces and smaller screens
+- **Accessibility**:
+  - Keyboard navigation and focus management
+  - Reduced motion support via media queries
+  - High contrast mode compatibility
+  - Sufficient color contrast for text readability
+  - Visible focus indicators for keyboard users
+  - Semantic HTML structure
+- **Performance**:
+  - Optimized animations with hardware acceleration
+  - React memo and useCallback for rendering optimization
+  - Efficient DOM updates with React
+  - Lazy loading for modal components
+- **Design System**:
+  - Consistent CSS variables for theming
+  - Responsive spacing and typography scales
+  - Glassmorphism effects with backdrop filters
+  - Fluid animations with cubic-bezier easing
+- **Browser Storage**:
+  - Courses data persisted in localStorage
+  - UI state preservation between sessions
+  - Error handling for storage access
 
 ## Contributions
 
