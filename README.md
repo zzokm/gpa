@@ -8,6 +8,7 @@ A modern, interactive GPA calculator web application designed specifically for F
 ## Features
 
 - **Intuitive Course Management**: Add, edit, and remove courses with ease
+- **Course Data Autocomplete**: Enter a course code or name to automatically fill in course name and credit hours
 - **Grade Selection**: Choose from standard letter grades (A+ to F)
 - **Enhanced Credit Hour Selection**: Interactive rotating number input for credit hours (0-3)
 - **Real-time GPA Calculation**: Instantly see your GPA update as you modify courses
@@ -30,8 +31,11 @@ You can try the calculator at: [https://zzokm.github.io/gpa/](https://zzokm.gith
 
 ### Adding Courses Manually
 
-1. Enter your course name (optional)
-2. Select the number of credit hours (0-3)
+1. Enter your course code (e.g., "CS111", "MA214") or course name
+   - As you type, a dropdown will appear with matching course suggestions
+   - Select a course from the dropdown to automatically fill in the course name and credit hours
+   - You can also manually enter any course name without using the autocomplete
+2. Select the number of credit hours (0-3) if not automatically filled
 3. Choose a grade
 4. Click "Add Course"
 
@@ -158,6 +162,8 @@ The main component that:
 #### `CourseForm.tsx`
 
 Handles course creation with:
+- Intelligent course code autocomplete with suggestions from FCAI course catalog
+- Auto-population of course details (name and credit hours) based on selection
 - Input validation for course details
 - Enhanced rotating credit hour selection with animations
 - Grade selection via styled dropdown
@@ -249,6 +255,18 @@ Singleton utility that:
 - Prevents multiple dropdowns from being open simultaneously
 - Coordinates dropdown opening and closing
 - Handles outside click detection
+
+#### Course Autocomplete
+
+Intelligent course code matching:
+- Parses complete FCAI course catalog from structured JSON data
+- Searches across all departments and course levels 
+- Provides real-time suggestions as you type (after 2+ characters)
+- Case-insensitive matching against course codes and names
+- Automatically fills course details upon selection
+- Styled dropdown with hover effects matching the app's design system
+- Keyboard navigation support
+- Outside click detection for improved UX
 
 #### `gradeUtils.ts`
 
