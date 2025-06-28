@@ -5,6 +5,7 @@ import GroupedCourseTable from './components/GroupedCourseTable';
 import GPADisplay from './components/GPADisplay';
 import ImportModal from './components/ImportModal';
 import ThreeJSBackground from './components/ThreeJSBackground';
+import Footer from './components/Footer';
 import { Course, Grade } from './types/Course';
 import { calculateGPA } from './utils/gradeUtils';
 
@@ -171,6 +172,7 @@ const App: React.FC = () => {
       </Container>
 
       <ThreeJSBackground />
+      <Footer />
     </>
   );
 };

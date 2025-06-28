@@ -1,0 +1,203 @@
+.app-footer {
+  text-align: center;
+  padding: 0px 0 40px 0;
+  margin-top: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  position: relative;
+  width: min(95%, 755px); /* Max width of 800px applied to container */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Take full width of the container */
+  padding: 15px 25px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.18); /* Whiter background */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  /* Removed shadow */
+  transition: all 0.3s ease;
+}
+
+.footer-content:hover {
+  background: rgba(255, 255, 255, 0.22); /* Even whiter on hover */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Removed shadow */
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.footer-left span {
+  color: rgba(0, 0, 0, 0.78); /* Slightly darker text for better readability */
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  font-weight: 500;
+}
+
+.footer-middle {
+  color: rgba(0, 0, 0, 0.72); /* Darker text */
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  flex: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.copyright-icon {
+  width: 14px; /* Match text height */
+  height: 14px; /* Match text height */
+  margin: 0 4px;
+  vertical-align: -0.125em; /* Fine-tune vertical alignment with text */
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+  flex: 1;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.signature-logo-link {
+  display: block;
+  width: 40px;
+  height: calc(40px * (1440/2558)); /* Calculate height based on SVG aspect ratio */
+  background: linear-gradient(45deg, #ff7955, #fab6a1, #ff7955);
+  background-size: 200% 200%;
+  animation: gradientAnimation 3s ease infinite;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  transition: transform 0.3s ease;
+}
+
+.signature-logo-link:hover {
+  transform: scale(1.1);
+}
+
+.github-link {
+  color: rgba(0, 0, 0, 0.75); /* Darker icon */
+  font-size: 24px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.github-link:hover {
+  transform: scale(1.1);
+  color: #000; /* Full black on hover */
+}
+
+/* Enhanced responsive styles */
+@media (max-width: 768px) {
+  .app-footer {
+    width: min(92%, 800px); /* Better width for tablets */
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 15px;
+    background: rgba(255, 255, 255, 0.22); /* Slightly whiter on mobile for better readability */
+  }
+  
+  .footer-middle {
+    font-size: 12px;
+    order: 3; /* Move copyright to bottom on mobile */
+    font-weight: 600; /* Bolder on mobile for readability */
+    margin-top: 5px;
+  }
+  
+  .copyright-icon {
+    width: 12px; /* Slightly smaller to match smaller font on mobile */
+    height: 12px;
+    margin: 0 4px;
+  }
+  
+  .footer-left {
+    gap: 12px;
+    order: 1;
+    justify-content: center;
+  }
+  
+  .footer-right {
+    gap: 10px;
+    order: 2;
+  }
+  
+  .footer-left span {
+    font-size: 13px;
+    font-weight: 600; /* Bolder on mobile for readability */
+  }
+  
+  .github-link {
+    font-size: 26px; /* Bigger GitHub icon on tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .app-footer {
+    width: min(90%, 800px); /* Better width for phones */
+  }
+  
+  .footer-content {
+    padding: 18px 16px;
+    gap: 14px;
+  }
+  
+  .signature-logo-link {
+    width: 38px; /* Slightly larger on mobile */
+    height: calc(38px * (1440/2558));
+  }
+  
+  .github-link {
+    font-size: 28px; /* Even bigger GitHub icon on phones */
+  }
+  
+  .copyright-icon {
+    width: 12px;
+    height: 12px;
+    margin: 0 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  .app-footer {
+    width: min(95%, 800px); /* Adjusted width for very small screens */
+  }
+  
+  .footer-content {
+    padding: 16px 12px;
+    gap: 12px;
+  }
+}
