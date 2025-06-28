@@ -2,7 +2,7 @@
 
 A modern, interactive GPA calculator web application designed specifically for Faculty of Computer and Artificial Intelligence (FCAI) students at Cairo University. This tool helps students calculate their GPA based on the university's grading system.
 
-![GPA Calculator Screenshot](https://github.com/zzokm/gpa/raw/main/screenshot.png)
+![GPA Calculator Screenshot](https://github.com/zzokm/gpa/blob/main/screenshot.png)
 
 
 ## Features
