@@ -1,21 +1,17 @@
-// filepath: d:\Yehia's Uni files\gpaCalc\src\components\GradeDropdown.tsx
 import React, { useState, useRef, useEffect } from 'react';
-import { Grade } from '../types/Course';
-import { getGradeStyles } from '../utils/gradeUtils';
 import { createPortal } from 'react-dom';
 import { DropdownManager } from '../utils/dropdownManager';
 
-// Define grade options once for use in all components
-const GRADE_OPTIONS: Grade[] = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
+// Define credit hours options (0-3)
+const CREDIT_HOURS_OPTIONS = [0, 1, 2, 3];
 
 // Dropdown Menu component that uses portal to render outside the table
 interface DropdownMenuProps {
-  onSelectGrade: (grade: Grade) => void;
+  onSelectCreditHours: (hours: number) => void;
   triggerRef: React.RefObject<HTMLDivElement>;
-  // No courseId needed here as it's for the menu itself
 }
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }) => {
+const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectCreditHours, triggerRef }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
@@ -41,17 +37,20 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
       document.body.removeChild(container);
     };
   }, []);
-    // Update dropdown position when trigger position changes
+  
+  // Update dropdown position when trigger position changes
   useEffect(() => {
     if (!triggerRef.current || !portalContainer) return;
     
     const updatePosition = () => {
       const triggerRect = triggerRef.current!.getBoundingClientRect();
       const dropdownWidth = 165; // Match width in CSS
-        // Calculate position relative to viewport
-      let top = triggerRect.bottom + 8; // Closer to the arrow but still with some visual separation
+      
+      // Calculate position relative to viewport
+      let top = triggerRect.bottom + 8; // Increased gap to match CSS
       let left = triggerRect.left + (triggerRect.width / 2) - (dropdownWidth / 2); // Center without transform
-        // Ensure dropdown stays within viewport horizontally
+      
+      // Ensure dropdown stays within viewport horizontally
       const viewportWidth = document.documentElement.clientWidth;
       if (left < 10) {
         // Too close to left edge
@@ -63,12 +62,11 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
       
       // Ensure dropdown stays within viewport vertically
       const viewportHeight = document.documentElement.clientHeight;
-      const estimatedDropdownHeight = 300; // Approximate max height
+      const estimatedDropdownHeight = 200; // Approximate max height
       
       if (top + estimatedDropdownHeight > viewportHeight) {
         // Show dropdown above the trigger if not enough space below
-        // Adjusted spacing to match the bottom spacing
-        top = Math.max(10, triggerRect.top - estimatedDropdownHeight - 8);
+        top = Math.max(10, triggerRect.top - estimatedDropdownHeight);
       }
       
       // Position the portal container at the scroll position
@@ -111,31 +109,32 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
       }
     };
   }, []);
-    return portalContainer ? createPortal(
+  
+  return portalContainer ? createPortal(
     <div 
-      className="grade-dropdown-menu"      style={{ 
+      className="credit-hours-dropdown-menu"      
+      style={{ 
         top: `${position.top}px`, 
         left: `${position.left}px`
       }}
       ref={menuRef}
     >
-      <div className="grade-dropdown-content">
-        {GRADE_OPTIONS.map((grade, index) => (
-          <React.Fragment key={grade}>
+      <div className="credit-hours-dropdown-content">
+        {CREDIT_HOURS_OPTIONS.map((hours, index) => (
+          <React.Fragment key={hours}>
             <button
-              className="grade-dropdown-option"
+              className="credit-hours-dropdown-option"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                onSelectGrade(grade);
+                onSelectCreditHours(hours);
               }}
-              style={getGradeStyles(grade)}
               type="button"
             >
-              {grade}
+              {hours}
             </button>
-            {index < GRADE_OPTIONS.length - 1 && (
-              <div className="grade-dropdown-separator"></div>
+            {index < CREDIT_HOURS_OPTIONS.length - 1 && (
+              <div className="credit-hours-dropdown-separator"></div>
             )}
           </React.Fragment>
         ))}
@@ -145,26 +144,23 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
   ) : null;
 };
 
-// Main GradeDropdown component
-interface GradeDropdownProps {
-  courseId: string; // Still useful for unique IDs, e.g., for closeAllDropdowns
-  courseName: string; // For aria-label
-  onSelectGrade: (courseId: string, grade: Grade) => void;
-  currentGrade?: Grade | null;
-  displayMode?: 'badge' | 'input'; // New prop for styling
+// Main CreditHoursDropdown component
+interface CreditHoursDropdownProps {
+  courseId: string;
+  courseName: string;
+  onSelectCreditHours: (courseId: string, hours: number) => void;
+  currentHours: number;
 }
 
-const GradeDropdown: React.FC<GradeDropdownProps> = ({ 
+const CreditHoursDropdown: React.FC<CreditHoursDropdownProps> = ({ 
   courseId, 
   courseName, 
-  onSelectGrade, 
-  currentGrade,
-  displayMode = 'badge' // Default to 'badge'
+  onSelectCreditHours, 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownManager = DropdownManager.getInstance();
-  const dropdownId = `grade-${courseId}`;
+  const dropdownId = `credit-hours-${courseId}`;
   
   // Register with dropdown manager
   useEffect(() => {
@@ -175,7 +171,7 @@ const GradeDropdown: React.FC<GradeDropdownProps> = ({
       dropdownManager.unregister(dropdownId);
     };
   }, [dropdownId, dropdownManager]);
-  
+
   // Add class to parent row when dropdown is open to fix z-index issues
   useEffect(() => {
     if (!dropdownRef.current) return;
@@ -224,31 +220,21 @@ const GradeDropdown: React.FC<GradeDropdownProps> = ({
     }
   };
 
-  const handleGradeSelect = (grade: Grade) => {
-    onSelectGrade(courseId, grade);
+  const handleCreditHoursSelect = (hours: number) => {
+    onSelectCreditHours(courseId, hours);
     setIsOpen(false);
     dropdownManager.closeDropdown(dropdownId);
   };
-  
-  return (
-    <div className={`grade-dropdown ${displayMode === 'input' ? 'grade-dropdown-input-mode' : ''}`} ref={dropdownRef}>
-      <button
-        className={`grade-dropdown-trigger ${
-          displayMode === 'input' 
-            ? 'form-input-style-trigger' 
-            : currentGrade ? 'grade-dropdown-trigger-compact' : ''
-        }`}
+    return (
+    <div className="credit-hours-dropdown" ref={dropdownRef}>      <button
+        className="credit-hours-dropdown-trigger static-arrow"
         onClick={handleToggle}
-        aria-label={`${currentGrade ? 'Change' : 'Select'} grade for ${courseName}`}
+        aria-label={`Change credit hours for ${courseName}`}
         aria-expanded={isOpen}
         type="button"
       >
-        {displayMode === 'input' && (
-          <span className="grade-dropdown-input-text">
-            {currentGrade || 'Select Grade'}
-          </span>
-        )}        <svg 
-          className={`grade-dropdown-arrow ${isOpen ? 'open' : ''}`} 
+        <svg 
+          className={`credit-hours-dropdown-arrow ${isOpen ? 'open' : ''}`} 
           width="8" 
           height="8" 
           viewBox="0 0 12 12" 
@@ -260,7 +246,7 @@ const GradeDropdown: React.FC<GradeDropdownProps> = ({
       
       {isOpen && (
         <DropdownMenu 
-          onSelectGrade={handleGradeSelect} 
+          onSelectCreditHours={handleCreditHoursSelect} 
           triggerRef={dropdownRef}
         />
       )}
@@ -268,4 +254,4 @@ const GradeDropdown: React.FC<GradeDropdownProps> = ({
   );
 };
 
-export default GradeDropdown;
+export default CreditHoursDropdown;

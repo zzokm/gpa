@@ -1,0 +1,102 @@
+/* Mobile Credit Hours Input Override - Fix for thin white line issue */
+/* This file ensures the RotatingNumberInput displays properly on mobile devices */
+
+/* Override any conflicting styles from index.css */
+@media (max-width: 768px) {
+  .credit-hours-input {
+    /* Critical mobile display fixes */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    
+    /* Size and positioning */
+    height: 50px !important;
+    min-width: 200px !important;
+    width: 100% !important;
+    max-width: none !important;
+    
+    /* Visual appearance - prevent thin white line */
+    background: rgba(255, 255, 255, 0.35) !important;
+    border: 2px solid rgba(255, 255, 255, 0.5) !important;
+    border-radius: var(--radius-md) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    
+    /* Layout and visibility */
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    
+    /* Remove any transform or scale that might cause issues */
+    transform: none !important;
+    scale: none !important;
+  }
+  
+  /* Ensure all child elements are visible */
+  .credit-hours-input * {
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* Make sure perspective container takes proper space */
+  .credit-hours-input .perspective-container {
+    flex: 1 !important;
+    min-width: 120px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+  }
+  
+  /* Ensure glass panes and center window are visible */
+  .credit-hours-input .glass-pane-left,
+  .credit-hours-input .glass-pane-right,
+  .credit-hours-input .center-window {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: 100% !important;
+  }
+  
+  /* Make sure arrows are properly sized and visible */
+  .credit-hours-input .credit-arrow {
+    width: 45px !important;
+    min-width: 45px !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* Extra small screen adjustments */
+@media (max-width: 480px) {
+  .credit-hours-input {
+    min-width: 180px !important;
+  }
+  
+  .credit-hours-input .credit-arrow {
+    width: 40px !important;
+    min-width: 40px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .credit-hours-input {
+    min-width: 160px !important;
+  }
+  
+  .credit-hours-input .credit-arrow {
+    width: 35px !important;
+    min-width: 35px !important;
+  }
+  
+  .credit-hours-input .perspective-container {
+    min-width: 90px !important;
+  }
+}

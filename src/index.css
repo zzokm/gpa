@@ -121,8 +121,13 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Default body background color to match ThreeJS gradient */
+  background-color: #ffe2da; /* Soft orange background that blends with ThreeJS gradient */
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
-
+ 
 img,
 picture,
 video,
@@ -165,8 +170,8 @@ select {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  /* Enhanced visibility on light background */
-  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));
+  /* Enhanced visibility on light background 
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));*/
 }
 
 .app-subtitle {
@@ -176,8 +181,8 @@ select {
   text-align: center;
   margin: var(--space-sm) 0 0 0;
   letter-spacing: 0.025em;
-  /* Enhanced visibility */
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  /* Enhanced visibility 
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);*/
 }
 
 /* Modern Card Components - Ultra-Enhanced Glassmorphism for Light Background */
@@ -256,12 +261,63 @@ select {
   font-weight: 400;
 }
 
+/* Import textarea styling */
+.import-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: var(--space-sm) var(--space-md); /* Smaller padding: top/bottom smaller, left/right smaller and same */
+  border: 2px solid rgba(255, 255, 255, 0.5); /* Same as form-input */
+  border-radius: var(--radius-md);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  background: rgba(255, 255, 255, 0.35); /* Same as form-input */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-color);
+  transition: var(--transition-base);
+  outline: none;
+  resize: none; /* Remove resize handle */
+  box-sizing: border-box;
+  text-align: left; /* Left align for code content */
+  overflow-y: auto; /* Enable vertical scrolling */  overflow-x: hidden; /* Hide horizontal scrollbar */
+  
+  /* Hide scrollbar completely while keeping scroll functionality */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  
+  /* Same shadow as form-input */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.03),
+    0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Hide scrollbar for webkit browsers (Chrome, Safari, Edge) */
+.import-textarea::-webkit-scrollbar {
+  display: none;
+}
+
+.import-textarea:focus {
+  border-color: rgba(255, 121, 85, 0.6); /* Same as form-input focus */
+  box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.15);
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.import-textarea::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
 /* Credit Hours Input with Arrows - Ultra-Enhanced Glassmorphism */
+/* MOVED TO RotatingNumberInput.css for better organization and to prevent conflicts */
+/*
 .credit-hours-input {
   display: flex;
   align-items: center;
   flex: 1;
-  min-width: 200px; /* Match regular form inputs */
+  min-width: 200px;
   height: 50px;
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(16px);
@@ -271,7 +327,6 @@ select {
   overflow: hidden;
   transition: var(--transition-base);
   box-sizing: border-box;
-  /* Enhanced visibility */
   box-shadow: 
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     0 2px 6px rgba(0, 0, 0, 0.04);
@@ -281,6 +336,7 @@ select {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.1);
 }
+*/
 
 .credit-hours-number {
   flex: 1;
@@ -576,16 +632,17 @@ select {
   border-collapse: separate;
   border-spacing: 0;
   margin: 0;
-  /* Enhanced table visibility */
-  box-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.06),
-    0 4px 12px rgba(0, 0, 0, 0.03);
+  /* No shadow for cleaner look */
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow: visible;  /* Allow remove button ring effect to show */
 }
 
 .course-table thead {
   background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+}
+
+.course-table tbody {
+  overflow: visible;  /* Allow remove button ring effect to show fully */
 }
 
 /* Hide table header */
@@ -618,15 +675,12 @@ select {
   background: rgba(255, 255, 255, 0.15);
   /* No shadows - appears as one piece */
   position: relative; /* Add position relative for stacking context */
+  overflow: visible;  /* Allow remove button ring effect to show */
 }
 
 .course-table tbody tr:hover:not(.dropdown-open) {
   background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-  /* Pop-out shadow on hover only */
-  box-shadow: 
-    0 8px 24px rgba(0, 0, 0, 0.12),
-    0 4px 12px rgba(0, 0, 0, 0.08);
+  /* No transform or shadow for cleaner look */
   /* Ensure row hover doesn't affect dropdown visibility */
   z-index: 1;
 }
@@ -716,32 +770,41 @@ select {
 }
 
 .remove-btn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--remove-btn-size);
+  height: var(--remove-btn-size);
+  min-width: var(--remove-btn-size);
+  min-height: var(--remove-btn-size);
   background: transparent;
   border: none;
+  border-radius: 50%;
   cursor: pointer;
   transition: var(--transition-base);
   margin: 0 auto;
   padding: 0;
-  /* Icon-only, no circle or shadows */
+  overflow: visible;
+  z-index: 15;  /* Higher z-index to appear above all course elements */
 }
 
 .remove-btn:hover {
-  transform: scale(1.1);
+  transform: translateY(-1px);
+  filter: drop-shadow(0 4px 8px rgba(229, 57, 53, 0.4));
 }
 
 .remove-btn svg {
-  width: 18px;
-  height: 18px;
-  fill: var(--primary-600);
+  width: calc(var(--remove-btn-size) * 0.9);  /* 90% of button size for perfect fit */
+  height: calc(var(--remove-btn-size) * 0.9);
+  transition: filter 0.2s ease;
+  flex-shrink: 0;  /* Prevent SVG from shrinking */
+  min-width: 24px; /* Ensure minimum size for icon */
+  min-height: 24px;
 }
 
 .remove-btn:hover svg {
-  fill: var(--primary-700);
+  filter: brightness(1.1);
 }
 
 /* Empty State */
@@ -820,46 +883,7 @@ select {
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
-/* Modal Styling */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: var(--space-lg);
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.modal-content {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-radius: var(--radius-2xl);
-  padding: var(--space-2xl);
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  border: 1.5px solid rgba(255, 255, 255, 0.8);
-  position: relative;
-  animation: slideUp 0.3s var(--ease-back);
-}
+/* Modal Styling - REMOVED DUPLICATE DEFINITION */
 
 @keyframes slideUp {
   from {
@@ -906,51 +930,125 @@ select {
   transform: scale(1.1);
 }
 
-.import-textarea {
+/* Modal Body and Footer Styles */
+.modal-body {
+  padding: var(--space-sm) var(--space-2xl) var(--space-xl); /* Adjusted top padding */
+}
+
+.modal-description {
+  margin-bottom: var(--space-lg);
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.textarea-container {
+  position: relative;
+  margin-bottom: var(--space-sm);
   width: 100%;
-  min-height: 200px;
-  padding: var(--space-lg);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-md);
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: var(--text-sm);
-  resize: vertical;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: var(--transition-base);
 }
 
-.import-textarea:focus {
-  border-color: rgba(255, 121, 85, 0.6);
-  box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.1);
-  background: rgba(255, 255, 255, 0.25);
+/* Modal button spacing */
+.modal-footer {
+  padding: var(--space-md) var(--space-2xl); /* Reduced top padding from lg to md */
+  border-top: 1px solid var(--border-light);
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
 }
 
+.modal-footer .button-group {
+  justify-content: flex-end;
+  margin-top: 0;
+  gap: var(--space-md); /* Reduced spacing between buttons */
+}
+
+.modal-footer .btn-primary,
+.modal-footer .btn-secondary {
+  margin: var(--space-sm); /* Add margins around buttons */
+  min-width: 120px; /* Ensure consistent button widths */
+}
+
+/* Import and Paste Button Styles - Enhanced with Glassmorphism Elements */
+.import-btn,
 .paste-btn {
-  position: absolute;
-  top: var(--space-md);
-  right: var(--space-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-sm);
-  padding: var(--space-sm) var(--space-md);
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  cursor: pointer;
   font-size: var(--text-xs);
   color: var(--text-secondary);
   transition: var(--transition-base);
-  /* No shadow for glassmorphism */
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.import-btn::before,
+.paste-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: var(--transition-slow);
+}
+
+.import-btn:hover::before,
+.paste-btn:hover::before {
+  left: 100%;
+}
+
+.import-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.import-btn:active {
+  transform: translateY(0);
+}
+
+/* Updated Paste button styling - Glassmorphism */
+.paste-btn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: rgba(255, 255, 255, 0.25); /* Glassmorphism background */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Thin border */
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md); /* Bigger button with better padding */
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+  font-size: var(--text-sm); /* Slightly bigger font */
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .paste-btn:hover {
-  background: rgba(255, 121, 85, 0.15);
-  border-color: var(--primary-color);
-  color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.35); /* Enhanced glassmorphism on hover */
+  border-color: rgba(255, 121, 85, 0.3); /* Primary color border on hover */
+  color: var(--primary-color); /* Primary color text on hover */
+  transform: translateY(-1px);
+}
+
+.paste-btn svg {
+  width: 14px;
+  height: 14px;
+  margin-right: var(--space-xs);
 }
 
 /* Grade Dropdown Styling */
@@ -1216,21 +1314,30 @@ select {
     padding: var(--space-md) var(--space-sm);
     font-size: var(--text-sm);
   }
-  
-  .gpa-display {
+    .gpa-display {
     max-width: 100%;
   }
   
   .modal-content {
-    margin: var(--space-md);
-    padding: var(--space-xl);
+    margin: var(--space-lg);
+    padding: var(--space-xl) var(--space-xl);
     border-radius: var(--radius-xl);
+    width: calc(100% - 2 * var(--space-lg));
+    max-width: 500px;
   }
 }
 
 @media (max-width: 480px) {
   .container {
     padding: var(--space-md);
+  }
+  
+  /* Improved modal styling for small screens */
+  .modal-content {
+    margin: var(--space-md);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    width: calc(100% - 2 * var(--space-md));
   }
   
   .course-table th:first-child,
@@ -1261,6 +1368,1534 @@ select {
   
   .gpa-value {
     font-size: var(--text-3xl);
+  }
+  
+  /* Adjust remove button on small screens */
+  .remove-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Accessibility - Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+    background-attachment: local;
+  }
+  
+  .credit-hours-number.sliding-out-left,
+  .credit-hours-number.sliding-out-right,
+  .credit-hours-number.sliding-in-left,
+  .credit-hours-number.sliding-in-right,
+  .credit-hours-number.shake,
+  .credit-hours-number.pulse {
+    animation: none;
+    transition: none;
+  }
+  
+  .top-box,
+  .table-box,
+  .gpa-display,
+  .form-input,
+  .form-select,
+  .btn-primary,
+  .btn-secondary {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Enhanced Mobile Glassmorphism */
+@media (max-width: 480px) {
+  .top-box,
+  .table-box,
+  .gpa-display {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+  }    .form-input,
+  .form-select,
+  .credit-hours-input {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    width: 100%;
+  }
+    
+  .credit-arrow {
+    width: 40px;
+    min-width: 40px; /* Ensure fixed width on mobile */
+    flex-shrink: 0; /* Prevent arrows from shrinking */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1; /* Maintain square shape */
+  }
+    .paste-btn {
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+  }
+  
+  /* Ensure remove button remains transparent on all device sizes */
+  .remove-btn {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .top-box,
+  .table-box,
+  .gpa-display {
+    background: var(--white);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 2px solid var(--border-color);
+  }
+  
+  .form-input,
+  .form-select,
+  .credit-hours-input {
+    background: var(--white);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 2px solid var(--border-color);
+  }
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--primary-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus States */
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.form-input:focus-visible,
+.form-select:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  .btn-primary,
+  .btn-secondary,
+  .remove-btn {
+    display: none;
+  }
+  
+  .container {
+    padding: 0;
+    max-width: none;
+  }
+  
+  .top-box,
+  .table-box,
+  .gpa-display {
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+  }
+}
+
+/* Grade Dropdown Input Styling */
+.grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+  flex: 1;
+  min-width: 200px;
+  height: 50px;
+  padding: var(--space-md) var(--space-lg);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 550;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-color);
+  transition: var(--transition-base);
+  outline: none;
+  box-sizing: border-box;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.03),
+    0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex; /* To align text and arrow */
+  justify-content: center; /* Center content like other inputs */
+  align-items: center;
+  width: 100%; /* Take full width of its container */
+}
+
+.grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger:focus,
+.grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger:hover {
+  border-color: rgba(255, 121, 85, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.15);
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.grade-dropdown-input-text {
+  flex-grow: 1;
+  text-align: center;
+  font-weight: 550;
+  color: var(--text-color);
+  width: 100%; /* Ensure the text container takes full width */
+  display: flex;
+  justify-content: center; /* Center the text */
+}
+
+.grade-dropdown-input-mode .grade-dropdown-arrow {
+  margin-left: var(--space-md); /* Increased spacing */
+}
+
+/* Remove default button styling for the trigger in input mode */
+.grade-dropdown-trigger.form-input-style-trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent; /* Overridden by specific mode style but good default */
+  border: none; /* Overridden by specific mode style */
+  padding: 0; /* Overridden by specific mode style */
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex; /* Default for non-input mode */
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Modal Styles - Single definition to avoid conflicts */
+/* Modal Styles - Main container */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999999; /* Extremely high z-index to ensure it's above everything */
+  padding: 32px;
+  /* Ensure modal covers everything */
+  margin: 0;
+  box-sizing: border-box;
+  pointer-events: auto;
+  overflow: auto;
+  /* Animation properties */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.modal-overlay.modal-visible {
+  opacity: 1;
+  visibility: visible;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Prevent body scrolling when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: var(--radius-2xl);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  /* Add shadow for better visibility */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  /* Animation and transform */
+  transform: translateY(0);
+  transition: transform 0.3s var(--ease-back);
+  margin: 0 auto;
+  padding: 0;
+  animation: slideUp 0.3s var(--ease-back);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+  padding: var(--space-xl) var(--space-2xl) var(--space-md);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  padding: var(--space-xs);
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: var(--space-sm) var(--space-2xl) var(--space-xl); /* Adjusted top padding */
+}
+
+.modal-description {
+  margin-bottom: var(--space-lg);
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.textarea-container {
+  position: relative;
+  margin-bottom: var(--space-sm);
+  width: 100%;
+}
+
+/* Import and Paste Button Styles - Enhanced with Glassmorphism Elements */
+.import-btn,
+.paste-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.import-btn::before,
+.paste-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: var(--transition-slow);
+}
+
+.import-btn:hover::before,
+.paste-btn:hover::before {
+  left: 100%;
+}
+
+.import-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.import-btn:active {
+  transform: translateY(0);
+}
+
+/* Updated Paste button styling - Glassmorphism */
+.paste-btn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: rgba(255, 255, 255, 0.25); /* Glassmorphism background */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Thin border */
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md); /* Bigger button with better padding */
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+  font-size: var(--text-sm); /* Slightly bigger font */
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.paste-btn:hover {
+  background: rgba(255, 255, 255, 0.35); /* Enhanced glassmorphism on hover */
+  border-color: rgba(255, 121, 85, 0.3); /* Primary color border on hover */
+  color: var(--primary-color); /* Primary color text on hover */
+  transform: translateY(-1px);
+}
+
+.paste-btn svg {
+  width: 14px;
+  height: 14px;
+  margin-right: var(--space-xs);
+}
+
+/* Grade Dropdown Styling */
+.grade-dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%; /* Make the dropdown take the full width of its container */
+}
+
+.grade-dropdown-input-mode {
+  width: 100%; /* Ensure input mode takes full width */
+  display: block; /* Change from inline-block to block for full width */
+}
+
+.grade-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--gray-200);
+  color: var(--gray-800);
+  border: none;
+  border-radius: 50%;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-align: center;
+  position: relative;
+  padding: 0;
+  margin-left: 8px; /* Fixed distance from badge */
+}
+
+.grade-dropdown-trigger:hover {
+  background: var(--gray-300);
+}
+
+.grade-dropdown-trigger:active {
+  transform: translateY(0);
+}
+
+.grade-dropdown-trigger-compact {
+  min-width: auto;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  box-shadow: var(--shadow-xs);
+}
+
+.grade-dropdown-text {
+  flex-shrink: 0;
+}
+
+.grade-dropdown-arrow {
+  transition: var(--transition-base);
+  flex-shrink: 0;
+  width: 8px; /* Smaller arrow */
+  height: 8px; /* Smaller arrow */
+}
+
+.grade-dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.grade-dropdown-menu {
+  position: absolute; /* Use absolute positioning within the portal */
+  z-index: 100000; /* High z-index to stay above other elements */
+  width: 165px; /* Slightly wider to accommodate the increased padding */
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden; /* Changed from visible to hidden for clean edges */
+  animation: dropdownSlideIn 0.25s var(--ease-out);
+  box-shadow: var(--shadow-md);
+  /* Force the dropdown to appear in its own stacking context to fix flickering issues */
+  isolation: isolate;
+  pointer-events: auto; /* Ensure clicks work properly */
+  margin-top: 8px; /* Slightly larger gap between trigger and dropdown */
+}
+
+/* Removed arrow pointer */
+
+.grade-dropdown-content {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: var(--space-md); /* Increased padding */
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-300) transparent;
+}
+
+.grade-dropdown-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.grade-dropdown-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.grade-dropdown-content::-webkit-scrollbar-thumb {
+  background-color: var(--gray-300);
+  border-radius: 3px;
+}
+
+.grade-dropdown-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  border: none;
+  border-radius: var(--radius-md); /* More rounded */
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  margin-bottom: 4px; /* Slightly increased spacing */
+  color: white !important;
+  height: 36px; /* Slightly increased height for better touch targets */
+}
+
+.grade-dropdown-option:last-child {
+  margin-bottom: 0;
+}
+
+.grade-dropdown-option:hover {
+  transform: scale(1.02); /* Subtler scale effect */
+  box-shadow: var(--shadow-sm);
+  filter: brightness(1.05); /* Subtle brightness increase */
+}
+
+/* Fix for dropdown to stay above other elements and avoid flickering */
+.grade-dropdown-option:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* Behind the option */
+}
+
+.grade-dropdown-separator {
+  height: 1px;
+  background: var(--gray-200);
+  margin: 6px 12px; /* More spacing around separators */
+  border-radius: var(--radius-full); /* Rounded edges for separator */
+}
+
+@keyframes dropdownSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+    scale: 0.98;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    scale: 1;
+  }
+}
+
+/* Responsive Grade Dropdown */
+@media (max-width: 768px) {
+  .grade-dropdown-trigger {
+    min-width: 20px; /* Standardize size */
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    font-size: var(--text-xs);
+  }
+  
+  .grade-dropdown-option {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--text-xs);
+    height: 28px; /* Smaller height on mobile */
+  }
+  
+  .grade-dropdown-menu {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); /* Stronger shadow on mobile */
+    width: 140px; /* Slightly narrower on mobile */
+  }  .course-grade-badge {
+    min-width: 40px; /* Maintain consistent size */
+    width: 40px;
+    height: 28px;
+    padding: 0;
+    font-size: var(--text-xs);
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 480px) {
+  .grade-dropdown-menu {
+    width: 120px; /* Smaller dropdown menu */
+  }
+
+  .course-grade-badge {
+    min-width: 40px; /* Keep consistent across all screen sizes */
+    width: 40px;
+    height: 28px;
+    padding: 0;
+    font-size: var(--text-xs);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-lg) var(--space-md);
+    gap: var(--space-lg);
+  }
+  
+  .app-title {
+    font-size: var(--text-2xl);
+  }
+  
+  .app-subtitle {
+    font-size: var(--text-base);
+  }
+  
+  .top-box,
+  .table-box {
+    padding: var(--space-lg);
+    border-radius: var(--radius-xl);
+  }
+  
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+    .form-label {
+    text-align: left;
+    min-width: auto;
+    font-size: var(--text-lg);
+  }  .form-input,
+  .form-select,
+  .credit-hours-input {
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .credit-hours-input {
+    display: flex; /* Ensure flexbox is preserved on mobile */
+    margin: 0; /* Remove centering to match other inputs */
+  }
+  
+  .button-group {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+  
+  .course-table th,
+  .course-table td {
+    padding: var(--space-md) var(--space-sm);
+    font-size: var(--text-sm);
+  }
+    .gpa-display {
+    max-width: 100%;
+  }
+  
+  .modal-content {
+    margin: var(--space-lg);
+    padding: var(--space-xl) var(--space-xl);
+    border-radius: var(--radius-xl);
+    width: calc(100% - 2 * var(--space-lg));
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-md);
+  }
+  
+  /* Improved modal styling for small screens */
+  .modal-content {
+    margin: var(--space-md);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    width: calc(100% - 2 * var(--space-md));
+  }
+  
+  .course-table th:first-child,
+  .course-table td:first-child {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+    /* Additional fixes for credit hours input on smaller screens */
+  .form-input,
+  .form-select,
+  .credit-hours-input {
+    height: 45px; /* Slightly smaller height for better mobile fit */
+    padding: var(--space-sm) var(--space-md); /* Reduce padding for smaller screens */
+  }
+  
+  .credit-hours-number {
+    min-width: 30px; /* Ensure number remains visible */
+    font-size: calc(var(--text-base) - 1px); /* Slightly smaller font */
+    padding: var(--space-sm); /* Reduce padding */
+  }
+  
+  .credit-arrow {
+    width: 36px; /* Slightly smaller on very small screens */
+    min-width: 36px;
+  }
+  
+  .gpa-value {
+    font-size: var(--text-3xl);
+  }
+  
+  /* Adjust remove button on small screens */
+  .remove-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Accessibility - Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+    background-attachment: local;
+  }
+  
+  .credit-hours-number.sliding-out-left,
+  .credit-hours-number.sliding-out-right,
+  .credit-hours-number.sliding-in-left,
+  .credit-hours-number.sliding-in-right,
+  .credit-hours-number.shake,
+  .credit-hours-number.pulse {
+    animation: none;
+    transition: none;
+  }
+  
+  .top-box,
+  .table-box,
+  .gpa-display,
+  .form-input,
+  .form-select,
+  .btn-primary,
+  .btn-secondary {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Enhanced Mobile Glassmorphism */
+@media (max-width: 480px) {
+  .top-box,
+  .table-box,
+  .gpa-display {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+  }    .form-input,
+  .form-select,
+  .credit-hours-input {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    width: 100%;
+  }
+    
+  .credit-arrow {
+    width: 40px;
+    min-width: 40px; /* Ensure fixed width on mobile */
+    flex-shrink: 0; /* Prevent arrows from shrinking */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1; /* Maintain square shape */
+  }
+    .paste-btn {
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+  }
+  
+  /* Ensure remove button remains transparent on all device sizes */
+  .remove-btn {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .top-box,
+  .table-box,
+  .gpa-display {
+    background: var(--white);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 2px solid var(--border-color);
+  }
+  
+  .form-input,
+  .form-select,
+  .credit-hours-input {
+    background: var(--white);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 2px solid var(--border-color);
+  }
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--primary-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus States */
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.form-input:focus-visible,
+.form-select:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  .btn-primary,
+  .btn-secondary,
+  .remove-btn {
+    display: none;
+  }
+  
+  .container {
+    padding: 0;
+    max-width: none;
+  }
+  
+  .top-box,
+  .table-box,
+  .gpa-display {
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+  }
+}
+
+/* Grade Dropdown Input Styling */
+.grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+  flex: 1;
+  min-width: 200px;
+  height: 50px;
+  padding: var(--space-md) var(--space-lg);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 550;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-color);
+  transition: var(--transition-base);
+  outline: none;
+  box-sizing: border-box;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.03),
+    0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex; /* To align text and arrow */
+  justify-content: center; /* Center content like other inputs */
+  align-items: center;
+  width: 100%; /* Take full width of its container */
+}
+
+.grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger:focus,
+.grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger:hover {
+  border-color: rgba(255, 121, 85, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.15);
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.grade-dropdown-input-text {
+  flex-grow: 1;
+  text-align: center;
+  font-weight: 550;
+  color: var(--text-color);
+  width: 100%; /* Ensure the text container takes full width */
+  display: flex;
+  justify-content: center; /* Center the text */
+}
+
+.grade-dropdown-input-mode .grade-dropdown-arrow {
+  margin-left: var(--space-md); /* Increased spacing */
+}
+
+/* Remove default button styling for the trigger in input mode */
+.grade-dropdown-trigger.form-input-style-trigger {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: transparent; /* Overridden by specific mode style but good default */
+  border: none; /* Overridden by specific mode style */
+  padding: 0; /* Overridden by specific mode style */
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex; /* Default for non-input mode */
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Modal Styles - Single definition to avoid conflicts */
+/* Modal Styles - Main container */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999999; /* Extremely high z-index to ensure it's above everything */
+  padding: 32px;
+  /* Ensure modal covers everything */
+  margin: 0;
+  box-sizing: border-box;
+  pointer-events: auto;
+  overflow: auto;
+  /* Animation properties */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.modal-overlay.modal-visible {
+  opacity: 1;
+  visibility: visible;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Prevent body scrolling when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: var(--radius-2xl);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  /* Add shadow for better visibility */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  /* Animation and transform */
+  transform: translateY(0);
+  transition: transform 0.3s var(--ease-back);
+  margin: 0 auto;
+  padding: 0;
+  animation: slideUp 0.3s var(--ease-back);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+  padding: var(--space-xl) var(--space-2xl) var(--space-md);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  padding: var(--space-xs);
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: var(--space-sm) var(--space-2xl) var(--space-xl); /* Adjusted top padding */
+}
+
+.modal-description {
+  margin-bottom: var(--space-lg);
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.textarea-container {
+  position: relative;
+  margin-bottom: var(--space-sm);
+  width: 100%;
+}
+
+/* Import and Paste Button Styles - Enhanced with Glassmorphism Elements */
+.import-btn,
+.paste-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.import-btn::before,
+.paste-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: var(--transition-slow);
+}
+
+.import-btn:hover::before,
+.paste-btn:hover::before {
+  left: 100%;
+}
+
+.import-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.import-btn:active {
+  transform: translateY(0);
+}
+
+/* Updated Paste button styling - Glassmorphism */
+.paste-btn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: rgba(255, 255, 255, 0.25); /* Glassmorphism background */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Thin border */
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md); /* Bigger button with better padding */
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+  font-size: var(--text-sm); /* Slightly bigger font */
+  color: var(--text-secondary);
+  transition: var(--transition-base);
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.paste-btn:hover {
+  background: rgba(255, 255, 255, 0.35); /* Enhanced glassmorphism on hover */
+  border-color: rgba(255, 121, 85, 0.3); /* Primary color border on hover */
+  color: var(--primary-color); /* Primary color text on hover */
+  transform: translateY(-1px);
+}
+
+.paste-btn svg {
+  width: 14px;
+  height: 14px;
+  margin-right: var(--space-xs);
+}
+
+/* Grade Dropdown Styling */
+.grade-dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%; /* Make the dropdown take the full width of its container */
+}
+
+.grade-dropdown-input-mode {
+  width: 100%; /* Ensure input mode takes full width */
+  display: block; /* Change from inline-block to block for full width */
+}
+
+.grade-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--gray-200);
+  color: var(--gray-800);
+  border: none;
+  border-radius: 50%;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-align: center;
+  position: relative;
+  padding: 0;
+  margin-left: 8px; /* Fixed distance from badge */
+}
+
+.grade-dropdown-trigger:hover {
+  background: var(--gray-300);
+}
+
+.grade-dropdown-trigger:active {
+  transform: translateY(0);
+}
+
+.grade-dropdown-trigger-compact {
+  min-width: auto;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  box-shadow: var(--shadow-xs);
+}
+
+.grade-dropdown-text {
+  flex-shrink: 0;
+}
+
+.grade-dropdown-arrow {
+  transition: var(--transition-base);
+  flex-shrink: 0;
+  width: 8px; /* Smaller arrow */
+  height: 8px; /* Smaller arrow */
+}
+
+.grade-dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.grade-dropdown-menu {
+  position: absolute; /* Use absolute positioning within the portal */
+  z-index: 100000; /* High z-index to stay above other elements */
+  width: 165px; /* Slightly wider to accommodate the increased padding */
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden; /* Changed from visible to hidden for clean edges */
+  animation: dropdownSlideIn 0.25s var(--ease-out);
+  box-shadow: var(--shadow-md);
+  /* Force the dropdown to appear in its own stacking context to fix flickering issues */
+  isolation: isolate;
+  pointer-events: auto; /* Ensure clicks work properly */
+  margin-top: 8px; /* Slightly larger gap between trigger and dropdown */
+}
+
+/* Removed arrow pointer */
+
+.grade-dropdown-content {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: var(--space-md); /* Increased padding */
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-300) transparent;
+}
+
+.grade-dropdown-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.grade-dropdown-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.grade-dropdown-content::-webkit-scrollbar-thumb {
+  background-color: var(--gray-300);
+  border-radius: 3px;
+}
+
+.grade-dropdown-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  border: none;
+  border-radius: var(--radius-md); /* More rounded */
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  margin-bottom: 4px; /* Slightly increased spacing */
+  color: white !important;
+  height: 36px; /* Slightly increased height for better touch targets */
+}
+
+.grade-dropdown-option:last-child {
+  margin-bottom: 0;
+}
+
+.grade-dropdown-option:hover {
+  transform: scale(1.02); /* Subtler scale effect */
+  box-shadow: var(--shadow-sm);
+  filter: brightness(1.05); /* Subtle brightness increase */
+}
+
+/* Fix for dropdown to stay above other elements and avoid flickering */
+.grade-dropdown-option:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* Behind the option */
+}
+
+.grade-dropdown-separator {
+  height: 1px;
+  background: var(--gray-200);
+  margin: 6px 12px; /* More spacing around separators */
+  border-radius: var(--radius-full); /* Rounded edges for separator */
+}
+
+@keyframes dropdownSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+    scale: 0.98;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    scale: 1;
+  }
+}
+
+/* Responsive Grade Dropdown */
+@media (max-width: 768px) {
+  .grade-dropdown-trigger {
+    min-width: 20px; /* Standardize size */
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    font-size: var(--text-xs);
+  }
+  
+  .grade-dropdown-option {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--text-xs);
+    height: 28px; /* Smaller height on mobile */
+  }
+  
+  .grade-dropdown-menu {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); /* Stronger shadow on mobile */
+    width: 140px; /* Slightly narrower on mobile */
+  }  .course-grade-badge {
+    min-width: 40px; /* Maintain consistent size */
+    width: 40px;
+    height: 28px;
+    padding: 0;
+    font-size: var(--text-xs);
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 480px) {
+  .grade-dropdown-menu {
+    width: 120px; /* Smaller dropdown menu */
+  }
+
+  .course-grade-badge {
+    min-width: 40px; /* Keep consistent across all screen sizes */
+    width: 40px;
+    height: 28px;
+    padding: 0;
+    font-size: var(--text-xs);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-lg) var(--space-md);
+    gap: var(--space-lg);
+  }
+  
+  .app-title {
+    font-size: var(--text-2xl);
+  }
+  
+  .app-subtitle {
+    font-size: var(--text-base);
+  }
+  
+  .top-box,
+  .table-box {
+    padding: var(--space-lg);
+    border-radius: var(--radius-xl);
+  }
+  
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+    .form-label {
+    text-align: left;
+    min-width: auto;
+    font-size: var(--text-lg);
+  }  .form-input,
+  .form-select,
+  .credit-hours-input {
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .credit-hours-input {
+    display: flex; /* Ensure flexbox is preserved on mobile */
+    margin: 0; /* Remove centering to match other inputs */
+  }
+  
+  .button-group {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+  
+  .course-table th,
+  .course-table td {
+    padding: var(--space-md) var(--space-sm);
+    font-size: var(--text-sm);
+  }
+    .gpa-display {
+    max-width: 100%;
+  }
+  
+  .modal-content {
+    margin: var(--space-lg);
+    padding: var(--space-xl) var(--space-xl);
+    border-radius: var(--radius-xl);
+    width: calc(100% - 2 * var(--space-lg));
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-md);
+  }
+  
+  /* Improved modal styling for small screens */
+  .modal-content {
+    margin: var(--space-md);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    width: calc(100% - 2 * var(--space-md));
+  }
+  
+  .course-table th:first-child,
+  .course-table td:first-child {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+    /* Additional fixes for credit hours input on smaller screens */
+  .form-input,
+  .form-select,
+  .credit-hours-input {
+    height: 45px; /* Slightly smaller height for better mobile fit */
+    padding: var(--space-sm) var(--space-md); /* Reduce padding for smaller screens */
+  }
+  
+  .credit-hours-number {
+    min-width: 30px; /* Ensure number remains visible */
+    font-size: calc(var(--text-base) - 1px); /* Slightly smaller font */
+    padding: var(--space-sm); /* Reduce padding */
+  }
+  
+  .credit-arrow {
+    width: 36px; /* Slightly smaller on very small screens */
+    min-width: 36px;
+  }
+  
+  .gpa-value {
+    font-size: var(--text-3xl);
+  }
+  
+  /* Adjust remove button on small screens */
+  .remove-btn svg {
+    width: 16px;
+    height: 16px;
   }
 }
 

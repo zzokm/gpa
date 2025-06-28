@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import CourseForm from './components/CourseForm';
-import CourseTable from './components/CourseTable';
+import GroupedCourseTable from './components/GroupedCourseTable';
 import GPADisplay from './components/GPADisplay';
 import ImportModal from './components/ImportModal';
 import ThreeJSBackground from './components/ThreeJSBackground';
@@ -30,6 +30,20 @@ const App: React.FC = () => {
     show: false,
     message: ''
   });
+  
+  // Clear all courses and remove from local storage
+  const clearAllCourses = useCallback(() => {
+    setCourses([]);
+    setSaveNotification({
+      show: true,
+      message: 'All courses cleared!'
+    });
+    
+    // Hide notification after a delay
+    setTimeout(() => {
+      setSaveNotification(prev => ({...prev, show: false}));
+    }, 1500);
+  }, []);
 
   const addCourse = useCallback((course: Course) => {
     // Auto-generate course name if not provided
@@ -37,28 +51,52 @@ const App: React.FC = () => {
     setCourses(prev => [...prev, { 
       ...course, 
       name: courseName,
-      id: Date.now().toString() 
+      id: Date.now().toString(),
+      isImported: false // Mark as manually added
     }]);
   }, [courses.length]);
+  
+  // Update course grade
+  const updateCourseGrade = useCallback((courseId: string, grade: Grade) => {
+    setCourses(prev => prev.map(course => 
+      course.id === courseId 
+        ? { ...course, grade } 
+        : course
+    ));
+  }, []);
+  
+  // New function to update credit hours
+  const updateCreditHours = useCallback((courseId: string, hours: number) => {
+    setCourses(prev => prev.map(course => 
+      course.id === courseId 
+        ? { ...course, hours } 
+        : course
+    ));
+    
+    // Show brief notification
+    setSaveNotification({
+      show: true,
+      message: 'Credit hours updated!'
+    });
+    
+    // Hide notification after a delay
+    setTimeout(() => {
+      setSaveNotification(prev => ({...prev, show: false}));
+    }, 1500);
+  }, []);
+
   const removeCourse = useCallback((id: string) => {
     setCourses(prev => prev.filter(course => course.id !== id));
   }, []);
 
-  const updateCourseGrade = useCallback((id: string, newGrade: Grade) => {
-    setCourses(prev => prev.map(course => 
-      course.id === id ? { ...course, grade: newGrade } : course
-    ));
-  }, []);
-
   const importCourses = useCallback((importedCourses: Course[]) => {
-    const coursesWithIds = importedCourses.map((course, index) => ({
+    const coursesWithIds = importedCourses.map((course) => ({
       ...course,
-      name: course.name.trim() || `Course ${courses.length + index + 1}`,
       id: Date.now().toString() + Math.random().toString()
     }));
-    setCourses(prev => [...prev, ...coursesWithIds]);
+    setCourses(coursesWithIds);
     setShowImportModal(false);
-  }, [courses.length]);
+  }, []);
   // Save courses to localStorage whenever they change
   useEffect(() => {
     try {
@@ -96,6 +134,9 @@ const App: React.FC = () => {
     }
   }, [courses]);
 
+  // The default background color is now handled via CSS in index.css
+  // This ensures the color is applied immediately during page load without flickering
+
   const gpa = calculateGPA(courses);
   return (
     <>      <Container className="container">
@@ -112,18 +153,20 @@ const App: React.FC = () => {
         <CourseForm
           onAddCourse={addCourse}
           onShowImport={() => setShowImportModal(true)}
-        />        <CourseTable
+        />        <GroupedCourseTable
           courses={courses}
           onRemoveCourse={removeCourse}
           onUpdateGrade={updateCourseGrade}
+          onUpdateCreditHours={updateCreditHours}
+          onClearCourses={clearAllCourses}
         />
 
-        <GPADisplay gpa={gpa} />
-
+        <GPADisplay gpa={gpa} />        {/* The ImportModal is now using a portal, so it will render at body level */}
         <ImportModal
           show={showImportModal}
           onHide={() => setShowImportModal(false)}
           onImport={importCourses}
+          currentCourses={courses}
         />
       </Container>
 
