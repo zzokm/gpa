@@ -6,7 +6,7 @@ import GradeDropdown from './GradeDropdown';
 import EnhancedRotatingNumberInput from './RotatingNumberInput';
 
 // Import course data for autocomplete
-import courseData from '../../docs/Courses.json';
+import courseData from '../../data/Courses.json';
 
 // Interface for course suggestion
 interface CourseSuggestion {
