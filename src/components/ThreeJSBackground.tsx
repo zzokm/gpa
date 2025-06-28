@@ -32,17 +32,18 @@ const ThreeJSBackground: React.FC = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));    // Create uniforms for blurred color regions (66% white, 33% orange)
     const uniforms = {
-      uTime: { value: 10 },
+      uTime: { value: 50 },
       uOrangeColor: { value: new THREE.Color('#ffe0d8') }, // Brighter orange accent
       uWhiteColor: { value: new THREE.Color('#f9f9f9') }, // Dominant white
-      uWhiteThreshold: { value: 0.50 }, // Increased white coverage to create smaller orange patches
-      uOrangeThreshold: { value: 0.50 }, // Adjusted threshold for tighter transitions
-      uBlurAmount: { value: 0.3 }, // Reduced blur for tighter, more defined patches
-      uVortexStrength: { value: 0.33 }, // Increased for more scattered effect
-      uSpeed: { value: 0.3 }, // Slightly faster for more dynamic patterns
-      uNoiseIntensity: { value: 0.7 }, // Increased noise for more scattered smaller patches
-      uBoundaryWave: { value: 0.25 }, // Enhanced boundary distortion for more complex patterns
-      uScatterFactor: { value: 3.5 }, // New parameter to control scattering of orange patches
+      uWhiteThreshold: { value: 0.55 }, // Increased white coverage to create smaller orange patches
+      uOrangeThreshold: { value: 0.45 }, // Adjusted threshold for tighter transitions
+      uBlurAmount: { value: 0.2 }, // Further reduced blur for smaller, more defined patches
+      uVortexStrength: { value: 0.38 }, // Increased for more scattered effect
+      uSpeed: { value: 0.5 }, // Slightly faster for more dynamic patterns
+      uNoiseIntensity: { value: 0.85 }, // Increased noise for more scattered smaller patches
+      uBoundaryWave: { value: 0.28 }, // Enhanced boundary distortion for more complex patterns
+      uScatterFactor: { value: 5.2 }, // Significantly increased to create smaller, more frequent patterns
+      uMicroPatchesFrequency: { value: 7.5 }, // New parameter for micro-patches frequency
     };
 
     // Create shader material
@@ -66,6 +67,7 @@ const ThreeJSBackground: React.FC = () => {
         uniform float uNoiseIntensity;
         uniform float uBoundaryWave;
         uniform float uScatterFactor;
+        uniform float uMicroPatchesFrequency;
         varying vec2 vUv;
         
         // Simplified noise function for boundary distortion
@@ -95,7 +97,7 @@ const ThreeJSBackground: React.FC = () => {
           return 130.0 * dot(m, g);
         }
         
-        // Flow transformation with enhanced scattering for smaller, more distributed patterns
+        // Flow transformation with enhanced scattering for much smaller, more frequent patterns
         vec2 flowEffect(vec2 uv, float strength, float time, float scatter) {
           // Create directional flow that moves content off-screen
           // This prevents circular accumulation by using a consistent flow direction
@@ -103,17 +105,21 @@ const ThreeJSBackground: React.FC = () => {
           // Base UV coordinate
           vec2 flowUv = uv;
           
-          // Higher frequency wave patterns for smaller, more scattered patches
-          flowUv.x += sin(uv.y * scatter + time * 0.2) * strength * 0.15;
-          flowUv.y += cos(uv.x * (scatter - 1.0) + time * 0.3) * strength * 0.1;
+          // Multiple layers of high frequency wave patterns for many small scattered patches
+          flowUv.x += sin(uv.y * scatter * 1.2 + time * 0.22) * strength * 0.12;
+          flowUv.y += cos(uv.x * (scatter - 0.5) + time * 0.33) * strength * 0.09;
           
-          // Multiple layers of smaller wave patterns for increased scattering
-          flowUv.x += sin(uv.y * scatter * 1.5 - time * 0.15) * strength * 0.08;
-          flowUv.y += cos(uv.x * scatter * 1.2 + time * 0.25) * strength * 0.07;
+          // Additional layers of even smaller wave patterns for micro-scattering
+          flowUv.x += sin(uv.y * scatter * 2.3 - time * 0.17) * strength * 0.07;
+          flowUv.y += cos(uv.x * scatter * 2.0 + time * 0.28) * strength * 0.06;
           
-          // Add secondary flow movement to prevent static areas
-          flowUv.x += sin(time * 0.2) * strength * 0.05;
-          flowUv.y += cos(time * 0.3) * strength * 0.03;
+          // Ultra-fine detail layer for tiny patches
+          flowUv.x += sin(uv.y * scatter * 3.8 + time * 0.11) * strength * 0.04;
+          flowUv.y += cos(uv.x * scatter * 3.5 - time * 0.14) * strength * 0.035;
+          
+          // Add dynamic flow movement to prevent static areas and create more variation
+          flowUv.x += sin(time * 0.22 + uv.x * 1.5) * strength * 0.04;
+          flowUv.y += cos(time * 0.31 + uv.y * 1.3) * strength * 0.03;
           
           return flowUv;
         }
@@ -122,55 +128,71 @@ const ThreeJSBackground: React.FC = () => {
           // Apply enhanced flowing transformation with scatter factor for more distributed patterns
           vec2 distortedUv = flowEffect(vUv, uVortexStrength, uTime * uSpeed, uScatterFactor);
           
-          // Create continuously moving boundary noise with higher frequencies for smaller patches
+          // Create continuously moving boundary noise with much higher frequencies for smaller patches
           float boundaryNoise = snoise(vec2(
-            distortedUv.x * 4.5 + uTime * uSpeed * 0.3, 
-            distortedUv.y * 4.5 - uTime * uSpeed * 0.25
+            distortedUv.x * 6.5 + uTime * uSpeed * 0.32, 
+            distortedUv.y * 6.8 - uTime * uSpeed * 0.28
           )) * uBoundaryWave;
           
-          // Higher frequency detail noise for finer grain patterns
+          // Higher frequency detail noise for much finer grain patterns
           float detailNoise = snoise(vec2(
-            distortedUv.x * 9.0 + uTime * uSpeed * 0.15,
-            distortedUv.y * 9.0 - uTime * uSpeed * 0.2
+            distortedUv.x * 12.5 + uTime * uSpeed * 0.18,
+            distortedUv.y * 13.0 - uTime * uSpeed * 0.22
           )) * uNoiseIntensity * 0.5;
           
           // Add scattered high-frequency noise to create smaller, more distributed patches
           float extraNoise = snoise(vec2(
-            distortedUv.x * 15.0 - uTime * uSpeed * 0.1,
-            distortedUv.y * 13.0 + uTime * uSpeed * 0.12
+            distortedUv.x * 22.0 - uTime * uSpeed * 0.12,
+            distortedUv.y * 20.0 + uTime * uSpeed * 0.14
           )) * uNoiseIntensity * 0.3;
           
           // Additional scattered micro-detail noise layer
           float microNoise = snoise(vec2(
-            distortedUv.x * 20.0 + uTime * uSpeed * 0.05,
-            distortedUv.y * 18.0 - uTime * uSpeed * 0.08
+            distortedUv.x * 28.0 + uTime * uSpeed * 0.06,
+            distortedUv.y * 26.0 - uTime * uSpeed * 0.09
           )) * uNoiseIntensity * 0.2;
+          
+          // New ultra-fine micro patch layer for tiny frequent details
+          float microPatchNoise = snoise(vec2(
+            distortedUv.x * uMicroPatchesFrequency * 5.0 - uTime * uSpeed * 0.04,
+            distortedUv.y * uMicroPatchesFrequency * 4.8 + uTime * uSpeed * 0.05
+          )) * uNoiseIntensity * 0.15;
           
           // Define the main gradient with enhanced scatter noise patterns
           // Use scattered noise patterns with different frequencies to create smaller, distributed orange patches
-          float mainGradient = distortedUv.y + boundaryNoise * 0.7 + detailNoise * 0.6 + extraNoise * 0.4 + microNoise * 0.3;
+          float mainGradient = distortedUv.y + boundaryNoise * 0.6 + detailNoise * 0.5 + extraNoise * 0.35 + microNoise * 0.25 + microPatchNoise * 0.3;
           
           // Create multiple sub-gradients at different frequencies for scattered patches
-          float scatterGradient1 = mainGradient + microNoise * 0.8 - detailNoise * 0.4;
-          float scatterGradient2 = mainGradient - extraNoise * 0.6 + boundaryNoise * 0.5;
-          float scatterGradient3 = mainGradient + (sin(distortedUv.x * 15.0) * 0.03) - (cos(distortedUv.y * 12.0) * 0.02);
+          float scatterGradient1 = mainGradient + microNoise * 0.7 - detailNoise * 0.35 + microPatchNoise * 0.4;
+          float scatterGradient2 = mainGradient - extraNoise * 0.5 + boundaryNoise * 0.45 - microPatchNoise * 0.3;
+          float scatterGradient3 = mainGradient + (sin(distortedUv.x * 25.0) * 0.025) - (cos(distortedUv.y * 22.0) * 0.02);
+          float scatterGradient4 = mainGradient - microPatchNoise * 0.6 + extraNoise * 0.25;
+          float scatterGradient5 = mainGradient + (cos(distortedUv.x * 40.0 + uTime * 0.1) * 0.015);
           
-          // Calculate transition boundary with tighter blur control
+          // Calculate transition boundary with tighter blur control for smaller patches
           float transitionCenter = uOrangeThreshold;
           float blurRadius = uBlurAmount;
           
-          // Create multiple transition layers at different frequencies for scattered orange patches
+          // Create multiple transition layers at different frequencies for many tiny orange patches
           float blurFactor1 = smoothstep(transitionCenter - blurRadius, transitionCenter + blurRadius, mainGradient);
-          float blurFactor2 = smoothstep(transitionCenter - blurRadius * 0.7, transitionCenter + blurRadius * 0.7, scatterGradient1);
-          float blurFactor3 = smoothstep(transitionCenter - blurRadius * 1.0, transitionCenter + blurRadius * 1.0, scatterGradient2);
-          float blurFactor4 = smoothstep(transitionCenter - blurRadius * 0.5, transitionCenter + blurRadius * 0.5, scatterGradient3);
-          float blurFactor5 = smoothstep(transitionCenter - blurRadius * 0.3, transitionCenter + blurRadius * 0.3, mainGradient + microNoise * 0.7);
+          float blurFactor2 = smoothstep(transitionCenter - blurRadius * 0.6, transitionCenter + blurRadius * 0.6, scatterGradient1);
+          float blurFactor3 = smoothstep(transitionCenter - blurRadius * 0.8, transitionCenter + blurRadius * 0.8, scatterGradient2);
+          float blurFactor4 = smoothstep(transitionCenter - blurRadius * 0.4, transitionCenter + blurRadius * 0.4, scatterGradient3);
+          float blurFactor5 = smoothstep(transitionCenter - blurRadius * 0.25, transitionCenter + blurRadius * 0.25, mainGradient + microNoise * 0.6);
+          float blurFactor6 = smoothstep(transitionCenter - blurRadius * 0.3, transitionCenter + blurRadius * 0.35, scatterGradient4);
+          float blurFactor7 = smoothstep(transitionCenter - blurRadius * 0.2, transitionCenter + blurRadius * 0.2, scatterGradient5);
           
-          // Combine blur factors with weighted distribution to create scattered patches
-          float combinedBlur = (blurFactor1 * 0.25 + blurFactor2 * 0.2 + blurFactor3 * 0.2 + blurFactor4 * 0.15 + blurFactor5 * 0.2);
+          // Combine blur factors with weighted distribution to create many small scattered patches
+          float combinedBlur = (blurFactor1 * 0.15 + blurFactor2 * 0.15 + blurFactor3 * 0.15 + 
+                               blurFactor4 * 0.15 + blurFactor5 * 0.15 + blurFactor6 * 0.15 + blurFactor7 * 0.1);
           
-          // Apply additional scattered noise patterns to break up large areas
-          float noisyBlur = combinedBlur + (microNoise * uBlurAmount * 0.15) + (extraNoise * uBlurAmount * 0.1);
+          // Apply additional scattered micro noise patterns to break up into many tiny areas
+          float noisyBlur = combinedBlur + (microNoise * uBlurAmount * 0.12) + (extraNoise * uBlurAmount * 0.08) + 
+                            (microPatchNoise * uBlurAmount * 0.15);
+                            
+          // High frequency detail breakup for tiny patches
+          noisyBlur += sin(distortedUv.x * 50.0 + uTime * 0.07) * sin(distortedUv.y * 48.0 - uTime * 0.05) * uBlurAmount * 0.05;
+                            
           // Ensure proper clamping to prevent color artifacts
           noisyBlur = clamp(noisyBlur, 0.0, 1.0);
           
@@ -179,18 +201,24 @@ const ThreeJSBackground: React.FC = () => {
           
           // Enhance brightness of orange areas using noise patterns
           // This makes orange patches appear more vibrant
-          float brightnessFactor = (1.0 - noisyBlur) * 0.15; // Only brightens orange areas
+          float brightnessFactor = (1.0 - noisyBlur) * 0.18; // Only brightens orange areas
           finalColor += uOrangeColor * brightnessFactor;
           
-          // Add micro-texture variation within each color region
+          // Add ultra-fine micro-texture variation within each color region
           float textureNoise = snoise(vec2(
-            distortedUv.x * 18.0,
-            distortedUv.y * 16.0
-          )) * 0.04;
+            distortedUv.x * 32.0 + uTime * 0.05,
+            distortedUv.y * 28.0 - uTime * 0.06
+          )) * 0.035;
+          
+          // Secondary fine texture for even more detail
+          float secondaryTexture = snoise(vec2(
+            distortedUv.x * 48.0 - uTime * 0.03,
+            distortedUv.y * 42.0 + uTime * 0.04
+          )) * 0.025;
           
           // Apply more texture variation to orange regions for scattered effect
-          float orangeTextureIntensity = (1.0 - noisyBlur) * 0.7; // More texture in orange areas
-          finalColor = mix(finalColor, finalColor * (1.0 + textureNoise), 0.4 + orangeTextureIntensity * 0.2);
+          float orangeTextureIntensity = (1.0 - noisyBlur) * 0.8; // More texture in orange areas
+          finalColor = mix(finalColor, finalColor * (1.0 + textureNoise + secondaryTexture), 0.35 + orangeTextureIntensity * 0.25);
           
           // Subtle alpha variation for glassmorphism compatibility
           float alpha = 0.96 + microNoise * 0.02;
@@ -211,11 +239,12 @@ const ThreeJSBackground: React.FC = () => {
       uniforms: {
         ...uniforms,
         uTime: { value: uniforms.uTime.value + 5 }, // Offset time
-        uVortexStrength: { value: uniforms.uVortexStrength.value * 0.6 },
-        uBoundaryWave: { value: uniforms.uBoundaryWave.value * 0.8 },
-        uNoiseIntensity: { value: uniforms.uNoiseIntensity.value * 0.4 },
-        uBlurAmount: { value: uniforms.uBlurAmount.value * 1.1 }, // Slightly more blur on secondary layer
-        uScatterFactor: { value: uniforms.uScatterFactor.value * 0.9 }, // Slightly different scatter pattern for depth
+        uVortexStrength: { value: uniforms.uVortexStrength.value * 0.65 },
+        uBoundaryWave: { value: uniforms.uBoundaryWave.value * 0.85 },
+        uNoiseIntensity: { value: uniforms.uNoiseIntensity.value * 0.45 },
+        uBlurAmount: { value: uniforms.uBlurAmount.value * 1.05 }, // Slightly more blur on secondary layer
+        uScatterFactor: { value: uniforms.uScatterFactor.value * 0.95 }, // Slightly different scatter pattern for depth
+        uMicroPatchesFrequency: { value: uniforms.uMicroPatchesFrequency.value * 0.9 }, // Slightly different micro pattern
       },
       vertexShader: material.vertexShader,
       fragmentShader: material.fragmentShader,

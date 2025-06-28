@@ -30,16 +30,18 @@ const GPADisplay: React.FC<GPADisplayProps> = ({ gpa }) => {
       <div className="gpa-label">GPA</div>
       <div className="gpa-value">{gpa.toFixed(2)}</div>
       <div className="gpa-scale">out of 4.00</div>
-      <div 
-        className="gpa-assessment"
-        style={{ 
-          color: assessment.color,
-          textShadow: `0 0 10px ${assessment.color}33`,
-          backgroundColor: `${assessment.color}15`
-        }}
-      >
-        {assessment.text}
-      </div>
+      {gpa !== 0 && (
+        <div 
+          className="gpa-assessment"
+          style={{ 
+            color: assessment.color,
+            textShadow: `0 0 10px ${assessment.color}33`,
+            backgroundColor: `${assessment.color}15`
+          }}
+        >
+          {assessment.text}
+        </div>
+      )}
     </div>
   );
 };

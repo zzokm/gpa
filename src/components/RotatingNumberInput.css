@@ -592,3 +592,18 @@
     font-size: 0.9rem !important;
   }
 }
+
+/* Shake animation for limit indicators - no keyframes needed since we're doing it with JavaScript */
+.number-strip.shaking {
+  /* We'll handle the animation with JS for directional awareness */
+  position: relative;
+}
+
+/* No special styling for active number during shake animation */
+
+/* Add a subtle pulse effect to the arrows when at limits */
+.glass-pane-left:active .arrow-button svg,
+.glass-pane-right:active .arrow-button svg {
+  transform: scale(0.9);
+  transition: transform 0.1s ease;
+}

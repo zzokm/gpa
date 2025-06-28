@@ -165,92 +165,74 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
       window.clearTimeout(quickUpdateTimer);
       window.clearTimeout(finalUpdateTimer);
     };
-  }, [value, numbers, min, max]); // Added min/max to dependencies for better handling of range changes  // Enhanced function to create a seamless wrap-around animation effect
-  const animateWrapAround = (direction: 'left' | 'right') => {
+  }, [value, numbers, min, max]); // Added min/max to dependencies for better handling of range changes
+
+  // Improved shake animation function with guaranteed return to exact center
+  const animateShake = (direction: 'left' | 'right') => {
     if (!stripRef.current) return;
     
-    // Get precise measurements for the animation
-    const containerElement = stripRef.current.closest('.perspective-container') as HTMLElement;
-    const containerWidth = containerElement?.offsetWidth || 200;
+    // Calculate and ensure we start from the exact center position
+    updateDisplay();
     
-    // Get responsive width using the enhanced function
-    const getResponsiveWidth = () => {
-      const screenWidth = Math.min(
-        window.innerWidth || Infinity,
-        document.documentElement.clientWidth || Infinity,
-        document.body.clientWidth || Infinity
-      );
-      
-      if (screenWidth <= 360) return 35;
-      if (screenWidth <= 480) return 40;
-      return 50;
-    };
+    // Capture the exact centered position as our reference point
+    const initialCenterPosition = stripRef.current.style.getPropertyValue('--x-offset');
     
-    const itemWidth = getResponsiveWidth();
-    const totalNumbers = (max - min + 1);
-    const totalWidth = totalNumbers * itemWidth;
+    // Remove any existing animation classes first
+    stripRef.current.classList.remove('animating', 'shaking');
     
-    // Calculate animation distance for smooth wrap-around
-    const animationDistance = direction === 'left' 
-      ? -(totalWidth + containerWidth) // Move far left for 3→0 animation
-      : (totalWidth + containerWidth);  // Move far right for 0→3 animation
-    
-    // Remove animation class first
-    stripRef.current.classList.remove('animating');
-    
-    // Phase 1: Instantly position at start of animation
-    stripRef.current.style.transition = 'none';
-    stripRef.current.style.setProperty('--x-offset', `${animationDistance}px`);
-    stripRef.current.style.transform = `translateY(-50%) translateX(${animationDistance}px)`;
-    
-    // Force reflow
+    // Force reflow to ensure clean animation state
     stripRef.current.offsetHeight;
     
-    // Phase 2: Add animation class and animate to final position
-    requestAnimationFrame(() => {
-      if (stripRef.current) {
-        stripRef.current.classList.add('animating');
-        stripRef.current.style.transition = 'transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        
-        // Short delay then animate to final position
-        setTimeout(() => {
-          updateDisplay(); // This calculates and sets the correct final position
+    // Add shaking class for the animation
+    stripRef.current.classList.add('shaking');
+    
+    // Apply the shake animation with CSS
+    stripRef.current.style.transition = 'transform 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97)';
+    
+    // Sequence of small movements for directional shake effect
+    // Direction-aware - stronger initial movement in the direction user tried to go
+    const shakeMultiplier = direction === 'left' ? -1 : 1;
+    const shakeSequence = [
+      { offset: 5 * shakeMultiplier, delay: 0 },     // Stronger in the attempted direction
+      { offset: -3.5 * shakeMultiplier, delay: 80 },  // Opposite reaction
+      { offset: 2 * shakeMultiplier, delay: 160 },   // Small follow-through
+      { offset: -1 * shakeMultiplier, delay: 240 },  // Small counter-reaction
+      { offset: 0, delay: 300 }                     // Return to center
+    ];
+    
+    // Execute the shake sequence
+    shakeSequence.forEach(step => {
+      setTimeout(() => {
+        if (stripRef.current) {
+          // Use the initial center position as the base for calculations
+          const numericBaseOffset = parseFloat(initialCenterPosition || '0px');
+          const shakeOffset = `${numericBaseOffset + step.offset}px`;
           
-          // Add subtle bounce effect
-          setTimeout(() => {
-            if (stripRef.current) {
-              stripRef.current.style.transition = 'transform 0.15s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-              
-              // Get current final position
-              const currentOffset = stripRef.current.style.getPropertyValue('--x-offset') || '0px';
-              const numericOffset = parseFloat(currentOffset);
-              
-              // Small overshoot effect
-              const overshoot = direction === 'left' ? -4 : 4;
-              const overshootOffset = `${numericOffset + overshoot}px`;
-              
-              stripRef.current.style.setProperty('--x-offset', overshootOffset);
-              stripRef.current.style.transform = `translateY(-50%) translateX(${overshootOffset})`;
-              
-              // Settle back to final position
-              setTimeout(() => {
-                if (stripRef.current) {
-                  stripRef.current.style.setProperty('--x-offset', currentOffset);
-                  stripRef.current.style.transform = `translateY(-50%) translateX(${currentOffset})`;
-                  
-                  // Clean up animation class
-                  setTimeout(() => {
-                    if (stripRef.current) {
-                      stripRef.current.classList.remove('animating');
-                      stripRef.current.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    }
-                  }, 150);
-                }
-              }, 120);
-            }
-          }, 80);
-        }, 25);
-      }
+          // Apply the offset for this step of the animation
+          stripRef.current.style.setProperty('--x-offset', shakeOffset);
+          stripRef.current.style.transform = `translateY(-50%) translateX(${shakeOffset})`;
+          
+          // When returning to center position
+          if (step.offset === 0) {
+            setTimeout(() => {
+              if (stripRef.current) {
+                // Remove animation class
+                stripRef.current.classList.remove('shaking');
+                
+                // Reset to normal transition
+                stripRef.current.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                
+                // First set exact center using the initial position
+                stripRef.current.style.setProperty('--x-offset', initialCenterPosition);
+                stripRef.current.style.transform = `translateY(-50%) translateX(${initialCenterPosition})`;
+                
+                // Then recalculate to ensure perfect positioning
+                updateDisplay();
+              }
+            }, 100);
+          }
+        }
+      }, step.delay);
     });
   };
 
@@ -259,10 +241,10 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
     
     let newValue = value - 1;
     
-    // Implement wrap-around logic
+    // No wrap-around logic, instead show shake animation at min limit
     if (newValue < min) {
-      newValue = max; // Cycle to maximum value when going below minimum
-      animateWrapAround('left'); // Apply special animation for wrap-around
+      animateShake('left'); // Apply directional shake animation to indicate min limit reached
+      return; // Don't update the value
     }
     
     onChange(newValue);
@@ -273,10 +255,10 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
     
     let newValue = value + 1;
     
-    // Implement wrap-around logic
+    // No wrap-around logic, instead show shake animation at max limit
     if (newValue > max) {
-      newValue = min; // Cycle to minimum value when exceeding maximum
-      animateWrapAround('right'); // Apply special animation for wrap-around
+      animateShake('right'); // Apply directional shake animation to indicate max limit reached
+      return; // Don't update the value
     }
     
     onChange(newValue);

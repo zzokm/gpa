@@ -122,12 +122,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Default body background color to match ThreeJS gradient */
-  background-color: #fcede9; /* Soft orange background that blends with ThreeJS gradient */
+  background-color: #ffe2da; /* Soft orange background that blends with ThreeJS gradient */
   margin: 0;
   padding: 0;
   overflow-x: hidden; /* Prevent horizontal scrolling */
 }
-
+ 
 img,
 picture,
 video,
@@ -170,8 +170,8 @@ select {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  /* Enhanced visibility on light background */
-  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));
+  /* Enhanced visibility on light background 
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.8));*/
 }
 
 .app-subtitle {
@@ -181,8 +181,8 @@ select {
   text-align: center;
   margin: var(--space-sm) 0 0 0;
   letter-spacing: 0.025em;
-  /* Enhanced visibility */
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  /* Enhanced visibility 
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);*/
 }
 
 /* Modern Card Components - Ultra-Enhanced Glassmorphism for Light Background */
