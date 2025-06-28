@@ -24,7 +24,7 @@ A modern, interactive GPA calculator web application designed specifically for F
 
 ## Live Demo
 
-You can try the calculator at: [http://zokm.me/gpa/](http://zokm.me/gpa/)
+You can try the calculator at: [https://zzokm.github.io/gpa/](https://zzokm.github.io/gpa/)
 
 ## How to Use
 
