@@ -15,9 +15,15 @@ interface CourseSuggestion {
   credit_hours: number;
 }
 
+// Function to check if a string contains both letters and at least one number
+const containsLettersAndNumbers = (str: string): boolean => {
+  return /[a-zA-Z]/.test(str) && /[0-9]/.test(str);
+}
+
 // Function to get all courses from the JSON structure
 const getAllCourses = (): CourseSuggestion[] => {
   const courses: CourseSuggestion[] = [];
+  const uniqueCourseSet = new Set<string>(); // For tracking duplicate courses by name and code
   
   try {
     // Extract courses from program requirements
@@ -26,11 +32,19 @@ const getAllCourses = (): CourseSuggestion[] => {
       
       coursesArray.forEach(course => {
         if (course && course.code && course.name && course.credit_hours !== undefined) {
-          courses.push({
-            code: course.code,
-            name: course.name,
-            credit_hours: course.credit_hours
-          });
+          // Create unique identifier for each course to prevent duplicates
+          const courseId = `${course.code}_${course.name}`;
+          
+          // Only add if we haven't seen this course before
+          if (!uniqueCourseSet.has(courseId)) {
+            uniqueCourseSet.add(courseId);
+            
+            courses.push({
+              code: course.code,
+              name: course.name,
+              credit_hours: course.credit_hours
+            });
+          }
         }
       });
     };
@@ -129,18 +143,177 @@ const CourseForm: React.FC<CourseFormProps> = ({
     };
   }, []);
 
+  // Calculate string similarity using Levenshtein Distance algorithm
+  // Returns a score from 0 (completely different) to 1 (perfect match)
+  const calculateLevenshteinSimilarity = (str1: string, str2: string): number => {
+    // Convert both strings to lowercase for case-insensitive comparison
+    str1 = str1.toLowerCase();
+    str2 = str2.toLowerCase();
+    
+    // For empty strings or exact matches, handle edge cases
+    if (str1 === str2) return 1; // Perfect match
+    if (str1.length === 0) return 0;
+    if (str2.length === 0) return 0;
+    
+    // Set max allowed edit distance based on string length
+    // 1 edit for short words (≤ 5 chars)
+    // 2 edits for medium words (6-9 chars)
+    // 3 edits for long words (≥ 10 chars)
+    const getMaxAllowedEdits = (length: number): number => {
+      if (length <= 5) return 1;
+      if (length <= 9) return 2;
+      return 3;
+    };
+    
+    // Calculate Levenshtein Distance matrix
+    const matrix: number[][] = [];
+    
+    // Initialize first row
+    for (let i = 0; i <= str2.length; i++) {
+      matrix[0] = matrix[0] || [];
+      matrix[0][i] = i;
+    }
+    
+    // Initialize first column
+    for (let i = 0; i <= str1.length; i++) {
+      matrix[i] = matrix[i] || [];
+      matrix[i][0] = i;
+    }
+    
+    // Fill the matrix
+    for (let i = 1; i <= str1.length; i++) {
+      for (let j = 1; j <= str2.length; j++) {
+        if (str1.charAt(i - 1) === str2.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1]; // No operation needed
+        } else {
+          // Minimum of three operations (insertion, deletion, substitution)
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1, // Substitution
+            Math.min(
+              matrix[i][j - 1] + 1,   // Insertion
+              matrix[i - 1][j] + 1    // Deletion
+            )
+          );
+        }
+      }
+    }
+    
+    // The final cell contains the Levenshtein distance
+    const distance = matrix[str1.length][str2.length];
+    
+    // Calculate maximum allowed edits based on shorter string length
+    const shorterLen = Math.min(str1.length, str2.length);
+    const maxAllowedEdits = getMaxAllowedEdits(shorterLen);
+    
+    // If distance exceeds max allowed edits, return 0 (no match)
+    if (distance > maxAllowedEdits) {
+      return 0;
+    }
+    
+    // For very short strings (1-2 chars), be extremely strict
+    if (shorterLen <= 2) {
+      return str1 === str2 ? 1 : 0;
+    }
+    
+    // Convert distance to similarity score (0-1)
+    // For perfect match: distance = 0, similarity = 1
+    // For maximum allowed edits: similarity ~ 0.7
+    // Formula: 1 - (distance / max(strings length))
+    const maxPossibleDistance = Math.max(str1.length, str2.length);
+    return Math.max(0, 1 - (distance / maxPossibleDistance));
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setCourseName(input);
     
     // Show suggestions after at least 2 characters
     if (input.length >= 2) {
-      const filteredSuggestions = allCourses.filter(course => 
-        course.code.toLowerCase().includes(input.toLowerCase()) ||
-        course.name.toLowerCase().includes(input.toLowerCase())
-      );
+      const inputLower = input.toLowerCase();
+      let matchedCourses: Array<{course: CourseSuggestion, score: number}> = [];
+      
+      // Check if input contains both letters and at least one number
+      const hasLettersAndNumbers = containsLettersAndNumbers(inputLower);
+      
+      // Search through all courses for matches
+      allCourses.forEach(course => {
+        // Check for direct substring matches
+        // Only suggest course codes if the input has both letters and numbers
+        const codeMatch = hasLettersAndNumbers ? 
+          course.code.toLowerCase().includes(inputLower) : 
+          false;
+          
+        const nameMatch = course.name.toLowerCase().includes(inputLower);
+        
+        // Check for fuzzy match in name or code
+        let fuzzyScore = 0;
+        if (!codeMatch && !nameMatch) {
+          // Split the course name into words and check each for fuzzy matching
+          const words = course.name.split(/\s+/).map(word => word.toLowerCase());
+          for (const word of words) {
+            if (word.length >= 3) { // Only check meaningful words
+              const similarity = calculateLevenshteinSimilarity(word, inputLower);
+              fuzzyScore = Math.max(fuzzyScore, similarity);
+            }
+          }
+          
+          // Also check code for fuzzy matching - but only if input has letters and numbers
+          if (hasLettersAndNumbers) {
+            const codeSimilarity = calculateLevenshteinSimilarity(course.code.toLowerCase(), inputLower);
+            fuzzyScore = Math.max(fuzzyScore, codeSimilarity);
+          }
+        }
+        
+        // Determine if this course should be included - using stricter threshold for fuzzy matches
+        // For Levenshtein, we need an even higher threshold since it's more precise
+        if (codeMatch || nameMatch || fuzzyScore > 0.85) { // Higher threshold for Levenshtein matching
+          // Calculate overall match score to determine display order
+          let score = 0;
+          
+          // Calculate ranking score
+          if (codeMatch) {
+            // Exact code match gets highest priority
+            score += 0.95;
+          }
+          if (nameMatch) {
+            // Exact name match gets high priority
+            score += 0.85;
+          }
+          
+          // Add fuzzy match score with proper weight
+          if (fuzzyScore > 0) {
+            // Weight fuzzy matches according to their quality
+            // Perfect Levenshtein matches (score=1) get higher weight than partial matches
+            const fuzzyWeight = fuzzyScore >= 0.95 ? 0.5 : 0.25;
+            score += fuzzyScore * fuzzyWeight;
+          }
+          
+          matchedCourses.push({ course, score });
+        }
+      });
+      
+      // Sort matches by score (highest to lowest)
+      matchedCourses.sort((a, b) => b.score - a.score);
+      
+      // Apply dynamic threshold based on best match
+      if (matchedCourses.length > 0) {
+        const bestScore = matchedCourses[0].score;
+        
+        // Keep only suggestions that are reasonably close to the best match
+        // If best match has score 0.95, only keep matches with score >= 0.76 (80% of best score)
+        // This prevents showing very poor matches when good matches exist
+        const threshold = Math.max(0.7, bestScore * 0.8);
+        matchedCourses = matchedCourses.filter(match => match.score >= threshold);
+        
+        // Still limit the total number of suggestions for better UX
+        matchedCourses = matchedCourses.slice(0, 6);
+      }
+      
+      // Extract just the course objects from the sorted results
+      const filteredSuggestions = matchedCourses.map(item => item.course);
+      
       setSuggestions(filteredSuggestions);
-      setShowSuggestions(true);
+      setShowSuggestions(filteredSuggestions.length > 0);
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
@@ -181,7 +354,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
               className="form-input"
               value={courseName}
               onChange={handleInputChange}
-              placeholder="Enter Course Code"
+              placeholder="Enter course name"
               onFocus={() => courseName.length >= 2 && setShowSuggestions(true)}
             />
             {showSuggestions && suggestions.length > 0 && (
