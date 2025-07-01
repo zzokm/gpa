@@ -99,6 +99,26 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
+/* === Critical Fix for Collapsed Elements === */
+/* This ensures collapsed elements cannot be clicked */
+.table-container.collapsed,
+.level-container.collapsed, 
+.term-container.collapsed {
+  pointer-events: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Ensure group headers remain clickable */
+.group-header {
+  pointer-events: auto !important;
+  visibility: visible !important;
+  position: relative !important;
+  height: auto !important;
+}
+
 /* === Animation Fixes === */
 /* Fix for double collapse animation */
 .table-container {

@@ -18,6 +18,27 @@
   --grade-cell-width: calc(var(--grade-badge-width) + var(--spacing-z) + var(--grade-dropdown-width));
 }
 
+/* Critical fix for collapsed sections - disable interactions */
+.table-container.collapsed .course-row,
+.level-container.collapsed .course-row,
+.term-container.collapsed .course-row {
+  pointer-events: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Ensure normal rows work properly */
+.course-table tbody tr.course-row {
+  pointer-events: auto;
+  visibility: visible;
+  position: relative;
+  height: auto;
+  opacity: 1;
+}
+
 /* Course table row container with fixed grid layout */
 .course-table tbody tr {
   display: grid;

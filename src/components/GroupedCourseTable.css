@@ -9,10 +9,79 @@
 }
 
 .table-container.expanded {
-  animation: expandAnimation 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
   display: block;
-  /* Let the animation handle other properties */
   pointer-events: auto;
+  visibility: visible;
+  overflow: visible;
+}
+
+/* Expanding state - transitional */
+.table-container.expanding {
+  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  display: block;
+  pointer-events: none; /* Still prevent interaction during animation */
+  overflow: hidden;
+}
+
+/* Collapsing state - transitional */
+.table-container.collapsing {
+  animation: collapseAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  pointer-events: none;
+  overflow: hidden;
+  display: block;
+}
+
+/* Final collapsed state */
+.table-container.collapsed {
+  pointer-events: none;
+  visibility: hidden;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  display: block;
+  position: absolute; /* Take out of the flow to prevent any interaction */
+}
+
+/* Critical fix for level and term containers with specific states */
+.level-container.expanded,
+.term-container.expanded {
+  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.level-container.expanding,
+.term-container.expanding {
+  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  pointer-events: none;
+}
+
+.level-container.collapsing,
+.term-container.collapsing {
+  animation: collapseAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  pointer-events: none;
+}
+
+.level-container.collapsed,
+.term-container.collapsed {
+  pointer-events: none;
+  visibility: hidden;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute; /* Take out of the flow to prevent any interaction */
+  clip-path: polygon(0 0, 0 0, 0 0); /* Hide from interaction */
+  clip: rect(0, 0, 0, 0); /* Legacy clip */
+  user-select: none;
+  touch-action: none;
+}
+
+/* Ensure group headers are still clickable */
+.group-header {
+  pointer-events: auto !important;
+  visibility: visible !important;
+  position: relative !important;
 }
 
 /* ===== Variables for responsive sizing ===== */
@@ -199,19 +268,27 @@
   0% {
     max-height: 0;
     opacity: 0;
-    transform: translateY(-15px); /* Increased distance */
+    transform: translateY(-15px);
     visibility: visible;
   }
-  20% {
-    opacity: 0.5;
-    max-height: 100px; /* Gradual height increase */
+  5% {
+    opacity: 0.1;
+    max-height: 20px;
   }
-  60% {
+  20% {
+    opacity: 0.4;
+    max-height: 100px;
+  }
+  40% {
+    opacity: 0.6;
+    max-height: 500px;
+  }
+  70% {
     opacity: 0.9;
-    max-height: 1000px;
+    max-height: 1500px;
   }
   100% {
-    max-height: 2000px;
+    max-height: 2500px; /* Increased to ensure enough space for all content */
     opacity: 1;
     transform: translateY(0);
     visibility: visible;
@@ -220,31 +297,58 @@
 
 @keyframes collapseAnimation {
   0% {
-    max-height: 2000px;
+    max-height: 2500px;
     opacity: 1;
     transform: translateY(0);
     visibility: visible;
+    position: relative;
   }
-  20% {
+  10% {
+    opacity: 0.95;
+    visibility: visible;
+    position: relative;
+  }
+  30% {
     opacity: 0.8;
+    max-height: 1500px;
+    transform: translateY(-5px);
     visibility: visible;
+    position: relative;
   }
-  60% {
-    opacity: 0.2;
-    max-height: 100px; /* Gradual height reduction */
+  50% {
+    opacity: 0.6;
+    max-height: 500px;
+    transform: translateY(-8px);
     visibility: visible;
+    position: relative;
+  }
+  70% {
+    opacity: 0.3;
+    max-height: 200px;
+    transform: translateY(-10px);
+    visibility: visible;
+    position: relative;
+  }
+  90% {
+    opacity: 0.1;
+    max-height: 30px;
+    transform: translateY(-12px);
+    visibility: visible;
+    position: relative;
   }
   99% {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-15px);
+    max-height: 10px;
+    opacity: 0.01;
+    transform: translateY(-14px);
     visibility: visible;
+    position: relative;
   }
   100% {
     max-height: 0;
     opacity: 0;
     transform: translateY(-15px);
     visibility: hidden;
+    position: absolute;
   }
 }
 
@@ -252,9 +356,9 @@
 .level-container,
 .term-container {
   animation-fill-mode: forwards !important;
-  transition: max-height 0.6s cubic-bezier(0.19, 1, 0.22, 1), 
-              opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
-              transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: max-height 1s cubic-bezier(0.19, 1, 0.22, 1), 
+              opacity 0.9s cubic-bezier(0.19, 1, 0.22, 1), 
+              transform 0.9s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 /* ===== Level Group Styling ===== */
@@ -905,8 +1009,6 @@ body .level-container .term-group {
   opacity: 0;
   visibility: hidden;
   pointer-events: none; /* Disable all click events */
-  position: absolute;
-  z-index: -1; /* Move below other elements */
 }
 
 /* Only enable interactions when expanded */
@@ -924,4 +1026,140 @@ body .level-container .term-group {
   position: relative;
   z-index: auto;
   transition: opacity 0.2s var(--ease-out) 0.1s; /* Slight delay for better animation */
+}
+
+/* Enhanced animation effects */
+.table-container.expanding, 
+.table-container.collapsing,
+.level-container.expanding,
+.term-container.expanding,
+.level-container.collapsing,
+.term-container.collapsing {
+  will-change: opacity, transform, max-height; /* Optimize for animation */
+  backface-visibility: hidden; /* Reduce flickering */
+  transform-style: preserve-3d; /* Improve smoothness */
+}
+
+/* Add a subtle background flash to make transitions more noticeable */
+.table-container.expanding, 
+.level-container.expanding,
+.term-container.expanding {
+  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards,
+             highlightBg 1.2s ease-in-out;
+}
+
+.table-container.collapsing,
+.level-container.collapsing,
+.term-container.collapsing {
+  animation: collapseAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards,
+             highlightBg 1.2s ease-in-out;
+}
+
+@keyframes highlightBg {
+  0% { background-color: transparent; }
+  10% { background-color: rgba(255, 255, 255, 0.05); }
+  20% { background-color: rgba(255, 255, 255, 0.1); }
+  100% { background-color: transparent; }
+}
+
+/* Enhanced protection for interactive elements in collapsed containers */
+.table-container.collapsed button,
+.table-container.collapsed a,
+.table-container.collapsed input,
+.table-container.collapsed select,
+.table-container.collapsed [role="button"],
+.level-container.collapsed button,
+.level-container.collapsed a,
+.level-container.collapsed input,
+.level_container.collapsed select,
+.level-container.collapsed [role="button"],
+.term-container.collapsed button,
+.term-container.collapsed a,
+.term-container.collapsed input,
+.term-container.collapsed select,
+.term-container.collapsed [role="button"] {
+  pointer-events: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  z-index: -1 !important;
+}
+
+/* Also apply to transitional collapsing state */
+.table-container.collapsing button,
+.table-container.collapsing a,
+.table-container.collapsing input,
+.table-container.collapsing select,
+.table-container.collapsing [role="button"],
+.level-container.collapsing button,
+.level-container.collapsing a,
+.level-container.collapsing input,
+.level_container.collapsing select,
+.level-container.collapsing [role="button"],
+.term-container.collapsing button,
+.term-container.collapsing a,
+.term-container.collapsing input,
+.term-container.collapsing select,
+.term-container.collapsing [role="button"] {
+  pointer-events: none !important;
+}
+
+/* Create an interaction guard for collapsed containers */
+.table-container.collapsed::before,
+.level-container.collapsed::before,
+.term-container.collapsed::before,
+.table-container.collapsing::before,
+.level-container.collapsing::before,
+.term-container.collapsing::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  pointer-events: none; /* Allow clicks to pass through when animating */
+}
+
+/* Block all interaction in collapsed state */
+.table-container.collapsed::before,
+.level-container.collapsed::before,
+.term-container.collapsed::before {
+  pointer-events: auto; /* Block all interaction in fully collapsed state */
+}
+
+/* Full interaction blocker for collapsed groups */
+.interaction-blocker {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+  background: transparent !important;
+  cursor: default !important;
+}
+
+/* Extra protection for buttons in collapsed containers */
+.level-container.collapsed .remove-btn,
+.term-container.collapsed .remove-btn,
+.level-container.collapsing .remove-btn,
+.term-container.collapsing .remove-btn,
+.level-container.collapsed .info-btn,
+.term-container.collapsed .info-btn,
+.level-container.collapsing .info-btn,
+.term-container.collapsing .info-btn {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  z-index: -999 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  clip-path: polygon(0 0, 0 0, 0 0) !important;
 }
