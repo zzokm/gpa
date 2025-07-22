@@ -8,6 +8,7 @@ import ThreeJSBackground from './components/ThreeJSBackground';
 import Footer from './components/Footer';
 import { Course, Grade } from './types/Course';
 import { calculateGPA } from './utils/gradeUtils';
+import { processImportedHTML, mergeImportedCourses } from './utils/directImportHandler';
 
 // Local Storage key for saving courses
 const STORAGE_KEY = 'gpa-calculator-courses';
@@ -27,23 +28,10 @@ const App: React.FC = () => {
   // Initialize courses from localStorage
   const [courses, setCourses] = useState<Course[]>(loadCoursesFromStorage);
   const [showImportModal, setShowImportModal] = useState(false);
-  const [saveNotification, setSaveNotification] = useState<{show: boolean, message: string}>({
-    show: false,
-    message: ''
-  });
   
   // Clear all courses and remove from local storage
   const clearAllCourses = useCallback(() => {
     setCourses([]);
-    setSaveNotification({
-      show: true,
-      message: 'All courses cleared!'
-    });
-    
-    // Hide notification after a delay
-    setTimeout(() => {
-      setSaveNotification(prev => ({...prev, show: false}));
-    }, 1500);
   }, []);
 
   const addCourse = useCallback((course: Course) => {
@@ -73,17 +61,6 @@ const App: React.FC = () => {
         ? { ...course, hours } 
         : course
     ));
-    
-    // Show brief notification
-    setSaveNotification({
-      show: true,
-      message: 'Credit hours updated!'
-    });
-    
-    // Hide notification after a delay
-    setTimeout(() => {
-      setSaveNotification(prev => ({...prev, show: false}));
-    }, 1500);
   }, []);
 
   const removeCourse = useCallback((id: string) => {
@@ -102,38 +79,49 @@ const App: React.FC = () => {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(courses));
-      
-      // Show save notification
-      if (courses.length > 0) {
-        //setSaveNotification({
-        //show: true,
-        //  message: 'Changes saved!'
-        //});
-        
-        // Hide notification after a delay
-        const timeoutId = setTimeout(() => {
-          setSaveNotification(prev => ({...prev, show: false}));
-        }, 1500);
-        
-        return () => clearTimeout(timeoutId);
-      }
     } catch (error) {
       console.error('Failed to save courses to localStorage:', error);
-      
-      // Show error notification
-      setSaveNotification({
-        show: true,
-        message: 'Failed to save changes'
-      });
-      
-      // Hide notification after a delay
-      const timeoutId = setTimeout(() => {
-        setSaveNotification(prev => ({...prev, show: false}));
-      }, 1500);
-      
-      return () => clearTimeout(timeoutId);
     }
   }, [courses]);
+  
+  // Listen for direct imports from the Chrome extension
+  useEffect(() => {
+    const handleDirectImport = (event: CustomEvent) => {
+      try {
+        const { html } = event.detail;
+        
+        // Process the HTML into courses
+        const importedCourses = processImportedHTML(html);
+        
+        if (importedCourses.length > 0) {
+          // Add IDs to the imported courses
+          const coursesWithIds = importedCourses.map((course) => ({
+            ...course,
+            id: Date.now().toString() + Math.random().toString()
+          }));
+          
+          // Merge with existing courses (replace duplicates)
+          const mergedCourses = mergeImportedCourses(coursesWithIds, courses);
+          
+          // Update the courses state
+          setCourses(mergedCourses);
+          console.log(`Successfully imported ${importedCourses.length} courses!`);
+        } else {
+          console.log('No valid courses found in the imported data');
+        }
+      } catch (error) {
+        console.error('Error processing direct import:', error);
+      }
+    };
+    
+    // Add event listener for the custom event
+    document.addEventListener('importCoursesData', handleDirectImport as EventListener);
+    
+    // Cleanup the event listener when component unmounts
+    return () => {
+      document.removeEventListener('importCoursesData', handleDirectImport as EventListener);
+    };
+  }, [courses]); // Re-add listener if courses change to get latest state
 
   // The default background color is now handled via CSS in index.css
   // This ensures the color is applied immediately during page load without flickering
@@ -141,11 +129,6 @@ const App: React.FC = () => {
   const gpa = calculateGPA(courses);
   return (
     <>      <Container className="container">
-        {saveNotification.show && (
-          <div className={`save-notification ${saveNotification.message.includes('Failed') ? 'error' : 'success'}`}>
-            {saveNotification.message}
-          </div>
-        )}
         <div>
           <h1 className="app-title">GPA Calculator</h1>
           <h5 className="app-subtitle">FCAI - Cairo University</h5>
