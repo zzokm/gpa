@@ -1,6 +1,135 @@
 /* StatsModal Styles for course statuses and credit display */
 
 /* ========================================
+   Tab Navigation
+   ======================================== */
+
+.tab-navigation {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid rgba(255, 121, 85, 0.2);
+  padding: 0 var(--space-lg);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tab-button {
+  flex: 1;
+  padding: var(--space-md) var(--space-lg);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  position: relative;
+}
+
+.tab-button svg {
+  transition: transform 0.3s ease;
+}
+
+.tab-button:hover {
+  color: var(--primary-600);
+  background: rgba(255, 121, 85, 0.05);
+}
+
+.tab-button:hover svg {
+  transform: scale(1.1);
+}
+
+.tab-button.active {
+  color: var(--primary-600);
+  border-bottom-color: var(--primary-600);
+  background: rgba(255, 121, 85, 0.08);
+}
+
+.tab-button.active svg {
+  transform: scale(1.15);
+}
+
+/* ========================================
+   Tab Content
+   ======================================== */
+
+.tab-content-overview,
+.tab-content-courses,
+.tab-content-grades {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Overview Tab
+   ======================================== */
+
+.overview-summary {
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.overview-summary h4 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0 0 var(--space-md) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.overview-summary p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: var(--space-sm) 0;
+}
+
+.overview-summary strong {
+  color: var(--primary-600);
+  font-weight: 700;
+}
+
+.warning-text {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: #991b1b;
+  margin-top: var(--space-md);
+}
+
+.warning-text svg {
+  flex-shrink: 0;
+  color: #dc2626;
+}
+
+/* ========================================
    StatsModal Main Layout & Grid
    ======================================== */
 
@@ -9,7 +138,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-lg);
   padding: 0;
 }
 
@@ -62,6 +191,21 @@
     0 -1px 4px rgba(0, 0, 0, 0.05);
 }
 
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(255, 121, 85, 0.1), rgba(255, 121, 85, 0.2));
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-sm);
+}
+
+.stat-icon svg {
+  color: var(--primary-600);
+}
+
 /* Statistic values */
 .stat-value {
   font-size: var(--text-2xl);
@@ -98,16 +242,28 @@
   border-bottom: 2px solid var(--border-light);
 }
 
+.course-list-header {
+  margin-bottom: var(--space-md);
+}
+
+.course-list-header h4 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+}
+
 /* ========================================
    Scrollable Course Items Container
    ======================================== */
 
 .course-items {
-  max-height: 260px; /* Reduced from 280px to allow for spacing */
+  max-height: 300px;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: var(--space-xs);
-  margin-bottom: var(--space-lg); /* Added space below courses list */
+  margin-bottom: var(--space-md);
+  position: relative;
   
   /* Hide scrollbar completely while keeping scroll functionality */
   scrollbar-width: none; /* Firefox */
@@ -127,32 +283,26 @@
    ======================================== */
 
 .course-item {
-    padding: var(--space-md);
-    margin-bottom: var(--space-sm);
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: var(--radius-md);
-    /* box-shadow: 
-        0 2px 10px rgba(0, 0, 0, 0.06),
-        0 1px 3px rgba(0, 0, 0, 0.03); */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: var(--transition-base);
-    
-    /* CSS Grid layout for perfect alignment */
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    grid-gap: var(--space-md);
-    align-items: center;
-    position: relative;
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: var(--transition-base);
+  
+  /* CSS Grid layout for perfect alignment */
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  grid-gap: var(--space-md);
+  align-items: center;
+  position: relative;
 }
 
 .course-item:last-child {
   margin-bottom: 0;
 }
-
-/* Remove hover effects as requested */
-/* .course-item:hover styles removed */
 
 .course-name {
   font-weight: 600;
@@ -173,9 +323,89 @@
   text-align: center;
 }
 
-.course-status-container {
-  grid-column: 3;
-  text-align: center;
+/* ========================================
+   Grades Tab
+   ======================================== */
+
+.tab-content-grades {
+  padding: 0;
+}
+
+.grades-header {
+  margin-bottom: var(--space-lg);
+}
+
+.grades-header h4 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.grade-distribution-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.grade-distribution-item {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: var(--space-md);
+  align-items: center;
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-md);
+  transition: var(--transition-base);
+}
+
+.grade-distribution-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 121, 85, 0.3);
+  transform: translateX(4px);
+}
+
+.grade-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.grade-letter {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--primary-600);
+}
+
+.grade-points {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.grade-bar-container {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.grade-bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+}
+
+.grade-count {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  min-width: 80px;
+  text-align: right;
 }
 
 /* ========================================
@@ -184,11 +414,11 @@
 
 .scroll-down-arrow {
   position: absolute;
-  bottom: 15%; /* Move lower down (from 25% to 15%) */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Perfect horizontal centering */
-  width: 36px; /* Bigger size */
-  height: 36px; /* Bigger size */
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 36px;
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
@@ -199,12 +429,11 @@
   cursor: pointer;
   z-index: 10;
   opacity: 0.98;
-  border: 1px solid rgba(0, 0, 0, 0.15); /* Refined black stroke */
+  border: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: 
     0 2px 8px rgba(0, 0, 0, 0.12), 
     0 0 0 1px rgba(255, 255, 255, 0.4) inset,
-    0 -1px 0 rgba(255, 255, 255, 0.2) inset; /* Layered shadows for depth */
-  /* Subtle gradient overlay */
+    0 -1px 0 rgba(255, 255, 255, 0.2) inset;
   background-image: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0.3),
@@ -212,21 +441,18 @@
   );
 }
 
-/* Removed hover animation */
-
 .scroll-down-arrow svg {
   color: var(--primary-600);
-  width: 20px; /* Bigger icon */
-  height: 20px; /* Bigger icon */
+  width: 20px;
+  height: 20px;
 }
 
 /* ========================================
    Modal Body Spacing Reduction
    ======================================== */
 
-/* Reduce spacing between modal content and buttons but add bottom padding */
 .modal-body {
-    padding: var(--space-xs) var(--space-lg) calc(var(--space-xs) - 6px) !important; /* Slightly reduced bottom padding */
+  padding: var(--space-lg) var(--space-lg) var(--space-md) !important;
 }
 
 /* ========================================
@@ -249,7 +475,7 @@
 
 .course-status.passed {
   background-color: rgba(22, 163, 74, 0.18);
-  color: #15803d; /* green-700 for better contrast */
+  color: #15803d;
   border: 1px solid rgba(22, 163, 74, 0.35);
   box-shadow: 
     0 1px 5px rgba(22, 163, 74, 0.15),
@@ -258,7 +484,7 @@
 
 .course-status.failed {
   background-color: rgba(185, 28, 28, 0.18);
-  color: #b91c1c; /* red-700 */
+  color: #b91c1c;
   border: 1px solid rgba(185, 28, 28, 0.35);
   box-shadow: 
     0 1px 5px rgba(185, 28, 28, 0.15),
@@ -267,7 +493,7 @@
 
 .course-status.pending {
   background-color: rgba(107, 114, 128, 0.18);
-  color: #4b5563; /* gray-600 for better contrast */
+  color: #4b5563;
   border: 1px solid rgba(107, 114, 128, 0.35);
   box-shadow: 
     0 1px 5px rgba(107, 114, 128, 0.15),
@@ -282,7 +508,7 @@
 }
 
 .passed-credits {
-  color: #16a34a; /* green-600 */
+  color: #16a34a;
   font-weight: 700;
 }
 
@@ -292,18 +518,8 @@
 }
 
 .failed-credits {
-  color: #b91c1c; /* red-700 */
+  color: #b91c1c;
   font-weight: 700;
-}
-
-/* Course details styles */
-.course-details {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  margin-top: var(--space-xs);
-  color: var(--text-secondary);
 }
 
 /* ========================================
@@ -330,18 +546,18 @@
     align-items: flex-start;
   }
   
-  .course-details {
-    margin-top: var(--space-xs);
-  }  .course-items {
-    max-height: 180px; /* Reduced to keep space at bottom */
-    margin-bottom: var(--space-md); /* Slightly less margin on mobile */
-  }  .scroll-down-arrow {
+  .course-items {
+    max-height: 180px;
+    margin-bottom: var(--space-md);
+  }
+  
+  .scroll-down-arrow {
     width: 24px;
     height: 24px;
-    bottom: 10%; /* Lower position on mobile */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Perfect horizontal centering */
-    border: 1px solid rgba(0, 0, 0, 0.15); /* Refined black stroke */
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid rgba(0, 0, 0, 0.15);
     box-shadow: 
       0 2px 6px rgba(0, 0, 0, 0.1),
       0 0 0 1px rgba(255, 255, 255, 0.3) inset;
@@ -356,6 +572,21 @@
     width: 14px;
     height: 14px;
     color: var(--primary-600);
+  }
+  
+  .tab-button {
+    font-size: 0.75rem;
+    padding: var(--space-sm) var(--space-xs);
+  }
+  
+  .tab-button svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .grade-distribution-item {
+    grid-template-columns: 60px 1fr auto;
+    gap: var(--space-sm);
   }
 }
 
@@ -380,10 +611,6 @@
     font-size: var(--text-base);
   }
 }
-
-/* ========================================
-   Enhanced Mobile Responsiveness
-   ======================================== */
 
 /* Better course display for small screens */
 @media (max-width: 600px) {
@@ -434,10 +661,6 @@
 @media (max-width: 400px) {
   .course-item {
     grid-gap: var(--space-xs);
-  }
-  
-  .courses-container {
-    padding: var(--space-xs);
   }
   
   .stat-card {

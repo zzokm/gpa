@@ -6,7 +6,7 @@ import './GPADetailsModalStyles.css';
 
 interface CourseImpact {
   course: Course;
-  impact: number; // How much this course affects overall GPA
+  impact: number; // Realistic impact on overall GPA
   cumulativeGPA: number; // GPA up to and including this course
 }
 
@@ -67,10 +67,13 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
     });
   };
 
-  // Calculate course impacts
+  // Calculate course impacts with realistic numbers
   const calculateCourseImpacts = (): CourseImpact[] => {
     const coursesWithGrades = courses.filter(c => c.grade !== null);
     const impacts: CourseImpact[] = [];
+    
+    // Calculate total credits for the realistic impact calculation
+    const totalCredits = coursesWithGrades.reduce((sum, c) => sum + c.hours, 0);
     
     coursesWithGrades.forEach((course, index) => {
       // Calculate GPA before this course
@@ -81,7 +84,13 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
       const coursesIncluding = coursesWithGrades.slice(0, index + 1);
       const gpaIncluding = calculateGPA(coursesIncluding);
       
-      // Impact is the difference
+      // Realistic impact: How much this course actually affected the GPA
+      // This considers the course grade relative to the current GPA at that time
+      const courseGrade = letterToPoints(course.grade);
+      const creditsBeforeIncludingThis = coursesIncluding.reduce((sum, c) => sum + c.hours, 0);
+      
+      // The realistic impact is the difference from what the GPA would have been
+      // if this course matched the previous GPA vs. what it actually is
       const impact = gpaIncluding - gpaBefore;
       
       impacts.push({
@@ -103,17 +112,21 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
 
   // Get retake suggestions
   const getRetakeSuggestions = (impacts: CourseImpact[]): CourseImpact[] => {
+    const totalCredits = courses.filter(c => c.grade !== null).reduce((sum, c) => sum + c.hours, 0);
+    
     // Filter courses with low grades and high credit hours (highest potential for improvement)
     const suggestions = impacts.filter(impact => {
       const gradePoints = letterToPoints(impact.course.grade);
       return gradePoints < 3.0 && impact.course.hours >= 2; // B or below, 2+ credit hours
     });
     
-    // Sort by impact (most negative first) and grade points (lowest first)
+    // Sort by potential impact if improved to A+
     return suggestions.sort((a, b) => {
-      const impactDiff = a.impact - b.impact;
-      if (Math.abs(impactDiff) > 0.01) return impactDiff;
-      return letterToPoints(a.course.grade) - letterToPoints(b.course.grade);
+      const currentPointsA = letterToPoints(a.course.grade);
+      const currentPointsB = letterToPoints(b.course.grade);
+      const potentialGainA = (4.0 - currentPointsA) * a.course.hours / totalCredits;
+      const potentialGainB = (4.0 - currentPointsB) * b.course.hours / totalCredits;
+      return potentialGainB - potentialGainA;
     });
   };
 
@@ -139,7 +152,7 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
           {/* Overall Stats */}
           <div className="gpa-stats-summary">
             <div className="gpa-stat-card">
-              <div className="gpa-stat-value">{currentGPA.toFixed(2)}</div>
+              <div className="gpa-stat-value">{currentGPA.toFixed(3)}</div>
               <div className="gpa-stat-label">Current GPA</div>
             </div>
             <div className="gpa-stat-card">
@@ -160,7 +173,7 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
                 <div key={impact.course.id || index} className="gpa-impact-item">
                   <div className="gpa-impact-course">
                     <span className="gpa-impact-name">{impact.course.name}</span>
-                    <span className="gpa-impact-grade">{impact.course.grade}</span>
+                    <span className="gpa-impact-grade">{impact.course.grade} ({letterToPoints(impact.course.grade).toFixed(1)})</span>
                     <span className="gpa-impact-hours">{impact.course.hours}h</span>
                   </div>
                   <div className="gpa-impact-details">
@@ -168,7 +181,10 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
                       {impact.impact >= 0 ? '+' : ''}{impact.impact.toFixed(3)}
                     </span>
                     <span className="gpa-impact-cumulative">
-                      ? {impact.cumulativeGPA.toFixed(2)}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style={{display: 'inline', marginRight: '4px', verticalAlign: 'middle'}}>
+                        <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                      </svg>
+                      {impact.cumulativeGPA.toFixed(3)}
                     </span>
                   </div>
                 </div>
@@ -187,7 +203,7 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
                     <div className="gpa-worst-info">
                       <div className="gpa-worst-name">{impact.course.name}</div>
                       <div className="gpa-worst-details">
-                        Grade: {impact.course.grade} ? {impact.course.hours} credit hours
+                        Grade: {impact.course.grade} ({letterToPoints(impact.course.grade).toFixed(1)} pts) ? {impact.course.hours} credit hours
                       </div>
                     </div>
                     <div className="gpa-worst-impact">{impact.impact.toFixed(3)}</div>
@@ -202,7 +218,7 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
             <div className="gpa-section gpa-suggestions">
               <h3 className="gpa-section-title">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                  <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
                 </svg>
                 Retake Recommendations
               </h3>
@@ -219,10 +235,10 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
                     <div key={impact.course.id || index} className="gpa-suggestion-item">
                       <div className="gpa-suggestion-header">
                         <span className="gpa-suggestion-name">{impact.course.name}</span>
-                        <span className="gpa-suggestion-current">Current: {impact.course.grade}</span>
+                        <span className="gpa-suggestion-current">Current: {impact.course.grade} ({currentPoints.toFixed(1)})</span>
                       </div>
                       <div className="gpa-suggestion-potential">
-                        <div className="gpa-suggestion-label">Potential GPA gain if you get A+:</div>
+                        <div className="gpa-suggestion-label">Potential GPA gain if you get A+ (4.0):</div>
                         <div className="gpa-suggestion-value">+{potentialImpact.toFixed(3)}</div>
                       </div>
                       <div className="gpa-suggestion-reason">
@@ -238,7 +254,7 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
           {/* Disclaimer */}
           <div className="gpa-disclaimer">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
             </svg>
             <span>
               These calculations are estimates based on the current grading system. 

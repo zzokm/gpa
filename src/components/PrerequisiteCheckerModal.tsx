@@ -31,73 +31,89 @@ const getAllCoursesWithInfo = (): CourseInfo[] => {
   const uniqueCourseSet = new Set<string>();
   
   const addCourse = (course: any, category: string) => {
-    if (course && course.code && course.name) {
-      const courseId = `${course.code}_${course.name}`;
-      if (!uniqueCourseSet.has(courseId)) {
-        uniqueCourseSet.add(courseId);
-        courses.push({
-          code: course.code,
-          name: course.name,
-          credit_hours: course.credit_hours || 0,
-          category,
-          prerequisites: course.prerequisites || []
-        });
+    try {
+      if (course && course.code && course.name) {
+        const courseId = `${course.code}_${course.name}`;
+        if (!uniqueCourseSet.has(courseId)) {
+          uniqueCourseSet.add(courseId);
+          courses.push({
+            code: course.code,
+            name: course.name,
+            credit_hours: course.credit_hours || 0,
+            category,
+            prerequisites: course.prerequisites || []
+          });
+        }
       }
+    } catch (error) {
+      console.error('Error adding course:', error);
     }
   };
   
   const processCoursesArray = (coursesArray: any[], category: string) => {
-    if (!Array.isArray(coursesArray)) return;
-    coursesArray.forEach(course => addCourse(course, category));
+    try {
+      if (!Array.isArray(coursesArray)) return;
+      coursesArray.forEach(course => addCourse(course, category));
+    } catch (error) {
+      console.error('Error processing courses array:', error);
+    }
   };
   
-  // Process all course categories (same as Course Lookup)
-  if (courseData.program_requirements?.general_requirements) {
-    const generalReq = courseData.program_requirements.general_requirements;
-    if (generalReq.mandatory?.courses) {
-      processCoursesArray(generalReq.mandatory.courses, 'General - Mandatory');
-    }
-    if (generalReq.elective?.courses) {
-      processCoursesArray(generalReq.elective.courses, 'General - Elective');
-    }
-  }
-  
-  if (courseData.program_requirements?.university_requirements_no_credit?.courses) {
-    processCoursesArray(courseData.program_requirements.university_requirements_no_credit.courses, 'University Requirements');
-  }
-  
-  if (courseData.program_requirements?.college_requirements) {
-    const collegeReq = courseData.program_requirements.college_requirements;
-    if (collegeReq.mathematics_and_basic_sciences?.courses) {
-      processCoursesArray(collegeReq.mathematics_and_basic_sciences.courses, 'Mathematics & Basic Sciences');
-    }
-    if (collegeReq.basic_computer_science?.courses) {
-      processCoursesArray(collegeReq.basic_computer_science.courses, 'Basic Computer Science');
-    }
-  }
-  
-  if (courseData.majors) {
-    Object.keys(courseData.majors).forEach(majorKey => {
-      const major = courseData.majors[majorKey as keyof typeof courseData.majors];
-      const majorName = majorKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      
-      if (major && major.major_requirements) {
-        const majorReq = major.major_requirements;
-        
-        if (majorReq.applied_sciences_mandatory?.courses) {
-          processCoursesArray(majorReq.applied_sciences_mandatory.courses, `${majorName} - Mandatory`);
-        }
-        if (majorReq.electives?.courses) {
-          processCoursesArray(majorReq.electives.courses, `${majorName} - Elective`);
-        }
-        if (majorReq.graduation_project?.courses) {
-          processCoursesArray(majorReq.graduation_project.courses, `${majorName} - Graduation Project`);
-        }
-        if (majorReq.field_training?.courses) {
-          processCoursesArray(majorReq.field_training.courses, `${majorName} - Field Training`);
-        }
+  try {
+    // Process all course categories (same as Course Lookup)
+    if (courseData.program_requirements?.general_requirements) {
+      const generalReq = courseData.program_requirements.general_requirements;
+      if (generalReq.mandatory?.courses) {
+        processCoursesArray(generalReq.mandatory.courses, 'General - Mandatory');
       }
-    });
+      if (generalReq.elective?.courses) {
+        processCoursesArray(generalReq.elective.courses, 'General - Elective');
+      }
+    }
+    
+    if (courseData.program_requirements?.university_requirements_no_credit?.courses) {
+      processCoursesArray(courseData.program_requirements.university_requirements_no_credit.courses, 'University Requirements');
+    }
+    
+    if (courseData.program_requirements?.college_requirements) {
+      const collegeReq = courseData.program_requirements.college_requirements;
+      if (collegeReq.mathematics_and_basic_sciences?.courses) {
+        processCoursesArray(collegeReq.mathematics_and_basic_sciences.courses, 'Mathematics & Basic Sciences');
+      }
+      if (collegeReq.basic_computer_science?.courses) {
+        processCoursesArray(collegeReq.basic_computer_science.courses, 'Basic Computer Science');
+      }
+    }
+    
+    if (courseData.majors) {
+      Object.keys(courseData.majors).forEach(majorKey => {
+        try {
+          const major = courseData.majors[majorKey as keyof typeof courseData.majors];
+          const majorName = majorKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          
+          if (major && major.major_requirements) {
+            const majorReq = major.major_requirements;
+            
+            if (majorReq.applied_sciences_mandatory?.courses) {
+              processCoursesArray(majorReq.applied_sciences_mandatory.courses, `${majorName} - Mandatory`);
+            }
+            if (majorReq.electives?.courses) {
+              processCoursesArray(majorReq.electives.courses, `${majorName} - Elective`);
+            }
+            if (majorReq.graduation_project?.courses) {
+              processCoursesArray(majorReq.graduation_project.courses, `${majorName} - Graduation Project`);
+            }
+            if (majorReq.field_training?.courses) {
+              processCoursesArray(majorReq.field_training.courses, `${majorName} - Field Training`);
+            }
+          }
+        } catch (error) {
+          console.error(`Error processing major ${majorKey}:`, error);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error loading course data:', error);
   }
   
   return courses;
