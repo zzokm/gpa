@@ -9,13 +9,88 @@
   padding: 1rem 0;
 }
 
+.gpa-header-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.25rem;
+}
+
 .gpa-label {
   font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
   opacity: 0.8;
-  margin-bottom: 0.25rem;
+}
+
+.gpa-info-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--primary-600, #ff7955);
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.gpa-info-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+.gpa-info-btn:hover {
+  background-color: rgba(255, 121, 85, 0.1);
+  transform: scale(1.1);
+}
+
+.gpa-info-btn:hover svg {
+  transform: rotate(15deg);
+}
+
+.gpa-info-btn:active {
+  transform: scale(0.95);
+}
+
+.gpa-pdf-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--primary-600, #ff7955);
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.gpa-pdf-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+.gpa-pdf-btn:hover {
+  background-color: rgba(255, 121, 85, 0.1);
+  transform: scale(1.1);
+}
+
+.gpa-pdf-btn:hover svg {
+  transform: translateY(-2px);
+}
+
+.gpa-pdf-btn:active {
+  transform: scale(0.95);
 }
 
 .gpa-value {

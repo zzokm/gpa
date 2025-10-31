@@ -1,0 +1,383 @@
+/* Course Lookup Modal Styles */
+
+.lookup-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding: 20px;
+}
+
+.lookup-modal-overlay.lookup-modal-visible {
+  opacity: 1;
+}
+
+.lookup-modal-content {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.lookup-modal-visible .lookup-modal-content {
+  transform: scale(1);
+}
+
+.lookup-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 2px solid rgba(255, 121, 85, 0.2);
+}
+
+.lookup-modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-color, #1e293b);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lookup-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: #64748b;
+  transition: all 0.2s ease;
+  border-radius: var(--radius-sm, 8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lookup-modal-close:hover {
+  background-color: rgba(255, 121, 85, 0.1);
+  color: var(--primary-600, #ff7955);
+  transform: rotate(90deg);
+}
+
+/* Filters Section */
+.lookup-filters {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(203, 213, 225, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lookup-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.lookup-search svg:first-child {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.lookup-search-input {
+  width: 100%;
+  padding: 12px 42px 12px 42px;
+  border: 2px solid rgba(203, 213, 225, 0.5);
+  border-radius: var(--radius-md, 12px);
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: rgba(248, 250, 252, 0.8);
+}
+
+.lookup-search-input:focus {
+  outline: none;
+  border-color: var(--primary-600, #ff7955);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.1);
+}
+
+.lookup-search-clear {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lookup-search-clear:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.lookup-category-filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lookup-category-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.lookup-category-select {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid rgba(203, 213, 225, 0.5);
+  border-radius: var(--radius-md, 12px);
+  font-size: 14px;
+  background: rgba(248, 250, 252, 0.8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lookup-category-select:hover {
+  border-color: rgba(255, 121, 85, 0.5);
+}
+
+.lookup-category-select:focus {
+  outline: none;
+  border-color: var(--primary-600, #ff7955);
+  box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.1);
+}
+
+/* Results Count */
+.lookup-results-count {
+  padding: 12px 24px;
+  background: rgba(248, 250, 252, 0.8);
+  border-bottom: 1px solid rgba(203, 213, 225, 0.3);
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Modal Body */
+.lookup-modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+  position: relative;
+}
+
+.lookup-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lookup-modal-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.lookup-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 121, 85, 0.4);
+  border-radius: 4px;
+}
+
+.lookup-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 121, 85, 0.6);
+}
+
+/* No Results */
+.lookup-no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.lookup-no-results svg {
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.lookup-no-results p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Course List */
+.lookup-course-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.lookup-course-card {
+  background: rgba(248, 250, 252, 0.8);
+  border: 2px solid rgba(203, 213, 225, 0.5);
+  border-radius: var(--radius-md, 12px);
+  padding: 16px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.lookup-course-card:hover {
+  background: white;
+  border-color: rgba(255, 121, 85, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.15);
+}
+
+.lookup-course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.lookup-course-code {
+  background: var(--primary-600, #ff7955);
+  color: white;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm, 8px);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.lookup-course-credits {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm, 8px);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.lookup-course-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-color, #1e293b);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.lookup-course-category {
+  font-size: 12px;
+  color: #64748b;
+  padding: 4px 0;
+  font-weight: 500;
+}
+
+.lookup-course-prerequisites {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(203, 213, 225, 0.3);
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.lookup-course-prerequisites strong {
+  color: #475569;
+  font-weight: 600;
+}
+
+/* Scroll Arrow */
+.lookup-scroll-arrow {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-600, #ff7955);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.4);
+  transition: all 0.2s ease;
+  animation: bounce 2s infinite;
+  z-index: 10;
+}
+
+.lookup-scroll-arrow:hover {
+  background: var(--primary-700, #ff6844);
+  box-shadow: 0 6px 20px rgba(255, 121, 85, 0.5);
+  transform: translateX(-50%) scale(1.1);
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .lookup-modal-content {
+    max-width: 100%;
+    max-height: 95vh;
+    margin: 10px;
+  }
+
+  .lookup-modal-header {
+    padding: 20px;
+  }
+
+  .lookup-modal-title {
+    font-size: 20px;
+  }
+
+  .lookup-filters {
+    padding: 16px 20px;
+  }
+
+  .lookup-modal-body {
+    padding: 16px 20px;
+  }
+
+  .lookup-course-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .lookup-category-filter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .lookup-category-select {
+    width: 100%;
+  }
+}

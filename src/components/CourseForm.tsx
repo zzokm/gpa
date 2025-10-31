@@ -4,6 +4,8 @@ import { Course, Grade } from '../types/Course';
 
 import GradeDropdown from './GradeDropdown';
 import EnhancedRotatingNumberInput from './RotatingNumberInput';
+import CourseLookupModal from './CourseLookupModal';
+import PrerequisiteCheckerModal from './PrerequisiteCheckerModal';
 
 // Import course data for autocomplete
 import courseData from '../../data/Courses.json';
@@ -108,11 +110,13 @@ const getAllCourses = (): CourseSuggestion[] => {
 interface CourseFormProps {
   onAddCourse: (course: Course) => void;
   onShowImport: () => void;
+  completedCourses?: Course[];
 }
 
 const CourseForm: React.FC<CourseFormProps> = ({ 
   onAddCourse, 
-  onShowImport 
+  onShowImport,
+  completedCourses = []
 }) => {
   const [courseName, setCourseName] = useState('');
   const [courseHours, setCourseHours] = useState(2);
@@ -120,6 +124,8 @@ const CourseForm: React.FC<CourseFormProps> = ({
   const [suggestions, setSuggestions] = useState<CourseSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [allCourses, setAllCourses] = useState<CourseSuggestion[]>([]);
+  const [showCourseLookup, setShowCourseLookup] = useState(false);
+  const [showPrereqChecker, setShowPrereqChecker] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -444,8 +450,33 @@ const CourseForm: React.FC<CourseFormProps> = ({
           >
             Import Courses
           </button>
+          <button 
+            type="button" 
+            className="btn-secondary"
+            onClick={() => setShowCourseLookup(true)}
+          >
+            Course Lookup
+          </button>
+          <button 
+            type="button" 
+            className="btn-secondary"
+            onClick={() => setShowPrereqChecker(true)}
+          >
+            Check Eligibility
+          </button>
         </div>
       </Form>
+      
+      <CourseLookupModal 
+        show={showCourseLookup}
+        onHide={() => setShowCourseLookup(false)}
+      />
+      
+      <PrerequisiteCheckerModal 
+        show={showPrereqChecker}
+        onHide={() => setShowPrereqChecker(false)}
+        completedCourses={completedCourses}
+      />
     </div>
   );
 };
