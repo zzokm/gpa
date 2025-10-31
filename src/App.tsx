@@ -137,6 +137,7 @@ const App: React.FC = () => {
         <CourseForm
           onAddCourse={addCourse}
           onShowImport={() => setShowImportModal(true)}
+          completedCourses={courses}
         />        <GroupedCourseTable
           courses={courses}
           onRemoveCourse={removeCourse}
@@ -145,7 +146,7 @@ const App: React.FC = () => {
           onClearCourses={clearAllCourses}
         />
 
-        <GPADisplay gpa={gpa} />        {/* The ImportModal is now using a portal, so it will render at body level */}
+        <GPADisplay gpa={gpa} courses={courses} />        {/* The ImportModal is now using a portal, so it will render at body level */}
         <ImportModal
           show={showImportModal}
           onHide={() => setShowImportModal(false)}
