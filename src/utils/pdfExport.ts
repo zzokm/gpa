@@ -1,5 +1,4 @@
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { Course } from '../types/Course';
 import { letterToPoints, calculateGPA } from './gradeUtils';
 

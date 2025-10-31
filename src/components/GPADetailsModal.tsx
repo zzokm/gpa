@@ -72,9 +72,6 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
     const coursesWithGrades = courses.filter(c => c.grade !== null);
     const impacts: CourseImpact[] = [];
     
-    // Calculate total credits for the realistic impact calculation
-    const totalCredits = coursesWithGrades.reduce((sum, c) => sum + c.hours, 0);
-    
     coursesWithGrades.forEach((course, index) => {
       // Calculate GPA before this course
       const coursesBefore = coursesWithGrades.slice(0, index);
@@ -85,11 +82,7 @@ const GPADetailsModal: React.FC<GPADetailsModalProps> = ({ show, onHide, courses
       const gpaIncluding = calculateGPA(coursesIncluding);
       
       // Realistic impact: How much this course actually affected the GPA
-      // This considers the course grade relative to the current GPA at that time
-      const courseGrade = letterToPoints(course.grade);
-      const creditsBeforeIncludingThis = coursesIncluding.reduce((sum, c) => sum + c.hours, 0);
-      
-      // The realistic impact is the difference from what the GPA would have been
+      // The impact is the difference from what the GPA would have been
       // if this course matched the previous GPA vs. what it actually is
       const impact = gpaIncluding - gpaBefore;
       
