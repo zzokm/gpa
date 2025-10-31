@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import { Course } from '../types/Course';
 import { letterToPoints, calculateGPA } from './gradeUtils';
 
@@ -7,6 +8,29 @@ interface PDFExportOptions {
   currentGPA: number;
   studentName?: string;
 }
+
+// Helper to group courses by level and term
+interface GroupedCourses {
+  [level: string]: {
+    [term: string]: Course[];
+  };
+}
+
+const groupCoursesByLevelAndTerm = (courses: Course[]): GroupedCourses => {
+  const grouped: GroupedCourses = {};
+  
+  courses.forEach(course => {
+    const level = course.level || 'Other';
+    const term = course.term || 'No Term';
+    
+    if (!grouped[level]) grouped[level] = {};
+    if (!grouped[level][term]) grouped[level][term] = [];
+    
+    grouped[level][term].push(course);
+  });
+  
+  return grouped;
+};
 
 // Get grade assessment text
 const getGPAAssessment = (gpa: number): string => {
@@ -18,18 +42,6 @@ const getGPAAssessment = (gpa: number): string => {
   return 'Excellent';
 };
 
-// Calculate course impact
-const calculateCourseImpact = (courses: Course[], courseIndex: number): number => {
-  const coursesWithGrades = courses.filter(c => c.grade !== null);
-  const coursesBefore = coursesWithGrades.slice(0, courseIndex);
-  const coursesIncluding = coursesWithGrades.slice(0, courseIndex + 1);
-  
-  const gpaBefore = coursesBefore.length > 0 ? calculateGPA(coursesBefore) : 0;
-  const gpaIncluding = calculateGPA(coursesIncluding);
-  
-  return gpaIncluding - gpaBefore;
-};
-
 export const generateGradeReport = ({ courses, currentGPA, studentName }: PDFExportOptions): void => {
   const doc = new jsPDF('p', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -39,19 +51,29 @@ export const generateGradeReport = ({ courses, currentGPA, studentName }: PDFExp
   
   let yPos = margin;
   
-  // Add watermark function
+  // Add watermark function with grid of diagonal watermarks in variant sizes
   const addWatermark = () => {
     doc.saveGraphicsState();
     // @ts-ignore - GState is valid but TypeScript doesn't recognize it
-    doc.setGState(new doc.GState({ opacity: 0.1 }));
-    doc.setFontSize(60);
+    doc.setGState(new doc.GState({ opacity: 0.08 }));
     doc.setTextColor(255, 121, 85);
     
-    // Rotate and center the watermark
-    doc.text('UNOFFICIAL', pageWidth / 2, pageHeight / 2, {
-      angle: 45,
-      align: 'center',
-    });
+    // Create a grid of watermarks with variant sizes
+    const fontSizes = [40, 50, 60, 45, 55, 35];
+    const xPositions = [30, 90, 150];
+    const yPositions = [60, 120, 180, 240];
+    
+    let fontIndex = 0;
+    for (const y of yPositions) {
+      for (const x of xPositions) {
+        doc.setFontSize(fontSizes[fontIndex % fontSizes.length]);
+        doc.text('UNOFFICIAL', x, y, {
+          angle: 45,
+          align: 'center',
+        });
+        fontIndex++;
+      }
+    }
     
     doc.restoreGraphicsState();
   };
@@ -102,7 +124,7 @@ export const generateGradeReport = ({ courses, currentGPA, studentName }: PDFExp
     doc.setFontSize(10);
     doc.setTextColor(120, 53, 15);
     doc.setFont('helvetica', 'bold');
-    doc.text('? IMPORTANT NOTICE', margin + 5, yPos + 7);
+    doc.text('\u26a0 IMPORTANT NOTICE', margin + 5, yPos + 7);
     
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
@@ -129,7 +151,7 @@ export const generateGradeReport = ({ courses, currentGPA, studentName }: PDFExp
     }
     
     const assessment = getGPAAssessment(currentGPA);
-    doc.text(`GPA: ${currentGPA.toFixed(2)} / 4.00`, margin + 5, yPos + 15);
+    doc.text(`GPA: ${currentGPA.toFixed(3)} / 4.000`, margin + 5, yPos + 15);
     
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
@@ -194,7 +216,7 @@ export const generateGradeReport = ({ courses, currentGPA, studentName }: PDFExp
     yPos += 28;
   };
   
-  // Add course list with impacts
+  // Add grouped course list by level and term
   const addCourseList = () => {
     const coursesWithGrades = courses.filter(c => c.grade !== null);
     
@@ -202,81 +224,106 @@ export const generateGradeReport = ({ courses, currentGPA, studentName }: PDFExp
       return;
     }
     
-    doc.setFontSize(11);
-    doc.setTextColor(30, 41, 59);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Course Performance Details', margin, yPos);
-    yPos += 8;
+    const grouped = groupCoursesByLevelAndTerm(coursesWithGrades);
+    const levelOrder = ['First Level', 'Second Level', 'Third Level', 'Fourth Level', 'Other'];
+    const termOrder = ['First Term', 'Second Term', 'Summer Term', 'No Term'];
     
-    // Table header
-    doc.setFillColor(255, 121, 85);
-    doc.rect(margin, yPos, contentWidth, 8, 'F');
-    
-    doc.setFontSize(8);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Course Name', margin + 2, yPos + 5.5);
-    doc.text('Grade', margin + contentWidth - 45, yPos + 5.5);
-    doc.text('Credits', margin + contentWidth - 30, yPos + 5.5);
-    doc.text('Impact', margin + contentWidth - 15, yPos + 5.5);
-    
-    yPos += 10;
-    
-    // Table rows
-    coursesWithGrades.forEach((course, index) => {
-      // Check if we need a new page
-      if (yPos > pageHeight - 40) {
-        doc.addPage();
-        addWatermark();
-        yPos = margin;
-      }
+    Object.keys(grouped).sort((a, b) => levelOrder.indexOf(a) - levelOrder.indexOf(b)).forEach(level => {
+      const terms = grouped[level];
       
-      const impact = calculateCourseImpact(coursesWithGrades, index);
-      
-      // Alternate row colors
-      if (index % 2 === 0) {
-        doc.setFillColor(248, 250, 252);
-        doc.rect(margin, yPos - 5, contentWidth, 7, 'F');
-      }
-      
-      doc.setFontSize(8);
-      doc.setTextColor(30, 41, 59);
-      doc.setFont('helvetica', 'normal');
-      
-      // Course name (truncate if too long)
-      const maxNameWidth = contentWidth - 55;
-      let courseName = course.name;
-      if (doc.getTextWidth(courseName) > maxNameWidth) {
-        while (doc.getTextWidth(courseName + '...') > maxNameWidth && courseName.length > 0) {
-          courseName = courseName.slice(0, -1);
+      Object.keys(terms).sort((a, b) => termOrder.indexOf(a) - termOrder.indexOf(b)).forEach(term => {
+        const levelTermCourses = terms[term];
+        
+        // Check if we need a new page
+        if (yPos > pageHeight - 60) {
+          doc.addPage();
+          addWatermark();
+          yPos = margin;
         }
-        courseName += '...';
-      }
-      doc.text(courseName, margin + 2, yPos);
-      
-      // Grade
-      doc.setFont('helvetica', 'bold');
-      const gradeColor = course.grade === 'F' ? [239, 68, 68] : 
-                        letterToPoints(course.grade) >= 3.5 ? [34, 197, 94] :
-                        letterToPoints(course.grade) >= 3.0 ? [59, 130, 246] : [251, 191, 36];
-      doc.setTextColor(gradeColor[0], gradeColor[1], gradeColor[2]);
-      doc.text(course.grade || '-', margin + contentWidth - 45, yPos);
-      
-      // Credits
-      doc.setTextColor(100, 116, 139);
-      doc.setFont('helvetica', 'normal');
-      doc.text(course.hours.toString(), margin + contentWidth - 30, yPos);
-      
-      // Impact
-      const impactColor = impact >= 0 ? [34, 197, 94] : [239, 68, 68];
-      doc.setTextColor(impactColor[0], impactColor[1], impactColor[2]);
-      doc.setFont('helvetica', 'bold');
-      doc.text((impact >= 0 ? '+' : '') + impact.toFixed(3), margin + contentWidth - 15, yPos);
-      
-      yPos += 7;
+        
+        // Calculate stats for this level/term
+        const levelTermGPA = calculateGPA(levelTermCourses);
+        const levelTermCredits = levelTermCourses.reduce((sum, c) => sum + c.hours, 0);
+        
+        // Level/Term header
+        doc.setFontSize(12);
+        doc.setTextColor(30, 41, 59);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${level} - ${term}`, margin, yPos);
+        
+        doc.setFontSize(9);
+        doc.setTextColor(100, 116, 139);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`(${levelTermCredits} Credits, GPA: ${levelTermGPA.toFixed(3)})`, margin + 85, yPos);
+        
+        yPos += 8;
+        
+        // Table header
+        doc.setFillColor(255, 121, 85);
+        doc.rect(margin, yPos, contentWidth, 8, 'F');
+        
+        doc.setFontSize(8);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Course Name', margin + 2, yPos + 5.5);
+        doc.text('Grade', margin + contentWidth - 45, yPos + 5.5);
+        doc.text('Points', margin + contentWidth - 30, yPos + 5.5);
+        doc.text('Credits', margin + contentWidth - 15, yPos + 5.5);
+        
+        yPos += 10;
+        
+        // Table rows
+        levelTermCourses.forEach((course, index) => {
+          // Check if we need a new page
+          if (yPos > pageHeight - 40) {
+            doc.addPage();
+            addWatermark();
+            yPos = margin;
+          }
+          
+          // Alternate row colors
+          if (index % 2 === 0) {
+            doc.setFillColor(248, 250, 252);
+            doc.rect(margin, yPos - 5, contentWidth, 7, 'F');
+          }
+          
+          doc.setFontSize(8);
+          doc.setTextColor(30, 41, 59);
+          doc.setFont('helvetica', 'normal');
+          
+          // Course name (truncate if too long)
+          const maxNameWidth = contentWidth - 55;
+          let courseName = course.name;
+          if (doc.getTextWidth(courseName) > maxNameWidth) {
+            while (doc.getTextWidth(courseName + '...') > maxNameWidth && courseName.length > 0) {
+              courseName = courseName.slice(0, -1);
+            }
+            courseName += '...';
+          }
+          doc.text(courseName, margin + 2, yPos);
+          
+          // Grade Letter
+          doc.setFont('helvetica', 'bold');
+          const gradeColor = course.grade === 'F' ? [239, 68, 68] : 
+                            letterToPoints(course.grade) >= 3.5 ? [34, 197, 94] :
+                            letterToPoints(course.grade) >= 3.0 ? [59, 130, 246] : [251, 191, 36];
+          doc.setTextColor(gradeColor[0], gradeColor[1], gradeColor[2]);
+          doc.text(course.grade || '-', margin + contentWidth - 45, yPos);
+          
+          // Grade Points
+          doc.setTextColor(100, 116, 139);
+          doc.setFont('helvetica', 'normal');
+          doc.text(letterToPoints(course.grade).toFixed(1), margin + contentWidth - 30, yPos);
+          
+          // Credits
+          doc.text(course.hours.toString(), margin + contentWidth - 15, yPos);
+          
+          yPos += 7;
+        });
+        
+        yPos += 10;
+      });
     });
-    
-    yPos += 10;
   };
   
   // Add insights section
@@ -309,7 +356,7 @@ export const generateGradeReport = ({ courses, currentGPA, studentName }: PDFExp
     doc.setFontSize(9);
     doc.setTextColor(30, 64, 175);
     doc.setFont('helvetica', 'bold');
-    doc.text('?? Courses with Improvement Potential:', margin + 5, yPos + 7);
+    doc.text('\ud83d\udca1 Courses with Improvement Potential:', margin + 5, yPos + 7);
     
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
