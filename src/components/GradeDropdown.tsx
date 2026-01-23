@@ -18,6 +18,7 @@ interface DropdownMenuProps {
 const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const portalContainerRef = useRef<HTMLElement | null>(null);
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
   
   // Create a container for the portal that's positioned correctly
@@ -35,15 +36,20 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
     
     // Add to the DOM
     document.body.appendChild(container);
-    setPortalContainer(container);
+    portalContainerRef.current = container;
+    // Defer setState to avoid setState in effect
+    setTimeout(() => setPortalContainer(container), 0);
     
     return () => {
-      document.body.removeChild(container);
+      if (portalContainerRef.current && document.body.contains(portalContainerRef.current)) {
+        document.body.removeChild(portalContainerRef.current);
+      }
+      portalContainerRef.current = null;
     };
   }, []);
     // Update dropdown position when trigger position changes
   useEffect(() => {
-    if (!triggerRef.current || !portalContainer) return;
+    if (!triggerRef.current || !portalContainerRef.current) return;
     
     const updatePosition = () => {
       const triggerRect = triggerRef.current!.getBoundingClientRect();
@@ -71,8 +77,10 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
         top = Math.max(10, triggerRect.top - estimatedDropdownHeight - 8);
       }
       
-      // Position the portal container at the scroll position
-      portalContainer.style.transform = `translate(${window.scrollX}px, ${window.scrollY}px)`;
+      // Position the portal container at the scroll position using ref
+      if (portalContainerRef.current) {
+        portalContainerRef.current.style.transform = `translate(${window.scrollX}px, ${window.scrollY}px)`;
+      }
       
       // Set the dropdown position relative to the portal container
       setPosition({ top, left });
@@ -88,7 +96,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
       window.removeEventListener('scroll', updatePosition);
       window.removeEventListener('resize', updatePosition);
     };
-  }, [triggerRef, portalContainer]);
+  }, [triggerRef]);
   
   // Stop propagation to prevent parent row hover effects from affecting the dropdown
   useEffect(() => {

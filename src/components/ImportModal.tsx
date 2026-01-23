@@ -23,7 +23,8 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
       setTimeout(() => setMounted(true), 10);
     } else {
       document.body.classList.remove('modal-open');
-      setMounted(false);
+      // Defer setState to avoid setState in effect
+      setTimeout(() => setMounted(false), 0);
     }
     
     // Cleanup function

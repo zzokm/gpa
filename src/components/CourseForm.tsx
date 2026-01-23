@@ -129,14 +129,10 @@ const CourseForm: React.FC<CourseFormProps> = ({
   const [courseGrade, setCourseGrade] = useState<Grade>('A+');
   const [suggestions, setSuggestions] = useState<CourseSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [allCourses, setAllCourses] = useState<CourseSuggestion[]>([]);
+  // Initialize courses data using lazy initialization
+  const [allCourses] = useState<CourseSuggestion[]>(() => getAllCourses());
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Initialize courses data
-  useEffect(() => {
-    setAllCourses(getAllCourses());
-  }, []);
 
   // Close suggestions when clicking outside
   useEffect(() => {

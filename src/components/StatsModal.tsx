@@ -37,7 +37,8 @@ const StatsModal: React.FC<StatsModalProps> = ({ modalData, onClose }) => {
       setTimeout(() => setMounted(true), 10);
     } else {
       document.body.classList.remove('modal-open');
-      setMounted(false);
+      // Defer setState to avoid setState in effect
+      setTimeout(() => setMounted(false), 0);
     }
     
     // Cleanup function

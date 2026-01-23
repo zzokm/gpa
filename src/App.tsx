@@ -120,13 +120,18 @@ const App: React.FC = () => {
     } catch (error) {
       console.error('Failed to save courses to localStorage:', error);
       
-      // Show error notification
-      setSaveNotification({
-        show: true,
-        message: 'Failed to save changes'
-      });
-      
-      // Hide notification after a delay
+      // Show error notification using setTimeout to avoid setState in effect
+      setTimeout(() => {
+        setSaveNotification({
+          show: true,
+          message: 'Failed to save changes'
+        });
+        
+        // Hide notification after a delay
+        setTimeout(() => {
+          setSaveNotification(prev => ({...prev, show: false}));
+        }, 1500);
+      }, 0);
       const timeoutId = setTimeout(() => {
         setSaveNotification(prev => ({...prev, show: false}));
       }, 1500);
