@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "build:check": "node scripts/check-build.js",
+    "start": "npx serve@latest out",
     "lint": "eslint .",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d out"

@@ -37,6 +37,10 @@ jobs:
             images: { unoptimized: true },
             trailingSlash: true,
             reactStrictMode: true,
+            swcMinify: true,
+            compiler: {
+              removeConsole: { exclude: ['error', 'warn'] }
+            }
           }" > next.config.js
           
       - name: Set Next.js base path for Feature-Testing branch
@@ -49,6 +53,10 @@ jobs:
             images: { unoptimized: true },
             trailingSlash: true,
             reactStrictMode: true,
+            swcMinify: true,
+            compiler: {
+              removeConsole: { exclude: ['error', 'warn'] }
+            }
           }" > next.config.js
           
       - name: Build

@@ -1,6 +1,7 @@
 // EnhancedRotatingNumberInput.tsx
 import React, { useEffect, useRef, useState } from 'react';
-import './NewRotatingNumberInput.css';
+import './RotatingNumberInput.css';
+import './MobileCreditHoursOverride.css';
 
 interface RotatingNumberInputProps {
   value: number;

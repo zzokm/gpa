@@ -34,6 +34,32 @@ export default function Home() {
     show: false,
     message: ''
   })
+
+  // #region agent log
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      fetch('http://127.0.0.1:7244/ingest/065dc0e5-590e-4b67-a73f-1f0d5aa899f9', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: 'app/page.tsx:useEffect',
+          message: 'React component mounted and hydrated',
+          data: {
+            hasWindow: typeof window !== 'undefined',
+            hasDocument: typeof document !== 'undefined',
+            scriptTagsCount: document.querySelectorAll('script').length,
+            nextScripts: Array.from(document.querySelectorAll('script[src*="_next"]')).map(s => s.getAttribute('src')),
+            basePath: (window as any).__NEXT_DATA__?.assetPrefix || 'none',
+          },
+          timestamp: Date.now(),
+          sessionId: 'debug-session',
+          runId: 'hydration-check',
+          hypothesisId: 'A'
+        })
+      }).catch(() => {});
+    }
+  }, []);
+  // #endregion
   
   // Clear all courses and remove from local storage
   const clearAllCourses = useCallback(() => {
