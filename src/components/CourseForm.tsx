@@ -6,13 +6,23 @@ import GradeDropdown from './GradeDropdown';
 import EnhancedRotatingNumberInput from './RotatingNumberInput';
 
 // Import course data for autocomplete
-import courseData from '../../data/Courses.json';
+import courseData from '../data/Courses.json';
 
 // Interface for course suggestion
 interface CourseSuggestion {
   code: string;
   name: string;
   credit_hours: number;
+}
+
+// Interface for raw course data from JSON
+interface RawCourseData {
+  code: string;
+  name: string;
+  credit_hours: number;
+  prerequisites?: string | string[];
+  type?: string;
+  description?: string;
 }
 
 // Function to check if a string contains both letters and at least one number
@@ -27,7 +37,7 @@ const getAllCourses = (): CourseSuggestion[] => {
   
   try {
     // Extract courses from program requirements
-    const processCoursesArray = (coursesArray: any[]) => {
+    const processCoursesArray = (coursesArray: RawCourseData[]) => {
       if (!Array.isArray(coursesArray)) return;
       
       coursesArray.forEach(course => {

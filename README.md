@@ -108,54 +108,65 @@ For Android users, the easiest method is to use Chrome and request the desktop s
 
 This application is built using modern web technologies:
 
-- **React**: Front-end library for building the user interface
+- **Next.js 16**: React framework with App Router for optimal performance and SEO
+- **React 19**: Front-end library for building the user interface
 - **TypeScript**: For type-safe code with interfaces and type definitions
-- **Vite**: Fast build tool and development server
 - **Three.js**: 3D graphics for the dynamic background animation with GLSL shaders
 - **React Portals**: For properly positioned dropdowns and modals
 - **CSS Variables**: For consistent design system and theming
 - **Local Storage API**: For persisting courses and UI state between sessions
 - **Responsive Design**: Mobile-first approach with device-specific optimizations
 - **Glassmorphism UI**: Modern UI with backdrop filters and transparency effects
+- **Static Export**: Optimized static site generation for GitHub Pages deployment
 
 ## Project Structure
 
 ```
-src/
-├── components/                      # React components
-│   ├── ConfirmationModal.tsx        # Reusable confirmation dialog component
-│   ├── CourseForm.tsx               # Form for adding courses
-│   ├── CreditHoursDropdown.tsx      # Interactive credit hours selector
-│   ├── EnhancedRotatingNumberInput.tsx # Animated number input component
-│   ├── GPADisplay.tsx               # GPA visualization with assessment
-│   ├── GradeDropdown.tsx            # Enhanced grade selection dropdown
-│   ├── GroupedCourseTable.tsx       # Hierarchical course table with grouping
-│   ├── ImportModal.tsx              # Course import functionality
-│   ├── RotatingNumberInput.tsx      # Base component for number selection
-│   ├── StatsModal.tsx               # Statistics display for course groups
-│   └── ThreeJSBackground.tsx        # Animated background with GLSL shaders
-├── types/
-│   └── Course.ts                    # TypeScript interfaces and types
-├── utils/
-│   ├── dropdownManager.ts           # Dropdown coordination utilities
-│   ├── gradeUtils.ts                # GPA calculation and grade utilities
-│   └── visibilityUtils.ts           # DOM visibility helpers
-├── App.tsx                          # Main application component
-├── index.css                        # Global styles and design system
-├── responsive-fixes.css             # Mobile-specific style adjustments
-└── main.tsx                         # Application entry point
+├── app/                             # Next.js App Router directory
+│   ├── layout.tsx                   # Root layout with metadata and global styles
+│   ├── page.tsx                     # Main page component (client-side)
+│   └── globals.css                  # Global CSS with font imports
+├── src/
+│   ├── components/                  # React components
+│   │   ├── ConfirmationModal.tsx    # Reusable confirmation dialog component
+│   │   ├── CourseForm.tsx           # Form for adding courses
+│   │   ├── CreditHoursDropdown.tsx  # Interactive credit hours selector
+│   │   ├── EnhancedRotatingNumberInput.tsx # Animated number input component
+│   │   ├── GPADisplay.tsx           # GPA visualization with assessment
+│   │   ├── GradeDropdown.tsx        # Enhanced grade selection dropdown
+│   │   ├── GroupedCourseTable.tsx   # Hierarchical course table with grouping
+│   │   ├── ImportModal.tsx          # Course import functionality
+│   │   ├── RotatingNumberInput.tsx  # Base component for number selection
+│   │   ├── StatsModal.tsx           # Statistics display for course groups
+│   │   └── ThreeJSBackground.tsx    # Animated background with GLSL shaders
+│   ├── data/
+│   │   └── Courses.json             # FCAI course catalog data
+│   ├── types/
+│   │   └── Course.ts                # TypeScript interfaces and types
+│   ├── utils/
+│   │   ├── dropdownManager.ts       # Dropdown coordination utilities
+│   │   └── gradeUtils.ts            # GPA calculation and grade utilities
+│   ├── index.css                    # Global styles and design system
+│   └── responsive-fixes.css         # Mobile-specific style adjustments
+├── public/                          # Static assets
+│   ├── logo.svg                     # Application logo
+│   └── Courses.json                 # Public course data (if needed)
+├── next.config.js                   # Next.js configuration
+├── tsconfig.json                    # TypeScript configuration
+└── package.json                     # Dependencies and scripts
 ```
 
 ## Detailed Component Functionality
 
-### App Component (`App.tsx`)
+### App Component (`app/page.tsx`)
 
-The main component that:
+The main page component (client-side) that:
 - Manages the application state (courses, modals)
 - Handles data persistence using local storage
 - Orchestrates the interactions between components
 - Provides save notifications for user actions
 - Manages clear/delete functionality with confirmations
+- Uses `'use client'` directive for client-side interactivity
 
 ### Course Management
 
@@ -341,7 +352,7 @@ Creates an engaging background using Three.js:
 
 ### Prerequisites
 
-- Node.js (v14 or later)
+- Node.js (v20.9 or later, LTS recommended)
 - npm or yarn
 
 ### Setup
@@ -361,11 +372,33 @@ npm install
 ```bash
 npm run dev
 ```
+The application will be available at `http://localhost:3000`
 
 4. Build for production
 ```bash
 npm run build
 ```
+This creates an optimized static export in the `out/` directory.
+
+5. Preview production build locally
+```bash
+npm run start
+```
+
+6. Run linting
+```bash
+npm run lint
+```
+
+### VSCode Tasks
+
+The project includes VSCode tasks for common operations:
+- **Run Build Task** (`Ctrl+Shift+B` / `Cmd+Shift+B`): Runs `npm run build`
+- **npm: dev**: Starts the development server
+- **npm: lint**: Runs ESLint to check code quality
+- **npm: start**: Starts the production server
+
+Access tasks via: `Terminal` → `Run Task...` or `Ctrl+Shift+P` → `Tasks: Run Task`
 
 ### Deployment
 
@@ -377,7 +410,18 @@ git commit -m "Your update message"
 git push origin main
 ```
 
-The GitHub Actions workflow will automatically build and deploy the application.
+The GitHub Actions workflow will automatically:
+- Build the Next.js application
+- Generate static export
+- Deploy to GitHub Pages
+
+For manual deployment:
+```bash
+npm run build
+npm run deploy
+```
+
+This will build and deploy the `out/` directory to the `gh-pages` branch.
 
 ## Technical Specifications
 
@@ -397,10 +441,12 @@ The GitHub Actions workflow will automatically build and deploy the application.
   - Visible focus indicators for keyboard users
   - Semantic HTML structure
 - **Performance**:
+  - Next.js static export for optimal loading times
   - Optimized animations with hardware acceleration
   - React memo and useCallback for rendering optimization
   - Efficient DOM updates with React
   - Lazy loading for modal components
+  - Code splitting and tree shaking via Next.js
 - **Design System**:
   - Consistent CSS variables for theming
   - Responsive spacing and typography scales

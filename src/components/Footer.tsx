@@ -1,6 +1,5 @@
 import React from 'react';
 import './Footer.css';
-import Logo from '../assets/logo.svg';
 import { FaGithub } from 'react-icons/fa';
 
 // Custom Copyright SVG icon component
@@ -32,8 +31,8 @@ const Footer: React.FC = () => {
             rel="noopener noreferrer" 
             className="signature-logo-link"
             style={{
-              WebkitMaskImage: `url(${Logo})`,
-              maskImage: `url(${Logo})`
+              WebkitMaskImage: 'url(/logo.svg)',
+              maskImage: 'url(/logo.svg)'
             }}
             title="Visit creator's profile"
           >

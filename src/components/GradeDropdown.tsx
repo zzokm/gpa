@@ -11,7 +11,7 @@ const GRADE_OPTIONS: Grade[] = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-
 // Dropdown Menu component that uses portal to render outside the table
 interface DropdownMenuProps {
   onSelectGrade: (grade: Grade) => void;
-  triggerRef: React.RefObject<HTMLDivElement>;
+  triggerRef: React.RefObject<HTMLDivElement | null>;
   // No courseId needed here as it's for the menu itself
 }
 

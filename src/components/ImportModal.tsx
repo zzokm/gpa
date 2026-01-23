@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import { Course, Grade, Term, Level } from '../types/Course';
 
 interface ImportModalProps {
@@ -194,7 +194,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
   };  if (!show) return null;
   
   // Use portal to render the modal at the document body level
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className={`modal-overlay ${mounted ? 'modal-visible' : ''}`} onClick={handleClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">

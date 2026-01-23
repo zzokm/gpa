@@ -8,7 +8,7 @@ const CREDIT_HOURS_OPTIONS = [0, 1, 2, 3];
 // Dropdown Menu component that uses portal to render outside the table
 interface DropdownMenuProps {
   onSelectCreditHours: (hours: number) => void;
-  triggerRef: React.RefObject<HTMLDivElement>;
+  triggerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectCreditHours, triggerRef }) => {
@@ -155,7 +155,8 @@ interface CreditHoursDropdownProps {
 const CreditHoursDropdown: React.FC<CreditHoursDropdownProps> = ({ 
   courseId, 
   courseName, 
-  onSelectCreditHours, 
+  onSelectCreditHours,
+  currentHours: _currentHours
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

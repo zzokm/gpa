@@ -20,31 +20,34 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
           
       - name: Install dependencies
         run: npm ci
         
-      # Set base path based on branch
-      - name: Set Vite base path for main branch
+      # Set base path based on branch for Next.js
+      - name: Set Next.js base path for main branch
         if: github.ref == 'refs/heads/main'
         run: |
-          echo "export default {
-            base: '/gpa/'
-          }" > vite.base.js
+          echo "module.exports = {
+            output: 'export',
+            basePath: '/gpa',
+            assetPrefix: '/gpa/',
+            images: { unoptimized: true },
+            trailingSlash: true,
+          }" > next.config.js
           
-      - name: Set Vite base path for Feature-Testing branch
+      - name: Set Next.js base path for Feature-Testing branch
         if: github.ref == 'refs/heads/Feature-Testing'
         run: |
-          echo "export default {
-            base: '/gpa/beta/'
-          }" > vite.base.js
-          
-      # Merge the base path with the original Vite config
-      - name: Update Vite config
-        run: |
-          sed -i 's|base: .*,|base: require("./vite.base.js").default.base,|' vite.config.ts
+          echo "module.exports = {
+            output: 'export',
+            basePath: '/gpa/beta',
+            assetPrefix: '/gpa/beta/',
+            images: { unoptimized: true },
+            trailingSlash: true,
+          }" > next.config.js
           
       - name: Build
         run: npm run build
@@ -54,7 +57,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist
+          folder: out
           branch: gh-pages
           clean: false  # Don't remove existing files
           
@@ -62,7 +65,7 @@ jobs:
         if: github.ref == 'refs/heads/Feature-Testing'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist
+          folder: out
           branch: gh-pages
           target-folder: beta  # Deploy to /gpa/beta subdirectory
           clean: false  # Don't remove existing files

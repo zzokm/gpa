@@ -165,7 +165,8 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
       window.clearTimeout(quickUpdateTimer);
       window.clearTimeout(finalUpdateTimer);
     };
-  }, [value, numbers, min, max]); // Added min/max to dependencies for better handling of range changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, numbers, min, max]); // updateDisplay is stable and dependencies are covered
 
   // Improved shake animation function with guaranteed return to exact center
   const animateShake = (direction: 'left' | 'right') => {
@@ -239,7 +240,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
   const handlePrev = () => {
     if (disabled) return;
     
-    let newValue = value - 1;
+    const newValue = value - 1;
     
     // No wrap-around logic, instead show shake animation at min limit
     if (newValue < min) {
@@ -253,7 +254,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
   const handleNext = () => {
     if (disabled) return;
     
-    let newValue = value + 1;
+    const newValue = value + 1;
     
     // No wrap-around logic, instead show shake animation at max limit
     if (newValue > max) {

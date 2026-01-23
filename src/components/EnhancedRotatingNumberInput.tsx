@@ -174,7 +174,8 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
       window.clearTimeout(quickUpdateTimer);
       window.clearTimeout(finalUpdateTimer);
     };
-  }, [value, numbers, min, max]); // Added min/max to dependencies for better handling of range changes  // Enhanced function to create a seamless wrap-around animation effect with better class handling
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, numbers, min, max]); // updateDisplay is stable and dependencies are covered  // Enhanced function to create a seamless wrap-around animation effect with better class handling
   const animateWrapAround = (direction: 'left' | 'right') => {
     if (!stripRef.current) return;
     

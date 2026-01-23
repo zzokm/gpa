@@ -75,6 +75,7 @@ jest-coverage/
 # IDE & Editor Files
 # ===================================
 .vscode/
+.cursor/
 .idea/
 *.swp
 *.swo
