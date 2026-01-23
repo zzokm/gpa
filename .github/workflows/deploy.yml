@@ -36,6 +36,7 @@ jobs:
             assetPrefix: '/gpa/',
             images: { unoptimized: true },
             trailingSlash: true,
+            reactStrictMode: true,
           }" > next.config.js
           
       - name: Set Next.js base path for Feature-Testing branch
@@ -47,6 +48,7 @@ jobs:
             assetPrefix: '/gpa/beta/',
             images: { unoptimized: true },
             trailingSlash: true,
+            reactStrictMode: true,
           }" > next.config.js
           
       - name: Build
