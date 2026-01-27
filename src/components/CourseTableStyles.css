@@ -40,6 +40,7 @@
 }
 
 /* Course table row container with fixed grid layout */
+/* Extends base .course-table tbody tr from index.css with grid layout */
 .course-table tbody tr {
   display: grid;
   grid-template-columns: 
@@ -53,14 +54,7 @@
     var(--spacing-x);        /* Distance X from remove button to end of row */
   grid-template-areas: 
     ".     .       credits .     grade   .     remove .";
-  width: 100%;
-  align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.15);
-  transition: var(--transition-base);
-  position: relative;
-  padding: 0;
-  overflow: visible;         /* Allow remove button ring effect to show */
+  /* Base styles inherited from index.css: border-bottom, background, transition, position, overflow */
 }
 
 /* Course name cell */
@@ -79,6 +73,52 @@
   text-align: center;
   padding: var(--space-md) 0;  /* No horizontal padding, controlled by grid */
   white-space: nowrap;
+}
+
+/* Credit hours badge – same shape/size as grade badge, neutral style */
+/* Credit hours badge container - matches grade-badge-container exactly */
+.credit-hours-badge-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--grade-badge-width);
+  min-width: var(--grade-badge-width);
+  flex-shrink: 0; /* Prevent from shrinking, same as grade-badge-container */
+}
+
+.credit-hours-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--grade-badge-width);
+  min-width: var(--grade-badge-width);
+  min-height: 30px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  font-weight: 650;
+  font-size: var(--text-sm);
+  line-height: 1;
+  background: var(--gray-200);
+  color: var(--gray-800);
+  border: 1px solid var(--gray-300);
+  transition: var(--transition-base);
+  text-align: center;
+}
+
+/* Credit hours cell layout: badge + dropdown, same gap as grade cell */
+.course-table .credit-hours-cell {
+  gap: var(--spacing-z); /* Same 8px gap as grade-cell */
+  justify-content: center;
+  flex-direction: row; /* Badge first (left), then dropdown (right), same as grade-cell */
+  align-items: center;
+}
+
+/* Credit hours dropdown wrapper - matches grade-dropdown positioning */
+.course-table .credit-hours-dropdown {
+  position: relative;
+  width: var(--grade-dropdown-width);
+  min-width: var(--grade-dropdown-width);
+  flex-shrink: 0; /* Prevent from shrinking, same as grade-dropdown */
 }
 
 /* Grade cell contains both the badge and dropdown */

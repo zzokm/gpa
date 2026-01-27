@@ -366,46 +366,13 @@ const CourseForm: React.FC<CourseFormProps> = ({
             {showSuggestions && suggestions.length > 0 && (
               <div 
                 ref={suggestionsRef}
-                style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: 0,
-                  right: 0,
-                  backgroundColor: 'white',
-                  border: '2px solid rgba(255, 255, 255, 0.5)',
-                  borderRadius: 'var(--radius-md)',
-                  maxHeight: '200px',
-                  overflowY: 'auto',
-                  zIndex: 1000,
-                  boxShadow: 'var(--shadow-md)',
-                  backdropFilter: 'blur(16px)',
-                  WebkitBackdropFilter: 'blur(16px)',
-                  background: 'rgba(255, 255, 255, 0.9)'
-                }}
+                className="course-form-suggestions"
               >
                 {suggestions.map((suggestion, index) => (
                   <div
                     key={index}
-                    style={{
-                      padding: '10px 15px',
-                      cursor: 'pointer',
-                      borderBottom: index < suggestions.length - 1 ? '1px solid rgba(203, 213, 225, 0.5)' : 'none',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      fontWeight: 500,
-                      color: 'var(--text-color)',
-                      transition: 'var(--transition-base)'
-                    }}
+                    className="course-form-suggestion-item"
                     onClick={() => handleSuggestionClick(suggestion)}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(255, 121, 85, 0.1)';
-                      e.currentTarget.style.color = 'var(--primary-600)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '';
-                      e.currentTarget.style.color = 'var(--text-color)';
-                    }}
                   >
                     <strong>{suggestion.code}</strong> - {suggestion.name}
                   </div>

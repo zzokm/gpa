@@ -21,7 +21,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   color: var(--text-color);
-  margin-left: 6px;
+  margin-left: 0; /* No margin - spacing handled by parent .credit-hours-cell gap */
   padding: 0;
   opacity: 0;
   transform: scale(0.8);
@@ -36,7 +36,7 @@
   border-radius: 50%;
   width: 24px;
   height: 24px;
-  margin-left: 8px; /* Match exactly the same margin as grade dropdown */
+  margin-left: 0; /* No margin - spacing handled by parent .credit-hours-cell gap (--spacing-z) */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -126,7 +126,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: var(--space-md) var(--space-lg);
+  padding: 6px var(--space-sm); /* Further reduced padding for shorter items */
   border: none;
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
@@ -137,6 +137,7 @@
   color: var(--text-color);
   margin-bottom: 0;
   transition: all 0.15s ease-out;
+  min-height: 28px; /* Reduced minimum height for more compact items */
 }
 
 .credit-hours-dropdown-option:hover {
@@ -157,7 +158,6 @@
   display: flex;
   align-items: center;
   justify-content: flex-start; /* Align items to the left like grade cell */
-  gap: 0; /* Remove gap to match grade cell exactly */
   width: 100%;
 }
 
@@ -182,13 +182,14 @@
   align-items: center;
   width: 100%;
   justify-content: flex-start;
+  /* Gap is set in CourseTableStyles.css to match grade-cell spacing */
 }
 
 /* Match the grade dropdown arrow appearance */
 .credit-hours-dropdown-trigger.static-arrow {
   opacity: 1;
   transform: scale(1);
-  margin-left: 8px; /* Match the grade dropdown margin */
+  /* No margin-left - spacing is handled by parent .credit-hours-cell gap (--spacing-z) */
 }
 
 /* Fix z-index issues for nested dropdowns */

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+// CSS loading order: Bootstrap → globals (font) → index (tokens + base styles) → responsive-fixes (overrides)
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './globals.css'
 import '../src/index.css'

@@ -1,11 +1,11 @@
 /* GroupedCourseTable.css - Combined styles for the grouped course table component */
 
-/* Table box container */
+/* Table box container - extends base .table-box from index.css */
 .table-box {
   position: relative;
-  padding-top: 20px; /* Space at the top for the reset button */
-  padding-right: 20px; /* Equal padding on the right to match top */
-  padding-left: 20px; /* Balance with right padding */
+  padding-top: var(--space-xl); /* Space at the top for the reset button */
+  padding-right: var(--space-xl); /* Equal padding on the right to match top */
+  padding-left: var(--space-xl); /* Balance with right padding */
 }
 
 .table-container.expanded {
@@ -429,13 +429,67 @@
   height: 100%;
 }
 
+/* Inline metrics on wide screens: visible; on narrow: hidden */
+.group-header-metrics-inline {
+  display: none;
+  margin-left: auto;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.group-metric {
+  white-space: nowrap;
+}
+
+.group-metric.gpa {
+  color: var(--primary-color);
+}
+
+.group-metric.credits .passed { color: var(--gray-700); }
+.group-metric.credits .sep { color: var(--gray-400); margin: 0 1px; }
+.group-metric.credits .failed { color: var(--primary-600); }
+
+.group-metric-sep {
+  color: var(--gray-400);
+  font-weight: 400;
+}
+
+/* Narrow: show info button, hide inline metrics */
+.group-header-metrics-narrow {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+}
+
+@media (min-width: 769px) {
+  .group-header-metrics-inline {
+    display: flex;
+  }
+  .group-header-metrics-narrow {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .group-header-metrics-inline {
+    display: none;
+  }
+  .group-header-metrics-narrow {
+    display: flex;
+  }
+}
+
 /* Position the info button correctly */
 .group-title .info-btn {
   /* No longer positioned absolutely */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
+  margin-left: 0;
   padding: 4px;
   border: 0;
   border-radius: 50%;

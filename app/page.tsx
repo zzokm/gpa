@@ -27,13 +27,17 @@ const loadCoursesFromStorage = (): Course[] => {
 }
 
 export default function Home() {
-  // Initialize courses from localStorage using lazy initialization
-  const [courses, setCourses] = useState<Course[]>(() => loadCoursesFromStorage())
+  // Start empty so server and client match (avoids hydration mismatch). Load from localStorage after mount.
+  const [courses, setCourses] = useState<Course[]>([])
   const [showImportModal, setShowImportModal] = useState(false)
   const [saveNotification, setSaveNotification] = useState<{show: boolean, message: string}>({
     show: false,
     message: ''
   })
+
+  useEffect(() => {
+    setCourses(loadCoursesFromStorage())
+  }, [])
 
   // #region agent log
   useEffect(() => {

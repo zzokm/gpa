@@ -354,11 +354,10 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
     return Object.values(levelData).flat();
   };
   const renderCourseRow = (course: Course) => (
-    <tr key={course.id} className="course-row">
-      <td className="course-name">{course.name}</td>      <td className="course-hours">
+    <tr key={course.id} className="course-row"><td className="course-name">{course.name}</td><td className="course-hours">
         <div className="credit-hours-cell">
-          <div className="credit-hours-value-container">
-            <span className="credit-hours-value">{course.hours}</span>
+          <div className="credit-hours-badge-container">
+            <span className="credit-hours-badge">{course.hours}</span>
           </div>
           <CreditHoursDropdown
             courseId={course.id!}
@@ -367,21 +366,18 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
             currentHours={course.hours}
           />
         </div>
-      </td>
-      <td>
+      </td><td>
         <div className="grade-cell">
           <div className="grade-badge-container">
             {course.grade !== null ? (
-              <span 
-                className="course-grade-badge" 
+              <span
+                className="course-grade-badge"
                 style={getGradeStyles(course.grade)}
               >
                 {course.grade}
               </span>
             ) : (
-              <span className="course-grade-badge empty-grade">
-                -
-              </span>
+              <span className="course-grade-badge empty-grade">-</span>
             )}
           </div>
           <GradeDropdown
@@ -391,12 +387,12 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
             currentGrade={course.grade !== null ? course.grade : null}
           />
         </div>
-      </td>
-      <td>
+      </td><td>
         <button
           className="remove-btn"
           onClick={() => onRemoveCourse(course.id!)}
-          aria-label={`Remove ${course.name}`}        >
+          aria-label={`Remove ${course.name}`}
+        >
           <svg fill="#ffffff" viewBox="-230 -230 1460.00 1460.00" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" strokeWidth="5">
             <g id="SVGRepo_bgCarrier" strokeWidth="0" transform="translate(0,0), scale(1)">
               <rect x="-230" y="-230" width="1460.00" height="1460.00" rx="730" fill="#e81717" strokeWidth="0"></rect>
@@ -407,8 +403,7 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
             </g>
           </svg>
         </button>
-      </td>
-    </tr>
+      </td></tr>
   );
   if (courses.length === 0) {
     return (
@@ -470,25 +465,44 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
               role="button"
               tabIndex={-1}
             >
-              <h3 className="group-title">                <span className={`group-toggle ${isLevelExpanded ? 'expanded' : 'collapsed'}`}>
+              <h3 className="group-title">
+                <span className={`group-toggle ${isLevelExpanded ? 'expanded' : 'collapsed'}`}>
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                  </svg>                </span>
-                {level}
-                <button 
-                  className="info-btn"
-                  title={`GPA: ${levelStats.gpa.toFixed(2)}`}
-                  aria-label={`View statistics for ${level}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openModal(level, levelStats, levelCourses);
-                  }}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M10 .4C4.697.4.399 4.698.399 10A9.6 9.6 0 0 0 10 19.601c5.301 0 9.6-4.298 9.6-9.601 0-5.302-4.299-9.6-9.6-9.6zm.896 3.466c.936 0 1.211.543 1.211 1.164 0 .775-.62 1.492-1.679 1.492-.886 0-1.308-.445-1.282-1.182 0-.621.519-1.474 1.75-1.474zM8.498 15.75c-.64 0-1.107-.389-.66-2.094l.733-3.025c.127-.484.148-.678 0-.678-.191 0-1.022.334-1.512.664l-.319-.523c1.555-1.299 3.343-2.061 4.108-2.061.64 0 .746.756.427 1.92l-.84 3.18c-.149.562-.085.756.064.756.192 0 .82-.232 1.438-.719l.362.486c-1.513 1.512-3.162 2.094-3.801 2.094z" fill="#ff7955"/>
                   </svg>
-                </button>
+                </span>
+                {level}
+                <span className="group-header-metrics group-header-metrics-inline" aria-hidden="true">
+                  <span className="group-metric gpa">GPA {levelStats.gpa.toFixed(2)}</span>
+                  {levelStats.failedCredits > 0 ? (
+                    <>
+                      <span className="group-metric-sep" aria-hidden="true">·</span>
+                      <span className="group-metric credits">
+                        <span className="passed">{levelStats.passedCredits}</span>
+                        <span className="sep">/</span>
+                        <span className="failed">{levelStats.failedCredits}</span>
+                      </span>
+                    </>
+                  ) : null}
+                  <span className="group-metric-sep" aria-hidden="true">·</span>
+                  <span className="group-metric total">{levelStats.totalCredits} hrs</span>
+                </span>
+                <span className="group-header-metrics-narrow">
+                  <button
+                    className="info-btn"
+                    title={`GPA: ${levelStats.gpa.toFixed(2)}`}
+                    aria-label={`View statistics for ${level}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      openModal(level, levelStats, levelCourses);
+                    }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M10 .4C4.697.4.399 4.698.399 10A9.6 9.6 0 0 0 10 19.601c5.301 0 9.6-4.298 9.6-9.601 0-5.302-4.299-9.6-9.6-9.6zm.896 3.466c.936 0 1.211.543 1.211 1.164 0 .775-.62 1.492-1.679 1.492-.886 0-1.308-.445-1.282-1.182 0-.621.519-1.474 1.75-1.474zM8.498 15.75c-.64 0-1.107-.389-.66-2.094l.733-3.025c.127-.484.148-.678 0-.678-.191 0-1.022.334-1.512.664l-.319-.523c1.555-1.299 3.343-2.061 4.108-2.061.64 0 .746.756.427 1.92l-.84 3.18c-.149.562-.085.756.064.756.192 0 .82-.232 1.438-.719l.362.486c-1.513 1.512-3.162 2.094-3.801 2.094z" fill="#ff7955"/>
+                    </svg>
+                  </button>
+                </span>
               </h3>
             </div>
             
@@ -536,25 +550,44 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                         role="button"
                         tabIndex={-1}
                       >
-                        <h4 className="group-title term-title">                          <span className={`group-toggle ${isTermExpanded ? 'expanded' : 'collapsed'}`}>
+                        <h4 className="group-title term-title">
+                          <span className={`group-toggle ${isTermExpanded ? 'expanded' : 'collapsed'}`}>
                             <svg viewBox="0 0 24 24" fill="currentColor">
                               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                             </svg>
                           </span>
                           {term}
-                          <button 
-                            className="info-btn"
-                            title={`GPA: ${termStats.gpa.toFixed(2)}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              openModal(`${level} - ${term}`, termStats, termCourses);
-                            }}
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                              <path d="M10 .4C4.697.4.399 4.698.399 10A9.6 9.6 0 0 0 10 19.601c5.301 0 9.6-4.298 9.6-9.601 0-5.302-4.299-9.6-9.6-9.6zm.896 3.466c.936 0 1.211.543 1.211 1.164 0 .775-.62 1.492-1.679 1.492-.886 0-1.308-.445-1.282-1.182 0-.621.519-1.474 1.75-1.474zM8.498 15.75c-.64 0-1.107-.389-.66-2.094l.733-3.025c.127-.484.148-.678 0-.678-.191 0-1.022.334-1.512.664l-.319-.523c1.555-1.299 3.343-2.061 4.108-2.061.64 0 .746.756.427 1.92l-.84 3.18c-.149.562-.085.756.064.756.192 0 .82-.232 1.438-.719l.362.486c-1.513 1.512-3.162 2.094-3.801 2.094z" fill="#ff7955"/>
-                            </svg>
-                          </button>
+                          <span className="group-header-metrics group-header-metrics-inline" aria-hidden="true">
+                            <span className="group-metric gpa">GPA {termStats.gpa.toFixed(2)}</span>
+                            {termStats.failedCredits > 0 ? (
+                              <>
+                                <span className="group-metric-sep" aria-hidden="true">·</span>
+                                <span className="group-metric credits">
+                                  <span className="passed">{termStats.passedCredits}</span>
+                                  <span className="sep">/</span>
+                                  <span className="failed">{termStats.failedCredits}</span>
+                                </span>
+                              </>
+                            ) : null}
+                            <span className="group-metric-sep" aria-hidden="true">·</span>
+                            <span className="group-metric total">{termStats.totalCredits} hrs</span>
+                          </span>
+                          <span className="group-header-metrics-narrow">
+                            <button
+                              className="info-btn"
+                              title={`GPA: ${termStats.gpa.toFixed(2)}`}
+                              aria-label={`View statistics for ${term}`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                openModal(`${level} - ${term}`, termStats, termCourses);
+                              }}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path d="M10 .4C4.697.4.399 4.698.399 10A9.6 9.6 0 0 0 10 19.601c5.301 0 9.6-4.298 9.6-9.601 0-5.302-4.299-9.6-9.6-9.6zm.896 3.466c.936 0 1.211.543 1.211 1.164 0 .775-.62 1.492-1.679 1.492-.886 0-1.308-.445-1.282-1.182 0-.621.519-1.474 1.75-1.474zM8.498 15.75c-.64 0-1.107-.389-.66-2.094l.733-3.025c.127-.484.148-.678 0-.678-.191 0-1.022.334-1.512.664l-.319-.523c1.555-1.299 3.343-2.061 4.108-2.061.64 0 .746.756.427 1.92l-.84 3.18c-.149.562-.085.756.064.756.192 0 .82-.232 1.438-.719l.362.486c-1.513 1.512-3.162 2.094-3.801 2.094z" fill="#ff7955"/>
+                              </svg>
+                            </button>
+                          </span>
                         </h4>
                       </div>
                       
