@@ -266,9 +266,12 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
     }
     
     onChange(newValue);
-  };  return (
-    <div className="credit-hours-input">      
-      <div className="perspective-container">
+  };
+
+  return (
+    <div className="credit-hours-input">
+      <div className="credit-hours-input-inner">
+        <div className="perspective-container">
         <div className="number-dial-viewport">
           <div ref={stripRef} id="number-strip" className="number-strip" style={{ '--x-offset': '0px' } as React.CSSProperties}>
             {numbers.map((num) => (
@@ -285,24 +288,23 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
             ))}
           </div>
         </div>
-          {/* The Glass Overlay Panes with integrated arrows */}
-        <div className="glass-pane-left" onClick={handlePrev} style={{ pointerEvents: disabled ? 'none' : 'auto', cursor: disabled ? 'not-allowed' : 'pointer' }}>
-          <div className="arrow-button" style={{ left: '5px' }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </div>
-        </div>
-        <div className="glass-pane-right" onClick={handleNext} style={{ pointerEvents: disabled ? 'none' : 'auto', cursor: disabled ? 'not-allowed' : 'pointer' }}>
-          <div className="arrow-button" style={{ right: '5px' }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </div>
-        </div>
-        
-        {/* Central viewing window with thin border */}
         <div className="center-window"></div>
+      </div>
+      {/* Glass overlay panes: siblings of perspective-container so backdrop is full input interior */}
+      <div className="glass-pane-left" onClick={handlePrev} style={{ pointerEvents: disabled ? 'none' : 'auto', cursor: disabled ? 'not-allowed' : 'pointer' }}>
+        <div className="arrow-button" style={{ left: '5px' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </div>
+      </div>
+      <div className="glass-pane-right" onClick={handleNext} style={{ pointerEvents: disabled ? 'none' : 'auto', cursor: disabled ? 'not-allowed' : 'pointer' }}>
+        <div className="arrow-button" style={{ right: '5px' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </div>
       </div>
     </div>
   );

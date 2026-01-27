@@ -1,6 +1,7 @@
 /* Mobile Responsiveness Fixes */
 
 /* === Rotating Number Input Centering Fix === */
+/* Credit-hours-input layout and glass owned by RotatingNumberInput.css; MobileCreditHoursOverride.css for mobile. */
 /* IMPORTANT: Main credit-hours-input styling has been moved to RotatingNumberInput.css */
 /* and MobileCreditHoursOverride.css to prevent conflicts and ensure proper mobile display */
 

@@ -349,6 +349,7 @@ select {
 }
 
 /* Credit Hours Input with Arrows - Ultra-Enhanced Glassmorphism */
+/* Credit-hours-input layout and glass (backdrop-filter, overflow) owned by RotatingNumberInput.css; do not override here. */
 /* MOVED TO RotatingNumberInput.css for better organization and to prevent conflicts */
 /*
 .credit-hours-input {

@@ -1,6 +1,7 @@
 /* Rotating Number Input with Glass Overlay - Enhanced Version (Consolidated) */
 
 /* ====== Main Wrapper ====== */
+/* Outer: backdrop-filter blur, no overflow - allows blur to render; overflow on inner wrapper */
 .credit-hours-input {
   position: relative;
   display: flex !important;
@@ -15,13 +16,26 @@
   -webkit-backdrop-filter: blur(16px) !important;
   border: 2px solid rgba(255, 255, 255, 0.5) !important; /* Match other form inputs exactly */
   border-radius: var(--radius-md) !important;
-  overflow: hidden !important;
+  isolation: isolate !important; /* Stacking context for backdrop-filter */
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 6px rgba(0, 0, 0, 0.04) !important; /* Match other form inputs exactly */
   transition: var(--transition-base) !important;
   box-sizing: border-box !important;
   flex-shrink: 0 !important;
   visibility: visible !important;
   opacity: 1 !important;
+}
+
+/* Inner: overflow hidden clips strip; blur stays on parent so backdrop-filter works */
+.credit-hours-input-inner {
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
 }
 .credit-hours-input:focus-within {
   border-color: rgba(255, 121, 85, 0.6) !important; /* Match other form inputs exactly */
@@ -31,6 +45,7 @@
 }
 
 /* ====== Perspective Container ====== */
+/* Glass panes (.glass-pane-left, .glass-pane-right) are siblings of this container, not children, so their backdrop-filter blurs the full input interior */
 .perspective-container {
   perspective: 1200px;
   flex: 1 !important;
@@ -138,26 +153,27 @@
     color 0.4s ease,
     filter 0.4s ease !important;
 }
+/* Filter: no !important so updateDisplay() inline styles (distance-based blur) can apply */
 .number-item:not(.active) { 
   z-index: 20 !important; 
-  filter: blur(1px) opacity(0.85) !important; /* Further reduced blur and increased opacity for maximum visibility through glass panes */
+  filter: blur(1px) opacity(0.85);
 }
 .number-item.prev, .number-item.next { 
-  filter: blur(1px) opacity(0.75) !important; /* Further reduced blur and increased opacity for better visibility */
+  filter: blur(1px) opacity(0.75);
 }
 .number-item.prev {
-  opacity: 0.75; /* Further increased from 0.65 for maximum visibility through glass panes */
+  opacity: 0.75;
   transform: translateX(-55px) translateZ(-25px) scale(0.65);
   color: #6b7280;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
-  filter: blur(1px) opacity(0.75) !important; /* Further reduced blur and increased opacity */
+  filter: blur(1px) opacity(0.75);
 }
 .number-item.next {
-  opacity: 0.75; /* Further increased from 0.65 for maximum visibility through glass panes */
+  opacity: 0.75;
   transform: translateX(55px) translateZ(-25px) scale(0.65);
   color: #6b7280;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
-  filter: blur(1px) opacity(0.75) !important; /* Further reduced blur and increased opacity */
+  filter: blur(1px) opacity(0.75);
 }
 .number-item.active {
   opacity: 1;
@@ -169,7 +185,7 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), 0 0 15px rgba(255, 255, 255, 0.6);
   isolation: isolate !important;
   z-index: 55 !important;
-  filter: none !important;
+  filter: none;
 }
 .number-item.active::after {
   content: '';
@@ -192,6 +208,7 @@
 }
 
 /* ====== Glass Panes (frosted glass) ====== */
+/* Panes are siblings of .perspective-container so backdrop is full input interior */
 .glass-pane-left,
 .glass-pane-right {
   position: absolute !important;
@@ -200,14 +217,14 @@
   pointer-events: auto !important;
   z-index: 100 !important;
   width: calc(50% - 25px) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
   -webkit-transform: translateZ(0) !important;
   transform: translateZ(0) !important;
   box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.15);
   transition: all 0.25s ease !important;
   -webkit-tap-highlight-color: transparent !important;
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
 }
 .glass-pane-left {
   left: 0 !important;
@@ -414,6 +431,10 @@
     background: rgba(255, 255, 255, 0.35) !important; /* Ensure background is visible */
     border: 2px solid rgba(255, 255, 255, 0.5) !important; /* Ensure border is visible */
     box-sizing: border-box !important;
+    isolation: isolate !important;
+  }
+  
+  .credit-hours-input-inner {
     overflow: hidden !important;
   }
   
@@ -446,6 +467,8 @@
     opacity: 1 !important;
     visibility: visible !important;
     height: 100% !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   }
   
   .center-window {
@@ -489,6 +512,7 @@
     opacity: 1 !important;
     background: rgba(255, 255, 255, 0.35) !important; /* Ensure background visibility */
     border: 2px solid rgba(255, 255, 255, 0.5) !important; /* Ensure border visibility */
+    isolation: isolate !important;
   }
   
   .number-item {
@@ -505,6 +529,8 @@
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   }
   
   .center-window {
@@ -543,6 +569,7 @@
 @media (max-width: 393px) {
   .credit-hours-input {
     min-width: 180px !important; /* Slightly smaller but still adequate */
+    isolation: isolate !important;
   }
   .number-item {
     font-size: 1rem !important;
@@ -552,6 +579,7 @@
   .credit-hours-input {
     min-width: 160px !important; /* Still large enough to be functional */
     height: 50px !important; /* Keep consistent height */
+    isolation: isolate !important;
   }
   .number-item {
     width: 35px !important;
@@ -579,12 +607,15 @@
   .glass-pane-left,
   .glass-pane-right {
     width: calc(50% - 17px) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   }
 }
 @media (max-width: 320px) {
   .credit-hours-input {
     min-width: 140px !important; /* Still functional on very small screens */
     height: 50px !important; /* Keep consistent height */
+    isolation: isolate !important;
   }
   .perspective-container {
     min-width: 70px !important;
