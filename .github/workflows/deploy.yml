@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
@@ -33,7 +33,7 @@ jobs:
           echo "module.exports = {
             output: 'export',
             basePath: '/gpa',
-            assetPrefix: '/gpa/',
+            assetPrefix: 'https://zzokm.github.io/gpa/',
             images: { unoptimized: true },
             trailingSlash: true,
             reactStrictMode: true,
@@ -49,7 +49,7 @@ jobs:
           echo "module.exports = {
             output: 'export',
             basePath: '/gpa/beta',
-            assetPrefix: '/gpa/beta/',
+            assetPrefix: 'https://zzokm.github.io/gpa/beta/',
             images: { unoptimized: true },
             trailingSlash: true,
             reactStrictMode: true,
@@ -61,6 +61,10 @@ jobs:
           
       - name: Build
         run: npm run build
+        
+      # Create .nojekyll file to prevent Jekyll from ignoring _next/ folder
+      - name: Create .nojekyll file
+        run: touch out/.nojekyll
         
       # Deploy to different target folders based on branch
       - name: Deploy to root (main branch)
