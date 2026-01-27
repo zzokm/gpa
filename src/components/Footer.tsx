@@ -21,6 +21,37 @@ const CopyrightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
+  // Get basePath from Next.js runtime for static export
+  // Extract path from assetPrefix (which may be a full URL or relative path)
+  const getBasePath = (): string => {
+    if (typeof window === 'undefined') return '';
+    const assetPrefix = (window as any).__NEXT_DATA__?.assetPrefix;
+    
+    if (assetPrefix) {
+      // If assetPrefix is a full URL, extract the pathname
+      if (assetPrefix.startsWith('http')) {
+        try {
+          const url = new URL(assetPrefix);
+          return url.pathname.replace(/\/$/, '');
+        } catch {
+          // Fall through to location-based detection
+        }
+      } else {
+        // If it's already a path, use it directly
+        return assetPrefix.replace(/\/$/, '');
+      }
+    }
+    
+    // Fallback: detect from window.location.pathname
+    const pathname = window.location.pathname;
+    if (pathname.startsWith('/gpa/beta')) return '/gpa/beta';
+    if (pathname.startsWith('/gpa')) return '/gpa';
+    return '';
+  };
+  
+  const basePath = getBasePath();
+  const logoPath = basePath ? `${basePath}/logo.svg` : '/logo.svg';
+  
   return (
     <footer className="app-footer">
       <div className="footer-content">
@@ -31,8 +62,8 @@ const Footer: React.FC = () => {
             rel="noopener noreferrer" 
             className="signature-logo-link"
             style={{
-              WebkitMaskImage: 'url(/logo.svg)',
-              maskImage: 'url(/logo.svg)'
+              WebkitMaskImage: `url(${logoPath})`,
+              maskImage: `url(${logoPath})`
             }}
             title="Visit creator's profile"
           >
