@@ -1,4 +1,4 @@
 :HL["https://zzokm.github.io/gpa/_next/static/chunks/5d1bc6c2ac543789.css","style"]
-:HL["https://zzokm.github.io/gpa/_next/static/chunks/2ef3bf34913cba89.css","style"]
-:HL["https://zzokm.github.io/gpa/_next/static/chunks/47b9cfaecef04b58.css","style"]
-0:{"buildId":"AuCtffrzP-6UCO5T5HND_","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
+:HL["https://zzokm.github.io/gpa/_next/static/chunks/6644254dd8a24fbf.css","style"]
+:HL["https://zzokm.github.io/gpa/_next/static/chunks/74f1490259e8ff8d.css","style"]
+0:{"buildId":"JtBzdKmjo-jLGsbMaeVTN","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
