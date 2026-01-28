@@ -101,14 +101,18 @@ body {
 }
 
 /* === Critical Fix for Collapsed Elements === */
-/* This ensures collapsed elements cannot be clicked */
-.table-container.collapsed,
-.level-container.collapsed, 
-.term-container.collapsed {
+/* Manual .table-container.collapsed only; level/term use grid 0fr/1fr in GroupedCourseTable.css */
+.table-container.collapsed:not(.level-container):not(.term-container) {
   pointer-events: none !important;
   visibility: hidden !important;
   position: absolute !important;
   height: 0 !important;
+  overflow: hidden !important;
+}
+
+.level-container.collapsed,
+.term-container.collapsed {
+  pointer-events: none !important;
   overflow: hidden !important;
 }
 
@@ -118,45 +122,6 @@ body {
   visibility: visible !important;
   position: relative !important;
   height: auto !important;
-}
-
-/* === Animation Fixes === */
-/* Fix for double collapse animation */
-.table-container {
-  transition: none !important;
-  animation-duration: 350ms !important;
-}
-
-.level-container,
-.term-container {
-  transition: none !important;
-}
-
-/* Improve animations */
-@keyframes expandAnimation {
-  0% {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    max-height: 2000px;
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes collapseAnimation {
-  0% {
-    max-height: 2000px;
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-20px);
-  }
 }
 
 /* === Credit Hours Input Improvements === */
@@ -506,22 +471,22 @@ body {
   }
 }
 
-/* Reduced motion support */
+/* Reduced motion support – do not touch level/term (they use grid in GroupedCourseTable.css) */
 @media (prefers-reduced-motion: reduce) {
-  .table-container,
-  .table-container.expanded,
-  .table-container.collapsed {
+  .table-container:not(.level-container):not(.term-container),
+  .table-container.expanded:not(.level-container):not(.term-container),
+  .table-container.collapsed:not(.level-container):not(.term-container) {
     transition: none !important;
     animation: none !important;
   }
   
-  .table-container.expanded {
+  .table-container.expanded:not(.level-container):not(.term-container) {
     max-height: 2000px !important;
     opacity: 1 !important;
     transform: translateY(0) !important;
   }
   
-  .table-container.collapsed {
+  .table-container.collapsed:not(.level-container):not(.term-container) {
     max-height: 0 !important;
     opacity: 0 !important;
     visibility: hidden !important;

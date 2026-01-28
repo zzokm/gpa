@@ -8,73 +8,57 @@
   padding-left: var(--space-xl); /* Balance with right padding */
 }
 
-.table-container.expanded {
-  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-  display: block;
-  pointer-events: auto;
-  visibility: visible;
-  overflow: visible;
-}
-
-/* Expanding state - transitional */
-.table-container.expanding {
-  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-  display: block;
-  pointer-events: none; /* Still prevent interaction during animation */
+/* ===== Expand/collapse: grid 0fr/1fr (no max-height jank, smooth both directions) ===== */
+.level-container,
+.term-container {
+  display: grid;
   overflow: hidden;
-}
-
-/* Collapsing state - transitional */
-.table-container.collapsing {
-  animation: collapseAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-  pointer-events: none;
-  overflow: hidden;
-  display: block;
-}
-
-/* Final collapsed state */
-.table-container.collapsed {
-  pointer-events: none;
-  visibility: hidden;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  display: block;
-  position: absolute; /* Take out of the flow to prevent any interaction */
-}
-
-/* Critical fix for level and term containers with specific states */
-.level-container.expanded,
-.term-container.expanded {
-  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-  pointer-events: auto;
-  visibility: visible;
-}
-
-.level-container.expanding,
-.term-container.expanding {
-  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-  pointer-events: none;
-}
-
-.level-container.collapsing,
-.term-container.collapsing {
-  animation: collapseAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-  pointer-events: none;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
 .level-container.collapsed,
 .term-container.collapsed {
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
   pointer-events: none;
-  visibility: hidden;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute; /* Take out of the flow to prevent any interaction */
-  clip-path: polygon(0 0, 0 0, 0 0); /* Hide from interaction */
-  clip: rect(0, 0, 0, 0); /* Legacy clip */
   user-select: none;
   touch-action: none;
+}
+
+.level-container.expanded,
+.term-container.expanded {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  pointer-events: auto;
+}
+
+/* Inner content must allow grid row to shrink to 0 */
+.level-container-inner,
+.term-container-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .level-container,
+  .term-container {
+    transition-duration: 0.12s;
+  }
+}
+
+/* Manual courses section – no grid, always visible */
+.table-container:not(.level-container):not(.term-container) {
+  display: block;
+  overflow: visible;
+}
+
+.table-container.expanded {
+  pointer-events: auto;
+}
+
+.table-container.collapsed {
+  pointer-events: none;
 }
 
 /* Ensure group headers are still clickable */
@@ -237,130 +221,6 @@
   }
 }
 
-/* ===== Animation styling ===== */
-.table-container {
-  overflow: visible;  /* Allow remove button drop shadow to show */
-  transition: max-height 0.6s cubic-bezier(0.19, 1, 0.22, 1), 
-              opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
-              transform 0.6s cubic-bezier(0.19, 1, 0.22, 1),
-              visibility 0.1s cubic-bezier(0.19, 1, 0.22, 1);
-  transform-origin: top;
-  will-change: max-height, opacity, transform, visibility;
-  animation-fill-mode: forwards !important;
-}
-
-/* Animation improvements */
-.table-container.expanded {
-  animation: expandAnimation 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-  max-height: 2000px; /* Large enough to accommodate content */
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.table-container.collapsed {
-  animation: collapseAnimation 0.5s cubic-bezier(0.55, 0, 0.1, 1) forwards;
-  pointer-events: none; /* Disable all interactions */
-  /* Don't set max-height, opacity, or transform directly here 
-     as they will override the animation values */
-}
-
-@keyframes expandAnimation {
-  0% {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-15px);
-    visibility: visible;
-  }
-  5% {
-    opacity: 0.1;
-    max-height: 20px;
-  }
-  20% {
-    opacity: 0.4;
-    max-height: 100px;
-  }
-  40% {
-    opacity: 0.6;
-    max-height: 500px;
-  }
-  70% {
-    opacity: 0.9;
-    max-height: 1500px;
-  }
-  100% {
-    max-height: 2500px; /* Increased to ensure enough space for all content */
-    opacity: 1;
-    transform: translateY(0);
-    visibility: visible;
-  }
-}
-
-@keyframes collapseAnimation {
-  0% {
-    max-height: 2500px;
-    opacity: 1;
-    transform: translateY(0);
-    visibility: visible;
-    position: relative;
-  }
-  10% {
-    opacity: 0.95;
-    visibility: visible;
-    position: relative;
-  }
-  30% {
-    opacity: 0.8;
-    max-height: 1500px;
-    transform: translateY(-5px);
-    visibility: visible;
-    position: relative;
-  }
-  50% {
-    opacity: 0.6;
-    max-height: 500px;
-    transform: translateY(-8px);
-    visibility: visible;
-    position: relative;
-  }
-  70% {
-    opacity: 0.3;
-    max-height: 200px;
-    transform: translateY(-10px);
-    visibility: visible;
-    position: relative;
-  }
-  90% {
-    opacity: 0.1;
-    max-height: 30px;
-    transform: translateY(-12px);
-    visibility: visible;
-    position: relative;
-  }
-  99% {
-    max-height: 10px;
-    opacity: 0.01;
-    transform: translateY(-14px);
-    visibility: visible;
-    position: relative;
-  }
-  100% {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-15px);
-    visibility: hidden;
-    position: absolute;
-  }
-}
-
-/* Specific fixes for level and term containers */
-.level-container,
-.term-container {
-  animation-fill-mode: forwards !important;
-  transition: max-height 1s cubic-bezier(0.19, 1, 0.22, 1), 
-              opacity 0.9s cubic-bezier(0.19, 1, 0.22, 1), 
-              transform 0.9s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
 /* ===== Level Group Styling ===== */
 .level-group {
   width: var(--level-width);
@@ -384,7 +244,7 @@
 }
 
 /* ===== Term Group Styling ===== */
-.level-container > .term-group {
+.level-container-inner > .term-group {
   width: var(--term-width) !important;
   margin-left: var(--term-indent) !important;
   margin-right: var(--term-indent) !important;
@@ -410,7 +270,7 @@
   margin-top: 6px !important; /* Reduced spacing between terms */
 }
 
-.level-container > .term-group .group-header {
+.level-container-inner > .term-group .group-header {
   width: 100% !important; /* Term header takes full width of term container */
 }
 
@@ -537,7 +397,7 @@
   overflow: visible;  /* Allow remove button drop shadow to show */
 }
 
-.level-container > .term-group .table-container table,
+.level-container-inner > .term-group .table-container table,
 .term-group .table-container .course-table,
 .table-box .course-group.term-group .table-container table {
   width: 100% !important; /* Table takes full width of its container */
@@ -685,12 +545,9 @@
   transform: rotate(0deg);
 }
 
-/* Smooth expand/collapse animation */
 .course-group .course-table {
-  overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-  padding-top: 8px; /* More space between container and table */
-  padding-bottom: 8px; /* More space at the bottom */
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 /* Enhanced info button isolation */
@@ -756,14 +613,10 @@
     width: 100% !important;
   }
   
-  /* Speed up animations on mobile but keep smooth */
-  .table-container.expanded,
-  .table-container.collapsed,
-  .level-container.expanded,
-  .level-container.collapsed,
-  .term-container.expanded,
-  .term-container.collapsed {
-    animation-duration: 0.4s !important;
+  /* Slightly faster expand/collapse on mobile */
+  .level-container,
+  .term-container {
+    transition-duration: 0.32s;
   }
   
   /* Keep consistent spacing on mobile */
@@ -1038,94 +891,11 @@ body .level-container .term-group {
   margin-top: 6px !important;
 }
 
-/* ===== Hide interactive elements when collapsed ===== */
-.table-container.collapsed {
-  animation: collapseAnimation 0.5s cubic-bezier(0.55, 0, 0.1, 1) forwards;
-  pointer-events: none; /* Disable all interactions */
-  /* Let the animation handle these properties */
-}
-
-/* Hide and disable interactive elements when courses are collapsed */
-.table-container.collapsed .course-table,
-.table-container.collapsed .course-container {
-  overflow: hidden; /* Hide any overflow */
-  pointer-events: none; /* Disable all interactions */
-  transition: opacity 0.4s cubic-bezier(0.55, 0, 0.1, 1), height 0.5s cubic-bezier(0.55, 0, 0.1, 1), visibility 0.1s 0.4s;
-  /* Let the animation handle visibility and height */
-}
-
-/* Specific handling for interactive elements */
-.table-container.collapsed .credit-hours-dropdown-trigger,
-.table-container.collapsed .grade-dropdown-trigger,
-.table-container.collapsed td:last-child .remove-button,
-.table-container.collapsed .dropdown-menu,
-.table-container.collapsed .dropdown-content {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none; /* Disable all click events */
-}
-
-/* Only enable interactions when expanded */
-.table-container.expanded .course-table {
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.table-container.expanded .credit-hours-dropdown-trigger,
-.table-container.expanded .grade-dropdown-trigger,
-.table-container.expanded td:last-child .remove-button {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto; /* Enable click events */
-  position: relative;
-  z-index: auto;
-  transition: opacity 0.2s var(--ease-out) 0.1s; /* Slight delay for better animation */
-}
-
-/* Enhanced animation effects */
-.table-container.expanding, 
-.table-container.collapsing,
-.level-container.expanding,
-.term-container.expanding,
-.level-container.collapsing,
-.term-container.collapsing {
-  will-change: opacity, transform, max-height; /* Optimize for animation */
-  backface-visibility: hidden; /* Reduce flickering */
-  transform-style: preserve-3d; /* Improve smoothness */
-}
-
-/* Add a subtle background flash to make transitions more noticeable */
-.table-container.expanding, 
-.level-container.expanding,
-.term-container.expanding {
-  animation: expandAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards,
-             highlightBg 1.2s ease-in-out;
-}
-
-.table-container.collapsing,
-.level-container.collapsing,
-.term-container.collapsing {
-  animation: collapseAnimation 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards,
-             highlightBg 1.2s ease-in-out;
-}
-
-@keyframes highlightBg {
-  0% { background-color: transparent; }
-  10% { background-color: rgba(255, 255, 255, 0.05); }
-  20% { background-color: rgba(255, 255, 255, 0.1); }
-  100% { background-color: transparent; }
-}
-
-/* Enhanced protection for interactive elements in collapsed containers */
-.table-container.collapsed button,
-.table-container.collapsed a,
-.table-container.collapsed input,
-.table-container.collapsed select,
-.table-container.collapsed [role="button"],
+/* ===== Collapsed state: disable interaction only (animation is grid height) ===== */
 .level-container.collapsed button,
 .level-container.collapsed a,
 .level-container.collapsed input,
-.level_container.collapsed select,
+.level-container.collapsed select,
 .level-container.collapsed [role="button"],
 .term-container.collapsed button,
 .term-container.collapsed a,
@@ -1133,87 +903,12 @@ body .level-container .term-group {
 .term-container.collapsed select,
 .term-container.collapsed [role="button"] {
   pointer-events: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  position: absolute !important;
-  z-index: -1 !important;
 }
 
-/* Also apply to transitional collapsing state */
-.table-container.collapsing button,
-.table-container.collapsing a,
-.table-container.collapsing input,
-.table-container.collapsing select,
-.table-container.collapsing [role="button"],
-.level-container.collapsing button,
-.level-container.collapsing a,
-.level-container.collapsing input,
-.level_container.collapsing select,
-.level-container.collapsing [role="button"],
-.term-container.collapsing button,
-.term-container.collapsing a,
-.term-container.collapsing input,
-.term-container.collapsing select,
-.term-container.collapsing [role="button"] {
-  pointer-events: none !important;
-}
-
-/* Create an interaction guard for collapsed containers */
-.table-container.collapsed::before,
-.level-container.collapsed::before,
-.term-container.collapsed::before,
-.table-container.collapsing::before,
-.level-container.collapsing::before,
-.term-container.collapsing::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 100;
-  pointer-events: none; /* Allow clicks to pass through when animating */
-}
-
-/* Block all interaction in collapsed state */
-.table-container.collapsed::before,
-.level-container.collapsed::before,
-.term-container.collapsed::before {
-  pointer-events: auto; /* Block all interaction in fully collapsed state */
-}
-
-/* Full interaction blocker for collapsed groups */
-.interaction-blocker {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  z-index: 1000 !important;
-  pointer-events: auto !important;
-  background: transparent !important;
-  cursor: default !important;
-}
-
-/* Extra protection for buttons in collapsed containers */
 .level-container.collapsed .remove-btn,
 .term-container.collapsed .remove-btn,
-.level-container.collapsing .remove-btn,
-.term-container.collapsing .remove-btn,
 .level-container.collapsed .info-btn,
-.term-container.collapsed .info-btn,
-.level-container.collapsing .info-btn,
-.term-container.collapsing .info-btn {
-  display: none !important;
+.term-container.collapsed .info-btn {
+  visibility: hidden;
   pointer-events: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  position: absolute !important;
-  z-index: -999 !important;
-  width: 0 !important;
-  height: 0 !important;
-  overflow: hidden !important;
-  clip-path: polygon(0 0, 0 0, 0 0) !important;
 }

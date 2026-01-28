@@ -119,82 +119,6 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
     }
   }, [groupStates, isInitialized]);
 
-  // Apply comprehensive protection at load time to prevent accidental interactions with collapsed elements
-  useEffect(() => {
-    // Process all collapsed elements to ensure they have pointer-events: none
-    Object.entries(groupStates).forEach(([key, isExpanded]) => {
-      if (!isExpanded) { // If collapsed
-        // Convert key to CSS selector
-        const selector = key.startsWith('level-') 
-          ? `.${key.replace('level-', 'level-container.')}`
-          : `.${key.replace('term-', 'term-container.')}`;
-        
-        // Find all related containers
-        const containers = document.querySelectorAll(selector);
-        containers.forEach(container => {
-          // Apply CSS immediately for protection, but preserve animation classes
-          (container as HTMLElement).style.pointerEvents = 'none';
-          (container as HTMLElement).setAttribute('aria-hidden', 'true');
-          
-          // Don't set visibility and height directly here to allow CSS animations
-          if (!container.classList.contains('collapsed')) {
-            container.classList.remove('expanded', 'expanding', 'collapsing');
-            container.classList.add('collapsed');
-          }
-          
-          // CRITICAL: Ensure ALL interactive elements within collapsed sections are completely disabled
-          const interactiveElements = container.querySelectorAll(
-            'button, a, input, select, [role="button"], [tabindex], .remove-btn, .info-btn'
-          );
-          
-          interactiveElements.forEach(element => {
-            // Store original tabindex if it exists
-            if ((element as HTMLElement).hasAttribute('tabindex') && 
-                (element as HTMLElement).getAttribute('tabindex') !== '-1') {
-              const tabIndex = (element as HTMLElement).getAttribute('tabindex');
-              (element as HTMLElement).setAttribute('data-original-tabindex', tabIndex || '0');
-            }
-            
-            // Make element completely non-interactive
-            (element as HTMLElement).style.pointerEvents = 'none';
-            (element as HTMLElement).setAttribute('tabindex', '-1');
-            (element as HTMLElement).setAttribute('aria-hidden', 'true');
-            
-            // For buttons specifically
-            if ((element as HTMLElement).tagName === 'BUTTON') {
-              (element as HTMLButtonElement).disabled = true;
-              (element as HTMLElement).style.cursor = 'default';
-            }
-          });
-          
-          // Create an overlay div to block all interaction if needed
-          if (!container.querySelector('.interaction-blocker')) {
-            const blocker = document.createElement('div');
-            blocker.className = 'interaction-blocker';
-            blocker.style.position = 'absolute';
-            blocker.style.top = '0';
-            blocker.style.left = '0';
-            blocker.style.width = '100%';
-            blocker.style.height = '100%';
-            blocker.style.zIndex = '1000';
-            blocker.style.pointerEvents = 'auto'; // Block all events
-            
-            // Add event listener to stop event propagation
-            blocker.addEventListener('click', (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              return false;
-            });
-            
-            // Add to container
-            (container as HTMLElement).style.position = 'relative';
-            container.appendChild(blocker);
-          }
-        });
-      }
-    });
-  }, [groupStates]);
-
   // Separate imported and manually added courses
   const importedCourses = courses.filter(course => course.isImported);
   const manualCourses = courses.filter(course => !course.isImported);
@@ -218,90 +142,12 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
     return grouped;
   }, [importedCourses]);
 
-  // Toggle group expansion state with improved animations and interaction safety
+  // Toggle group expansion; CSS transition in GroupedCourseTable.css handles smooth expand/collapse (0.35s)
   const toggleGroup = (groupKey: string) => {
-    const willExpand = !groupStates[groupKey]; // true if we're expanding
-    
-    // Update state
     setGroupStates(prev => ({
       ...prev,
-      [groupKey]: willExpand
+      [groupKey]: !prev[groupKey]
     }));
-    
-    // Apply accessibility attributes and manage animations
-    setTimeout(() => {
-      // Find all related containers
-      const containers = document.querySelectorAll(`.${groupKey.replace('level-', 'level-container.').replace('term-', 'term-container.')}`);
-      
-      containers.forEach(container => {
-        // Find all interactive elements in this container
-        const interactiveElements = container.querySelectorAll(
-          'button, a, input, select, [role="button"], [tabindex]'
-        );
-        
-        if (willExpand) {
-          // For expansion: First ensure proper accessibility and set classes
-          container.classList.remove('collapsed');
-          container.classList.add('expanding'); // Add a transitional class
-          
-          // Set aria-hidden but keep pointer-events disabled during animation
-          (container as HTMLElement).setAttribute('aria-hidden', 'false');
-          (container as HTMLElement).style.pointerEvents = 'none';
-          
-          // After animation starts, set expanded class
-          setTimeout(() => {
-            container.classList.remove('expanding');
-            container.classList.add('expanded');
-            
-            // Re-enable interaction only after animation completes
-            setTimeout(() => {
-              // Enable container interaction
-              (container as HTMLElement).style.pointerEvents = 'auto';
-              
-              // Enable all interactive elements
-              interactiveElements.forEach(element => {
-                (element as HTMLElement).style.pointerEvents = 'auto';
-                (element as HTMLElement).removeAttribute('aria-hidden');
-                if ((element as HTMLElement).hasAttribute('data-original-tabindex')) {
-                  const originalTabIndex = (element as HTMLElement).getAttribute('data-original-tabindex');
-                  (element as HTMLElement).setAttribute('tabindex', originalTabIndex || '0');
-                  (element as HTMLElement).removeAttribute('data-original-tabindex');
-                } else {
-                  (element as HTMLElement).setAttribute('tabindex', '0');
-                }
-              });
-            }, 1200); // Allow full animation time before enabling interaction
-          }, 50);
-        } else {
-          // For collapse: Immediately disable all interaction for safety
-          (container as HTMLElement).style.pointerEvents = 'none';
-          (container as HTMLElement).setAttribute('aria-hidden', 'true');
-          
-          // Disable all interactive elements immediately
-          interactiveElements.forEach(element => {
-            // Store original tabindex if it exists
-            if ((element as HTMLElement).hasAttribute('tabindex')) {
-              const tabIndex = (element as HTMLElement).getAttribute('tabindex');
-              (element as HTMLElement).setAttribute('data-original-tabindex', tabIndex || '0');
-            }
-            // Make element non-interactive
-            (element as HTMLElement).style.pointerEvents = 'none';
-            (element as HTMLElement).setAttribute('tabindex', '-1');
-            (element as HTMLElement).setAttribute('aria-hidden', 'true');
-          });
-          
-          // Start collapse animation
-          container.classList.remove('expanded');
-          container.classList.add('collapsing'); // Add transitional class
-          
-          // After animation completes, set to fully collapsed state
-          setTimeout(() => {
-            container.classList.remove('collapsing');
-            container.classList.add('collapsed');
-          }, 1200); // Match animation duration
-        }
-      });
-    }, 0);
   };
 
   // Check if a group is expanded (default to expanded if not set)
@@ -506,13 +352,12 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
               </h3>
             </div>
             
-            {/* Level Content */}
+            {/* Level Content – grid 0fr/1fr drives smooth height animation */}
             <div 
               className={`table-container level-container ${isLevelExpanded ? 'expanded' : 'collapsed'}`}
               aria-hidden={!isLevelExpanded}
-              style={{ pointerEvents: isLevelExpanded ? 'auto' : 'none' }}
             >
-            {/* Terms within the level */}
+              <div className="level-container-inner">
               {Object.keys(nestedGroupedCourses[level])
                 .sort((a, b) => {
                   // Define recognized terms and their order
@@ -595,15 +440,8 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                       <div 
                         className={`table-container term-container ${isTermExpanded ? 'expanded' : 'collapsed'}`}
                         aria-hidden={!isTermExpanded}
-                        style={{ pointerEvents: isTermExpanded ? 'auto' : 'none' }}
-                        onClick={(e) => {
-                          // If collapsed, prevent any click events
-                          if (!isTermExpanded) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }
-                        }}
                       >
+                        <div className="term-container-inner">
                         <div className="course-container">
                           <table className="course-table">
                             <thead className="table-header-hidden">
@@ -619,10 +457,12 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                             </tbody>
                           </table>
                         </div>
+                        </div>
                       </div>
                     </div>
                   );
                 })}
+              </div>
             </div>
           </div>
         );
