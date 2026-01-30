@@ -2,20 +2,21 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { Container } from 'react-bootstrap'
+import { LocaleProvider, useLocale } from '../src/i18n/LocaleContext'
+import LanguageSwitcher from '../src/components/LanguageSwitcher'
 import CourseForm from '../src/components/CourseForm'
 import GroupedCourseTable from '../src/components/GroupedCourseTable'
 import GPADisplay from '../src/components/GPADisplay'
 import ImportModal from '../src/components/ImportModal'
 import ThreeJSBackground from '../src/components/ThreeJSBackground'
 import Footer from '../src/components/Footer'
+import { DocumentTitleMeta } from '../src/components/DocumentTitleMeta'
 import { Course, Grade } from '../src/types/Course'
 import { calculateGPA } from '../src/utils/gradeUtils'
 
-// Local Storage key for saving courses
 const STORAGE_KEY = 'gpa-calculator-courses'
 
-// Helper function to load courses from localStorage
-const loadCoursesFromStorage = (): Course[] => {
+function loadCoursesFromStorage(): Course[] {
   if (typeof window === 'undefined') return []
   try {
     const storedCourses = localStorage.getItem(STORAGE_KEY)
@@ -26,8 +27,8 @@ const loadCoursesFromStorage = (): Course[] => {
   }
 }
 
-export default function Home() {
-  // Start empty so server and client match (avoids hydration mismatch). Load from localStorage after mount.
+function HomeContent() {
+  const { t } = useLocale()
   const [courses, setCourses] = useState<Course[]>([])
   const [showImportModal, setShowImportModal] = useState(false)
   const [saveNotification, setSaveNotification] = useState<{show: boolean, message: string}>({
@@ -39,7 +40,6 @@ export default function Home() {
     setCourses(loadCoursesFromStorage())
   }, [])
 
-  // #region agent log
   useEffect(() => {
     if (typeof window !== 'undefined') {
       fetch('http://127.0.0.1:7244/ingest/065dc0e5-590e-4b67-a73f-1f0d5aa899f9', {
@@ -62,62 +62,47 @@ export default function Home() {
         })
       }).catch(() => {});
     }
-  }, []);
-  // #endregion
-  
-  // Clear all courses and remove from local storage
+  }, [])
+
   const clearAllCourses = useCallback(() => {
     setCourses([])
     setSaveNotification({
       show: true,
-      message: 'All courses cleared!'
+      message: t('notify.cleared')
     })
-    
-    // Hide notification after a delay
     setTimeout(() => {
       setSaveNotification(prev => ({...prev, show: false}))
     }, 1500)
-  }, [])
+  }, [t])
 
   const addCourse = useCallback((course: Course) => {
-    // Auto-generate course name if not provided
-    const courseName = course.name.trim() || `Course ${courses.length + 1}`
-    setCourses(prev => [...prev, { 
-      ...course, 
+    const courseName = course.name.trim() || t('course.autoName', { n: courses.length + 1 })
+    setCourses(prev => [...prev, {
+      ...course,
       name: courseName,
       id: Date.now().toString(),
-      isImported: false // Mark as manually added
+      isImported: false
     }])
-  }, [courses.length])
-  
-  // Update course grade
+  }, [courses.length, t])
+
   const updateCourseGrade = useCallback((courseId: string, grade: Grade) => {
-    setCourses(prev => prev.map(course => 
-      course.id === courseId 
-        ? { ...course, grade } 
-        : course
+    setCourses(prev => prev.map(course =>
+      course.id === courseId ? { ...course, grade } : course
     ))
   }, [])
-  
-  // New function to update credit hours
+
   const updateCreditHours = useCallback((courseId: string, hours: number) => {
-    setCourses(prev => prev.map(course => 
-      course.id === courseId 
-        ? { ...course, hours } 
-        : course
+    setCourses(prev => prev.map(course =>
+      course.id === courseId ? { ...course, hours } : course
     ))
-    
-    // Show brief notification
     setSaveNotification({
       show: true,
-      message: 'Credit hours updated!'
+      message: t('notify.creditsUpdated')
     })
-    
-    // Hide notification after a delay
     setTimeout(() => {
       setSaveNotification(prev => ({...prev, show: false}))
     }, 1500)
-  }, [])
+  }, [t])
 
   const removeCourse = useCallback((id: string) => {
     setCourses(prev => prev.filter(course => course.id !== id))
@@ -132,51 +117,48 @@ export default function Home() {
     setShowImportModal(false)
   }, [])
 
-  // Save courses to localStorage whenever they change
   useEffect(() => {
     if (typeof window === 'undefined') return
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(courses))
-      
-      // Show save notification
       if (courses.length > 0) {
-        // Hide notification after a delay
         const timeoutId = setTimeout(() => {
           setSaveNotification(prev => ({...prev, show: false}))
         }, 1500)
-        
         return () => clearTimeout(timeoutId)
       }
     } catch (error) {
       console.error('Failed to save courses to localStorage:', error)
-      
-      // Show error notification using setTimeout to avoid setState in effect
       setTimeout(() => {
         setSaveNotification({
           show: true,
-          message: 'Failed to save changes'
+          message: t('notify.saveFailed')
         })
-        
-        // Hide notification after a delay
         setTimeout(() => {
           setSaveNotification(prev => ({...prev, show: false}))
         }, 1500)
       }, 0)
     }
-  }, [courses])
+  }, [courses, t])
 
   const gpa = calculateGPA(courses)
+  const isError = saveNotification.message === t('notify.saveFailed')
+
   return (
     <>
+      <DocumentTitleMeta />
       <Container className="container">
         {saveNotification.show && (
-          <div className={`save-notification ${saveNotification.message.includes('Failed') ? 'error' : 'success'}`}>
+          <div className={`save-notification ${isError ? 'error' : 'success'}`}>
             {saveNotification.message}
           </div>
         )}
-        <div>
-          <h1 className="app-title">GPA Calculator</h1>
-          <h5 className="app-subtitle">FCAI - Cairo University</h5>
+        <div className="app-header">
+          <div className="app-header-titles">
+            <h1 className="app-title">{t('app.title')}</h1>
+            <h5 className="app-subtitle">{t('app.subtitle')}</h5>
+          </div>
+          <LanguageSwitcher />
         </div>
 
         <CourseForm
@@ -192,7 +174,6 @@ export default function Home() {
         />
 
         <GPADisplay gpa={gpa} />
-        {/* The ImportModal is now using a portal, so it will render at body level */}
         <ImportModal
           show={showImportModal}
           onHide={() => setShowImportModal(false)}
@@ -204,5 +185,13 @@ export default function Home() {
       <ThreeJSBackground />
       <Footer />
     </>
+  )
+}
+
+export default function Home() {
+  return (
+    <LocaleProvider>
+      <HomeContent />
+    </LocaleProvider>
   )
 }

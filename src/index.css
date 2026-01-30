@@ -1,4 +1,4 @@
-/* Modern design system with Sora font */
+/* Modern design system with Bricolage Grotesque font */
 
 :root {
   /* Primary Color Palette */
@@ -116,7 +116,7 @@ html {
 }
 
 body {
-  font-family: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'pnum' 1, 'tnum' 0, 'onum' 1, 'lnum' 0, 'dlig' 0;
   /* Transparent background for Three.js */
   background: transparent;
@@ -172,6 +172,8 @@ select {
   text-align: center;
   margin: 0;
   letter-spacing: -0.025em;
+  line-height: 1.15;
+  padding-bottom: 0;
   background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -189,6 +191,75 @@ select {
   letter-spacing: 0.025em;
   /* Enhanced visibility 
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);*/
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.app-header-titles {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.app-header .app-title {
+  text-align: center;
+}
+
+.app-header .app-subtitle {
+  text-align: center;
+  margin-top: var(--space-xs);
+}
+
+[dir="rtl"] .app-title,
+html[lang="ar"] .app-title {
+  padding-bottom: 6px;
+}
+
+/* Switcher: use Bricolage when showing English, Rubik when showing Arabic */
+.language-switcher {
+  position: fixed;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 10000;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--text-color);
+  font-family: var(--font-rubik), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; /* default: en locale, label is "العربية" */
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-base);
+  flex-shrink: 0;
+}
+
+[dir="rtl"] .language-switcher,
+html[lang="ar"] .language-switcher {
+  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; /* ar locale, label is "English" */
+}
+
+.language-switcher:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 121, 85, 0.4);
+}
+
+.language-switcher-label {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Save notification â€“ base and responsive */
@@ -1069,8 +1140,8 @@ select {
 }
 
 .paste-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   margin-right: var(--space-xs);
 }
 
@@ -1092,8 +1163,8 @@ select {
   justify-content: center;
   width: 24px;
   height: 24px;
-  background: var(--gray-200);
-  color: var(--gray-800);
+  background: var(--gray-100);
+  color: var(--gray-600);
   border: none;
   border-radius: 50%;
   font-size: var(--text-sm);
@@ -1107,7 +1178,7 @@ select {
 }
 
 .grade-dropdown-trigger:hover {
-  background: var(--gray-300);
+  background: var(--gray-200);
 }
 
 .grade-dropdown-trigger:active {
@@ -1658,6 +1729,7 @@ select {
 .grade-dropdown-input-text {
   flex-grow: 1;
   text-align: center;
+  font-size: 1.2rem; /* Slightly bigger letter grade in form */
   font-weight: 550;
   color: var(--text-color);
   width: 100%; /* Ensure the text container takes full width */
@@ -1741,6 +1813,39 @@ body.modal-open {
   flex-direction: column;
 }
 
+/* Import modal: opaque background and proper footer spacing */
+.modal-content.import-modal {
+  background: var(--white);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.modal-content.import-modal .modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.modal-content.import-modal .modal-footer {
+  flex-shrink: 0;
+  margin-top: 0;
+  padding: var(--space-sm) var(--space-lg) var(--space-lg);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.modal-content.import-modal .modal-footer .button-group {
+  justify-content: flex-end;
+  margin: 0;
+}
+
+.modal-content.import-modal .modal-footer .btn-primary {
+  border-radius: var(--radius-md);
+}
+
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -1788,6 +1893,26 @@ body.modal-open {
   color: var(--text-secondary);
   font-size: var(--text-base);
   line-height: 1.5;
+}
+
+.modal-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: var(--space-md) var(--space-2xl);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-footer .button-group {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: flex-end;
+}
+
+.modal-footer .btn-primary,
+.modal-footer .btn-secondary {
+  min-width: 120px;
 }
 
 .textarea-container {
@@ -1873,7 +1998,7 @@ body.modal-open {
 }
 
 .paste-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   margin-right: var(--space-xs);
 }

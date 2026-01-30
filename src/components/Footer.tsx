@@ -1,6 +1,7 @@
 import React from 'react';
 import './Footer.css';
 import { FaGithub } from 'react-icons/fa';
+import { useLocale } from '../i18n/LocaleContext';
 
 // Custom Copyright SVG icon component
 const CopyrightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -19,6 +20,7 @@ const CopyrightIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 const Footer: React.FC = () => {
+  const { t } = useLocale();
   const currentYear = new Date().getFullYear();
   
   // Get basePath from Next.js runtime for static export
@@ -65,14 +67,14 @@ const Footer: React.FC = () => {
               WebkitMaskImage: `url(${logoPath})`,
               maskImage: `url(${logoPath})`
             }}
-            title="Visit creator's profile"
+            title={t('footer.visitProfile')}
           >
           </a>
-          <span>Made by <span style={{ color: '#ff7955' }}>Yehia</span></span>
+          <span>{t('footer.madeBy')} <span style={{ color: '#ff7955' }}>Yehia</span></span>
         </div>
         
         <div className="footer-middle">
-          Copyright <CopyrightIcon /> {currentYear}
+          {t('footer.copyright')} <CopyrightIcon /> {currentYear}
         </div>
         
         <div className="footer-right">
@@ -81,7 +83,7 @@ const Footer: React.FC = () => {
             target="_blank" 
             rel="noopener noreferrer"
             className="github-link"
-            title="View source code on GitHub"
+            title={t('footer.viewSource')}
           >
             <FaGithub />
           </a>

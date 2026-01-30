@@ -1,9 +1,9 @@
-// filepath: d:\Yehia's Uni files\gpaCalc\src\components\GradeDropdown.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Grade } from '../types/Course';
 import { getGradeStyles } from '../utils/gradeUtils';
 import { createPortal } from 'react-dom';
 import { DropdownManager } from '../utils/dropdownManager';
+import { useLocale } from '../i18n/LocaleContext';
 
 // Define grade options once for use in all components
 const GRADE_OPTIONS: Grade[] = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
@@ -167,8 +167,9 @@ const GradeDropdown: React.FC<GradeDropdownProps> = ({
   courseName, 
   onSelectGrade, 
   currentGrade,
-  displayMode = 'badge' // Default to 'badge'
+  displayMode = 'badge'
 }) => {
+  const { t } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownManager = DropdownManager.getInstance();
@@ -247,13 +248,13 @@ const GradeDropdown: React.FC<GradeDropdownProps> = ({
             : currentGrade ? 'grade-dropdown-trigger-compact' : ''
         }`}
         onClick={handleToggle}
-        aria-label={`${currentGrade ? 'Change' : 'Select'} grade for ${courseName}`}
+        aria-label={currentGrade ? t('aria.changeGrade', { name: courseName }) : t('aria.selectGrade', { name: courseName })}
         aria-expanded={isOpen}
         type="button"
       >
         {displayMode === 'input' && (
           <span className="grade-dropdown-input-text">
-            {currentGrade || 'Select Grade'}
+            {currentGrade || t('form.selectGrade')}
           </span>
         )}        <svg 
           className={`grade-dropdown-arrow ${isOpen ? 'open' : ''}`} 

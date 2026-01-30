@@ -30,8 +30,8 @@
 .credit-hours-dropdown-trigger.static-arrow {
   opacity: 1;
   transform: scale(1);
-  background: var(--gray-200);
-  color: var(--gray-800);
+  background: var(--gray-100);
+  color: var(--gray-600);
   border: none;
   border-radius: 50%;
   width: 24px;
@@ -43,7 +43,7 @@
 }
 
 .credit-hours-dropdown-trigger.static-arrow:hover {
-  background: var(--gray-300);
+  background: var(--gray-200);
 }
 
 /* Show arrow consistently on all devices */

@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './RotatingNumberInput.css';
 import './MobileCreditHoursOverride.css';
+import { useLocale } from '../i18n/LocaleContext';
 
 interface RotatingNumberInputProps {
   value: number;
@@ -11,6 +12,13 @@ interface RotatingNumberInputProps {
   disabled?: boolean;
 }
 
+const ARABIC_NUMERALS = '٠١٢٣٤٥٦٧٨٩';
+
+function formatNumberForLocale(n: number, locale: string): string {
+  if (locale !== 'ar-EG') return String(n);
+  return String(n).replace(/\d/g, (d) => ARABIC_NUMERALS[parseInt(d, 10)] ?? d);
+}
+
 const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
   value,
   onChange,
@@ -18,6 +26,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
   max = 3,
   disabled = false
 }) => {
+  const { locale } = useLocale();
   const stripRef = useRef<HTMLDivElement>(null);
   const [numbers, setNumbers] = useState<number[]>([]);
 
@@ -113,24 +122,25 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
         // Inactive number styling
         const distance = Math.abs(itemValue - value);
         
-        // Create smoother transitions between numbers with more gradual scaling
-        const scale = Math.max(0.6, 1 - (distance * 0.125));
+        // Farther numbers a bit bigger (higher scale floor)
+        const scale = Math.max(0.72, 1 - (distance * 0.1));
         const opacity = Math.max(0.4, 1 - (distance * 0.17));
         
         if (distance === 1) {
-          // Direct neighbors - more visible
-          item.style.transform = `translateX(${itemValue < value ? -55 : 55}px) translateZ(-25px) scale(0.75)`;
+          // Direct neighbors - blurred behind pane
+          item.style.transform = `translateX(${itemValue < value ? -55 : 55}px) translateZ(-25px) scale(0.78)`;
           item.style.color = '#4b5563';
           item.style.fontWeight = '600';
           item.style.opacity = '0.7';
-          item.style.filter = 'opacity(0.85) blur(0.3px)';
+          item.style.filter = 'blur(2.5px) opacity(0.75)';
         } else {
-          // Further items - gradually fade out
-          item.style.transform = `scale(${scale}) translateZ(-${distance * 10}px)`;
+          // Further items - stronger blur
+          const farScale = Math.max(0.72, 1 - (distance * 0.1));
+          item.style.transform = `scale(${farScale}) translateZ(-${distance * 10}px)`;
           item.style.color = '#4b5563';
           item.style.fontWeight = distance <= 2 ? '500' : '400';
           item.style.opacity = opacity.toString();
-          item.style.filter = distance <= 2 ? 'opacity(0.7) blur(0.5px)' : 'opacity(0.5) blur(1px)';
+          item.style.filter = distance <= 2 ? 'blur(2.5px) opacity(0.7)' : 'blur(4px) opacity(0.5)';
         }
         
         item.style.textShadow = 'none';
@@ -283,7 +293,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
                 data-value={num}
                 aria-selected={num === value}
               >
-                {num}
+                {formatNumberForLocale(num, locale)}
               </div>
             ))}
           </div>

@@ -153,28 +153,29 @@
     color 0.4s ease,
     filter 0.4s ease !important;
 }
-/* Filter: no !important so updateDisplay() inline styles (distance-based blur) can apply */
+/* Inactive items: stronger blur so panes look frosted; active stays crisp */
 .number-item:not(.active) { 
   z-index: 20 !important; 
-  filter: blur(1px) opacity(0.85);
+  filter: blur(2.5px) opacity(0.85);
 }
 .number-item.prev, .number-item.next { 
-  filter: blur(1px) opacity(0.75);
+  filter: blur(2.5px) opacity(0.75);
 }
 .number-item.prev {
   opacity: 0.75;
-  transform: translateX(-55px) translateZ(-25px) scale(0.65);
+  transform: translateX(-55px) translateZ(-25px) scale(0.78);
   color: #6b7280;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
-  filter: blur(1px) opacity(0.75);
+  filter: blur(2.5px) opacity(0.75);
 }
 .number-item.next {
   opacity: 0.75;
-  transform: translateX(55px) translateZ(-25px) scale(0.65);
+  transform: translateX(55px) translateZ(-25px) scale(0.78);
   color: #6b7280;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
-  filter: blur(1px) opacity(0.75);
+  filter: blur(2.5px) opacity(0.75);
 }
+/* Active number: no overlay on top, so it stays sharp (distortion was from ::after glow) */
 .number-item.active {
   opacity: 1;
   transform: translateZ(20px) scale(1.2);
@@ -182,23 +183,16 @@
   position: relative;
   font-weight: 800;
   letter-spacing: -0.01em;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), 0 0 15px rgba(255, 255, 255, 0.6);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
   isolation: isolate !important;
-  z-index: 55 !important;
-  filter: none;
+  z-index: 100 !important;
+  filter: none !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
 }
 .number-item.active::after {
-  content: '';
-  position: absolute;
-  width: 110%;
-  height: 110%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 25%, rgba(255, 255, 255, 0) 70%);
-  pointer-events: none;
-  opacity: 0.8;
-  z-index: -1;
-  animation: pulse 3s infinite alternate ease-in-out;
-  border-radius: 50%;
-  transform: translateZ(0);
+  display: none; /* was causing blurred/glow overlay on the number */
 }
 @keyframes pulse {
   0% { opacity: 0.5; transform: scale(0.96); }
@@ -223,8 +217,8 @@
   box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.15);
   transition: all 0.25s ease !important;
   -webkit-tap-highlight-color: transparent !important;
-  backdrop-filter: blur(24px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
 }
 .glass-pane-left {
   left: 0 !important;
@@ -265,7 +259,7 @@
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   pointer-events: none !important;
-  z-index: 95 !important;
+  z-index: 25 !important; /* below number-strip (30) and active (100) so numbers render crisp on top */
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 
              inset 0 0 6px rgba(255, 255, 255, 1),
              0 0 2px rgba(255, 255, 255, 0.9);
@@ -280,11 +274,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to right, 
-              rgba(255, 255, 255, 0) 0%,
-              rgba(255, 255, 255, 0.2) 49%, 
-              rgba(255, 255, 255, 0.2) 51%,
-              rgba(255, 255, 255, 0) 100%);
+  background: transparent;
   pointer-events: none;
 }
 
@@ -467,8 +457,8 @@
     opacity: 1 !important;
     visibility: visible !important;
     height: 100% !important;
-    backdrop-filter: blur(24px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
   }
   
   .center-window {
@@ -529,8 +519,8 @@
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
-    backdrop-filter: blur(24px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
   }
   
   .center-window {
@@ -608,8 +598,8 @@
   .glass-pane-left,
   .glass-pane-right {
     width: calc(50% - 17px) !important;
-    backdrop-filter: blur(24px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+backdrop-filter: blur(40px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
   }
 }
 @media (max-width: 320px) {
@@ -639,4 +629,22 @@
 .glass-pane-right:active .arrow-button svg {
   transform: scale(0.9);
   transition: transform 0.1s ease;
+}
+
+/* RTL: keep credit-hours input layout as LTR (left pane, center, right pane) and align block to the left */
+[dir="rtl"] .credit-hours-input {
+  direction: ltr !important;
+  margin-inline-start: auto !important; /* push block to visual left (inline-end in RTL) */
+  margin-inline-end: 0 !important;
+  width: auto !important;
+  min-width: 200px !important;
+  max-width: 100% !important;
+}
+[dir="rtl"] .credit-hours-input-inner {
+  direction: ltr !important;
+}
+[dir="rtl"] .perspective-container,
+[dir="rtl"] .number-dial-viewport,
+[dir="rtl"] .number-strip {
+  direction: ltr !important;
 }

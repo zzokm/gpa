@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form } from 'react-bootstrap';
 import { Course, Grade } from '../types/Course';
+import { useLocale } from '../i18n/LocaleContext';
 
 import GradeDropdown from './GradeDropdown';
 import EnhancedRotatingNumberInput from './RotatingNumberInput';
@@ -124,6 +125,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
   onAddCourse, 
   onShowImport 
 }) => {
+  const { t } = useLocale();
   const [courseName, setCourseName] = useState('');
   const [courseHours, setCourseHours] = useState(2);
   const [courseGrade, setCourseGrade] = useState<Grade>('A+');
@@ -351,7 +353,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
     <div className="top-box">
       <Form onSubmit={handleSubmit}>
         <div className="form-row">
-          <label className="form-label" htmlFor="courseName">Course Name:</label>
+          <label className="form-label" htmlFor="courseName">{t('form.courseName')}</label>
           <div className="form-grade-container">
             <input
               ref={inputRef}
@@ -360,7 +362,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
               className="form-input"
               value={courseName}
               onChange={handleInputChange}
-              placeholder="Enter course name"
+              placeholder={t('form.placeholder')}
               onFocus={() => courseName.length >= 2 && setShowSuggestions(true)}
             />
             {showSuggestions && suggestions.length > 0 && (
@@ -383,7 +385,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
         </div>
         
         <div className="form-row">
-          <label className="form-label" htmlFor="courseHours">Credit Hours:</label>
+          <label className="form-label" htmlFor="courseHours">{t('form.creditHours')}</label>
           <EnhancedRotatingNumberInput
             value={courseHours}
             onChange={(value: number) => setCourseHours(value)}
@@ -394,11 +396,11 @@ const CourseForm: React.FC<CourseFormProps> = ({
         </div>
 
         <div className="form-row">
-          <label className="form-label" htmlFor="courseGrade">Grade:</label>
+          <label className="form-label" htmlFor="courseGrade">{t('form.grade')}</label>
           <div className="form-grade-container">
             <GradeDropdown
               courseId="form-grade"
-              courseName="Form Grade"
+              courseName={t('form.formGrade')}
               onSelectGrade={(_, grade) => setCourseGrade(grade)}
               currentGrade={courseGrade}
               displayMode="input"
@@ -408,14 +410,14 @@ const CourseForm: React.FC<CourseFormProps> = ({
 
         <div className="button-group">
           <button type="submit" className="btn-primary">
-            Add Course
+            {t('form.addCourse')}
           </button>
           <button 
             type="button" 
             className="btn-secondary"
             onClick={onShowImport}
           >
-            Import Courses
+            {t('form.importCourses')}
           </button>
         </div>
       </Form>

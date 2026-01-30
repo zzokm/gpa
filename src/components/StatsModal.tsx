@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { Course } from '../types/Course';
+import { useLocale } from '../i18n/LocaleContext';
 import './StatsModalStyles.css';
 
 interface GroupStats {
@@ -23,7 +24,7 @@ interface StatsModalProps {
 }
 
 const StatsModal: React.FC<StatsModalProps> = ({ modalData, onClose }) => {
-  // To handle modal open/close animations
+  const { t } = useLocale();
   const [mounted, setMounted] = useState(false);
   const courseItemsRef = useRef<HTMLDivElement>(null); // Ref for the scrollable div
   const [showScrollArrow, setShowScrollArrow] = useState(false); // State for arrow visibility
@@ -85,7 +86,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ modalData, onClose }) => {
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2 className="modal-title">{modalData.title}</h2>
-          <button className="modal-close" onClick={onClose} aria-label="Close">
+          <button className="modal-close" onClick={onClose} aria-label={t('common.close')}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M14.7 1.3c-.4-.4-1-.4-1.4 0L8 6.6 2.7 1.3c-.4-.4-1-.4-1.4 0s-.4 1 0 1.4L6.6 8l-5.3 5.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3L8 9.4l5.3 5.3c.2.2.5.3.7.3.2 0 .5-.1.7-.3.4-.4.4-1 0-1.4L9.4 8l5.3-5.3c.4-.4.4-1 0-1.4z"/>
             </svg>
@@ -94,7 +95,7 @@ const StatsModal: React.FC<StatsModalProps> = ({ modalData, onClose }) => {
           <div className="stats-grid">
             <div className="stat-card">
               <div className="stat-value">{modalData.stats.courseCount}</div>
-              <div className="stat-label">Courses</div>
+              <div className="stat-label">{t('stats.courses')}</div>
             </div>
             {modalData.stats.failedCredits > 0 ? (
               <div className="stat-card">
@@ -103,41 +104,42 @@ const StatsModal: React.FC<StatsModalProps> = ({ modalData, onClose }) => {
                   <span className="separator">/</span>
                   <span className="failed-credits">{modalData.stats.failedCredits}</span>
                 </div>
-                <div className="stat-label">Credits (Pass/Fail)</div>
+                <div className="stat-label">{t('stats.passedFail')}</div>
               </div>
             ) : (
               <div className="stat-card">
                 <div className="stat-value">{modalData.stats.totalCredits}</div>
-                <div className="stat-label">Credit Hours</div>
+                <div className="stat-label">{t('stats.creditHours')}</div>
               </div>
             )}
             <div className="stat-card">
               <div className="stat-value">{modalData.stats.gpa.toFixed(2)}</div>
-              <div className="stat-label">GPA</div>
+              <div className="stat-label">{t('gpa.label')}</div>
             </div>
           </div>
           <div className="course-list">
-            <h3>Courses:</h3>            <div className="course-items" ref={courseItemsRef}> {/* Added ref */}
+            <h3>{t('stats.courses')}:</h3>
+            <div className="course-items" ref={courseItemsRef}>
               {modalData.courses.map(course => (
                 <div key={course.id} className="course-item">
                   <div className="course-name">{course.name}</div>
-                  <div className="course-credits">{course.hours} credits</div>
+                  <div className="course-credits">{course.hours} {t('stats.credits')}</div>
                   <div className="course-status-container">
                     {course.grade === 'F' && (
-                      <span className="course-status failed">Failed</span>
+                      <span className="course-status failed">{t('stats.failed')}</span>
                     )}
                     {course.grade && course.grade !== 'F' && (
-                      <span className="course-status passed">Passed</span>
+                      <span className="course-status passed">{t('stats.passed')}</span>
                     )}
                     {course.grade === null && (
-                      <span className="course-status pending">Pending</span>
+                      <span className="course-status pending">{t('stats.pending')}</span>
                     )}
                   </div>
                 </div>
               ))}
             </div>
             {showScrollArrow && (
-              <div className="scroll-down-arrow" onClick={scrollToBottom} title="Scroll to bottom">
+              <div className="scroll-down-arrow" onClick={scrollToBottom} title={t('stats.scrollToBottom')}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
                   <path d="M11.9999 13.1714L16.9497 8.22168L18.3639 9.63589L11.9999 15.9999L5.63599 9.63589L7.0502 8.22168L11.9999 13.1714Z"></path>
                 </svg>

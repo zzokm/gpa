@@ -150,7 +150,7 @@
   justify-content: center;
   gap: 8px;
   font-weight: 700;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-bricolage), sans-serif;
   font-size: 0.9rem;
   padding: 0.6rem 1.2rem;
   
@@ -176,6 +176,11 @@
 
 .reset-button:active {
   background: rgba(255, 255, 255, 0.7);
+}
+
+html[lang="ar"] .reset-button,
+[dir="rtl"] .reset-button {
+  font-family: inherit;
 }
 
 .reset-button:focus {
@@ -339,7 +344,7 @@
 /* Inline metrics on wide screens: visible; on narrow: hidden */
 .group-header-metrics-inline {
   display: none;
-  margin-left: auto;
+  margin-inline-start: auto; /* right in LTR, left in RTL (end of line) */
   align-items: center;
   gap: var(--space-sm);
   flex-shrink: 0;
@@ -368,7 +373,7 @@
 /* Narrow: show info button, hide inline metrics */
 .group-header-metrics-narrow {
   display: flex;
-  margin-left: auto;
+  margin-inline-start: auto; /* right in LTR, left in RTL (end of line) */
   align-items: center;
 }
 

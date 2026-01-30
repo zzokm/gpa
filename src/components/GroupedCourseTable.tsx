@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Course, Grade } from '../types/Course';
 import { getGradeStyles, calculateGPA } from '../utils/gradeUtils';
+import { useLocale } from '../i18n/LocaleContext';
 import GradeDropdown from './GradeDropdown';
 import CreditHoursDropdown from './CreditHoursDropdown';
 import StatsModal from './StatsModal';
 import ConfirmationModal from './ConfirmationModal';
-import './CourseTableStyles.css'; // Import the fixed spacing styles
-import './GroupedCourseTable.css'; // Import consolidated styles
-import './CreditHoursDropdownStyles.css'; // Unified CSS for all dropdowns
+import './CourseTableStyles.css';
+import './GroupedCourseTable.css';
+import './CreditHoursDropdownStyles.css';
 
 interface GroupedCourseTableProps {
   courses: Course[];
@@ -51,6 +52,7 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
   onUpdateCreditHours,
   onClearCourses
 }) => {
+  const { t, translateLevelOrTerm } = useLocale();
   const [groupStates, setGroupStates] = useState<GroupState>({});
   const [modalData, setModalData] = useState<ModalData | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -237,7 +239,7 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
         <button
           className="remove-btn"
           onClick={() => onRemoveCourse(course.id!)}
-          aria-label={`Remove ${course.name}`}
+          aria-label={t('aria.removeCourse', { name: course.name })}
         >
           <svg fill="#ffffff" viewBox="-230 -230 1460.00 1460.00" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" strokeWidth="5">
             <g id="SVGRepo_bgCarrier" strokeWidth="0" transform="translate(0,0), scale(1)">
@@ -260,7 +262,7 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
               <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
             </svg>
           </div>
-          <p>No courses added yet. Add your first course above or import your courses automatically!</p>
+          <p>{t('table.emptyState')}</p>
         </div>
       </div>
     );
@@ -270,17 +272,17 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
       {manualCourses.length > 0 && (
         <div className="course-group level-group">
           <div className="group-header level-header">
-            <h3 className="group-title">Manually Added Courses</h3>
+            <h3 className="group-title">{t('table.manuallyAdded')}</h3>
           </div>
           <div className="table-container expanded">
             <div className="course-container">
               <table className="course-table">
                 <thead className="table-header-hidden">
                   <tr>
-                    <th>Course Name</th>
-                    <th>Credit Hours</th>
-                    <th>Grade</th>
-                    <th>Remove</th>
+                    <th>{t('table.courseName')}</th>
+                    <th>{t('table.creditHours')}</th>
+                    <th>{t('table.grade')}</th>
+                    <th>{t('table.remove')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -317,9 +319,9 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                     <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                   </svg>
                 </span>
-                {level}
+                {translateLevelOrTerm(level)}
                 <span className="group-header-metrics group-header-metrics-inline" aria-hidden="true">
-                  <span className="group-metric gpa">GPA {levelStats.gpa.toFixed(2)}</span>
+                  <span className="group-metric gpa">{t('gpa.label')} {levelStats.gpa.toFixed(2)}</span>
                   {levelStats.failedCredits > 0 ? (
                     <>
                       <span className="group-metric-sep" aria-hidden="true">·</span>
@@ -331,17 +333,17 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                     </>
                   ) : null}
                   <span className="group-metric-sep" aria-hidden="true">·</span>
-                  <span className="group-metric total">{levelStats.totalCredits} hrs</span>
+                  <span className="group-metric total">{levelStats.totalCredits} {t('table.hrs')}</span>
                 </span>
                 <span className="group-header-metrics-narrow">
                   <button
                     className="info-btn"
-                    title={`GPA: ${levelStats.gpa.toFixed(2)}`}
-                    aria-label={`View statistics for ${level}`}
+                    title={`${t('gpa.label')}: ${levelStats.gpa.toFixed(2)}`}
+                    aria-label={t('aria.viewStats', { name: translateLevelOrTerm(level) })}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      openModal(level, levelStats, levelCourses);
+                      openModal(translateLevelOrTerm(level), levelStats, levelCourses);
                     }}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -363,7 +365,8 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                   // Define recognized terms and their order
                   const termOrder = {
                     'First Term': 1,
-                    'Second Term': 2
+                    'Second Term': 2,
+                    'Summer Term': 3
                   };
                   
                   // Get order for each term, defaulting to 3 (after recognized terms) if not found
@@ -401,9 +404,9 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                             </svg>
                           </span>
-                          {term}
+                          {translateLevelOrTerm(term)}
                           <span className="group-header-metrics group-header-metrics-inline" aria-hidden="true">
-                            <span className="group-metric gpa">GPA {termStats.gpa.toFixed(2)}</span>
+                            <span className="group-metric gpa">{t('gpa.label')} {termStats.gpa.toFixed(2)}</span>
                             {termStats.failedCredits > 0 ? (
                               <>
                                 <span className="group-metric-sep" aria-hidden="true">·</span>
@@ -415,17 +418,17 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                               </>
                             ) : null}
                             <span className="group-metric-sep" aria-hidden="true">·</span>
-                            <span className="group-metric total">{termStats.totalCredits} hrs</span>
+                            <span className="group-metric total">{termStats.totalCredits} {t('table.hrs')}</span>
                           </span>
                           <span className="group-header-metrics-narrow">
                             <button
                               className="info-btn"
-                              title={`GPA: ${termStats.gpa.toFixed(2)}`}
-                              aria-label={`View statistics for ${term}`}
+                              title={`${t('gpa.label')}: ${termStats.gpa.toFixed(2)}`}
+                              aria-label={t('aria.viewStats', { name: translateLevelOrTerm(term) })}
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                openModal(`${level} - ${term}`, termStats, termCourses);
+                                openModal(`${translateLevelOrTerm(level)} - ${translateLevelOrTerm(term)}`, termStats, termCourses);
                               }}
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -446,10 +449,10 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                           <table className="course-table">
                             <thead className="table-header-hidden">
                               <tr>
-                                <th>Course Name</th>
-                                <th>Credit Hours</th>
-                                <th>Grade</th>
-                                <th>Remove</th>
+                                <th>{t('table.courseName')}</th>
+                                <th>{t('table.creditHours')}</th>
+                                <th>{t('table.grade')}</th>
+                                <th>{t('table.remove')}</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -471,26 +474,24 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
         <button 
           className="reset-button"
           onClick={() => setShowConfirmModal(true)}
-          title="Reset all courses"
-          aria-label="Reset all courses"
+          title={t('aria.resetAll')}
+          aria-label={t('aria.resetAll')}
         >
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M20.49 15C19.841 16.831 18.612 18.4108 16.9875 19.492C15.363 20.5732 13.4312 21.0972 11.4831 20.9851C9.5349 20.873 7.67594 20.1308 6.18628 18.8704C4.69663 17.61 3.65698 15.8996 3.22398 13.997C2.79098 12.0944 2.98809 10.1026 3.78562 8.32177C4.58314 6.54091 5.93787 5.06746 7.64568 4.12343C9.35349 3.17941 11.3219 2.81593 13.2542 3.08779C16.5167 3.54676 18.6721 5.91142 21 8M21 8V2M21 8H15" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"></path>
           </svg>
-          <span>Reset All</span>
+          <span>{t('table.resetAll')}</span>
         </button>
       </div>
       
-      {/* Statistics Modal using Portal */}
       <StatsModal modalData={modalData} onClose={closeModal} />
       
-      {/* Confirmation Modal for Reset */}
       <ConfirmationModal
         show={showConfirmModal}
-        title="Reset All Courses"
-        message="Are you sure you want to delete all courses? This action cannot be undone."
-        confirmText="Reset All"
-        cancelText="Cancel"
+        title={t('confirm.resetTitle')}
+        message={t('confirm.resetMessage')}
+        confirmText={t('confirm.reset')}
+        cancelText={t('confirm.cancel')}
         onConfirm={() => {
           onClearCourses();
           setShowConfirmModal(false);

@@ -2,6 +2,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './RotatingNumberInput.css';
 import './MobileCreditHoursOverride.css'; // Mobile override to fix display issues
+import { useLocale } from '../i18n/LocaleContext';
+
+const ARABIC_NUMERALS = '٠١٢٣٤٥٦٧٨٩';
+
+function formatNumberForLocale(n: number, locale: string): string {
+  if (locale !== 'ar-EG') return String(n);
+  return String(n).replace(/\d/g, (d) => ARABIC_NUMERALS[parseInt(d, 10)] ?? d);
+}
 
 interface RotatingNumberInputProps {
   value: number;
@@ -18,6 +26,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
   max = 3,
   disabled = false
 }) => {
+  const { locale } = useLocale();
   const stripRef = useRef<HTMLDivElement>(null);
   const [numbers, setNumbers] = useState<number[]>([]);
 
@@ -110,13 +119,10 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
         item.style.background = 'radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)';
         item.style.filter = 'none'; // Clear any blur effects on active number
       } else {
-        // Inactive number styling with enhanced blur
+        // Inactive number styling - blur behind panes, farther numbers a bit bigger
         const distance = Math.abs(itemValue - value);
-        const scale = Math.max(0.4, 1 - (distance * 0.2));
+        const scale = Math.max(0.7, 1 - (distance * 0.15));
         const opacity = Math.max(0.2, 1 - (distance * 0.35));
-        
-        // Apply much stronger blur for numbers behind glass panes
-        const blurAmount = distance <= 1 ? 4 : 6; // Increased blur strength
         
         item.style.transform = `scale(${scale}) translateZ(-${distance * 15}px)`;
         item.style.color = distance <= 1 ? '#4b5563' : '#6b7280';
@@ -124,7 +130,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
         item.style.opacity = opacity.toString();
         item.style.textShadow = 'none';
         item.style.background = 'none';
-        item.style.filter = `blur(${blurAmount}px) opacity(${opacity})`;
+        item.style.filter = distance <= 1 ? 'blur(2.5px) opacity(0.75)' : 'blur(4px) opacity(0.6)';
       }
     });
   };// Enhanced effect for perfect positioning in all scenarios
@@ -277,7 +283,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
                 data-value={num}
                 aria-selected={num === value}
               >
-                {num}
+                {formatNumberForLocale(num, locale)}
               </div>
             ))}
           </div>

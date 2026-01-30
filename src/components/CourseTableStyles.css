@@ -103,9 +103,9 @@
   font-weight: 650;
   font-size: var(--text-sm);
   line-height: 1;
-  background: var(--gray-200);
-  color: var(--gray-800);
-  border: 1px solid var(--gray-300);
+  background: var(--gray-100);
+  color: var(--gray-600);
+  border: 1px solid var(--gray-200);
   transition: var(--transition-base);
   text-align: center;
 }
