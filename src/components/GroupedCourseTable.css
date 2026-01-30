@@ -3,9 +3,28 @@
 /* Table box container - extends base .table-box from index.css */
 .table-box {
   position: relative;
-  padding-top: var(--space-xl); /* Space at the top for the reset button */
+  padding-top: calc(var(--space-xl) + 28px); /* More space from top above first level */
   padding-right: var(--space-xl); /* Equal padding on the right to match top */
   padding-left: var(--space-xl); /* Balance with right padding */
+}
+
+/* Total hours completed – centered horizontally, recalculates with courses/grades */
+.table-total-hours {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 10;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.table-total-hours strong {
+  color: var(--text-color);
+  font-weight: 600;
 }
 
 /* ===== Expand/collapse: same for level and term – grid + max-height + opacity ===== */
@@ -194,8 +213,12 @@ html[lang="ar"] .reset-button,
   color: #ff7955; /* Match text color */
 }
 
-/* Responsive styles for reset button */
+/* Responsive styles for reset button and total hours */
 @media (max-width: 768px) {
+  .table-total-hours {
+    top: 15px;
+    font-size: 1.05rem;
+  }
   .reset-button-container {
     top: 15px;
     right: 15px; /* Keep consistent distance from right */
@@ -218,6 +241,10 @@ html[lang="ar"] .reset-button,
 }
 
 @media (max-width: 480px) {
+  .table-total-hours {
+    top: 12px;
+    font-size: 1rem;
+  }
   .reset-button-container {
     top: 12px;
     right: 12px; /* Keep consistent proportion from right */
@@ -283,7 +310,7 @@ html[lang="ar"] .reset-button,
 
 /* First level group should have top margin to make room for the reset button */
 .level-group:first-child {
-  margin-top: 50px; /* Increased to match exact top spacing (20px button + 10px + 20px space to group) */
+  margin-top: 74px; /* More space above first level */
 }
 
 .level-group:last-child {
@@ -662,7 +689,7 @@ html[lang="ar"] .reset-button,
   
   /* Adjust table padding for smaller screens */
   .table-box {
-    padding-top: 15px;
+    padding-top: 20px;
     padding-right: 15px;
     padding-left: 15px;
   }
@@ -671,9 +698,9 @@ html[lang="ar"] .reset-button,
     /* Removed margin-top here as we control it through other selectors */
   }
   
-  /* Adjust first level group margin for reset button on mobile */
+  /* Adjust first level group margin – more space above first level */
   .level-group:first-child {
-    margin-top: 45px; /* Keep the same proportion as desktop spacing */
+    margin-top: 66px;
   }
   
   /* Ensure tables maintain fixed width in term container */

@@ -29,16 +29,12 @@ function loadCoursesFromStorage(): Course[] {
 
 function HomeContent() {
   const { t } = useLocale()
-  const [courses, setCourses] = useState<Course[]>([])
+  const [courses, setCourses] = useState<Course[]>(loadCoursesFromStorage)
   const [showImportModal, setShowImportModal] = useState(false)
   const [saveNotification, setSaveNotification] = useState<{show: boolean, message: string}>({
     show: false,
     message: ''
   })
-
-  useEffect(() => {
-    setCourses(loadCoursesFromStorage())
-  }, [])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

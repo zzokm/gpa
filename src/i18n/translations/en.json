@@ -21,6 +21,7 @@
   "table.remove": "Remove",
   "table.resetAll": "Reset All",
   "table.hrs": "hrs",
+  "table.totalHoursCompleted": "Total credit hours",
   "confirm.resetTitle": "Reset All Courses",
   "confirm.resetMessage": "Are you sure you want to delete all courses? This action cannot be undone.",
   "confirm.reset": "Reset All",

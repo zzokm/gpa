@@ -21,6 +21,7 @@
   "table.remove": "حذف",
   "table.resetAll": "مسح الكل",
   "table.hrs": "س.م",
+  "table.totalHoursCompleted": "إجمالي الساعات المعتمدة",
   "confirm.resetTitle": "مسح كل المواد",
   "confirm.resetMessage": "متأكد إنك عايز تحذف كل المواد؟ العملية دي مش هتترجع.",
   "confirm.reset": "مسح الكل",

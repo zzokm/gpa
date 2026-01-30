@@ -40,11 +40,27 @@
 }
 
 /* Modal footer button group for confirmation modal */
-.confirmation-modal .button-group {
+.confirmation-modal .modal-footer .button-group {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: var(--space-md);
   margin: 0;
+  min-height: 44px;
+}
+
+/* Same size for Cancel and Reset – equal width and height (44px includes border) */
+.confirmation-modal .modal-footer .button-group button {
+  min-width: 130px;
+  width: 130px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  padding: 0 var(--space-md);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Danger button for destructive actions - styled like btn-primary but with red colors */
@@ -92,6 +108,10 @@
 
 .btn-danger:active {
   transform: translateY(0);
+}
+
+.confirmation-modal .modal-footer .btn-danger {
+  margin: 0;
 }
 
 .modal-footer .btn-danger {

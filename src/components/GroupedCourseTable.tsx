@@ -125,6 +125,12 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
   const importedCourses = courses.filter(course => course.isImported);
   const manualCourses = courses.filter(course => !course.isImported);
 
+  // Total hours completed = sum of hours for courses that have a grade (recalculates when courses/grades change)
+  const totalHoursCompleted = useMemo(
+    () => courses.filter(c => c.grade != null).reduce((sum, c) => sum + c.hours, 0),
+    [courses]
+  );
+
   // Group imported courses by level first, then by term
   const nestedGroupedCourses: NestedGroupedCourses = useMemo(() => {
     const grouped: NestedGroupedCourses = {};
@@ -268,6 +274,10 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
     );
   }  return (
     <div className="table-box">
+      {/* Total hours completed – top left, recalculates when courses/grades change */}
+      <div className="table-total-hours" aria-live="polite">
+        {t('table.totalHoursCompleted')}: <strong>{totalHoursCompleted}</strong> {t('table.hrs')}
+      </div>
       {/* Render manually added courses first */}
       {manualCourses.length > 0 && (
         <div className="course-group level-group">

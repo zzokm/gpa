@@ -135,8 +135,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
           item.style.filter = 'blur(2.5px) opacity(0.75)';
         } else {
           // Further items - stronger blur
-          const farScale = Math.max(0.72, 1 - (distance * 0.1));
-          item.style.transform = `scale(${farScale}) translateZ(-${distance * 10}px)`;
+          item.style.transform = `scale(${scale}) translateZ(-${distance * 10}px)`;
           item.style.color = '#4b5563';
           item.style.fontWeight = distance <= 2 ? '500' : '400';
           item.style.opacity = opacity.toString();

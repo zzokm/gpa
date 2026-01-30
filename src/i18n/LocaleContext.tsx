@@ -47,12 +47,12 @@ function getStoredLocale(): Locale {
 }
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('en')
+  const [locale, setLocaleState] = useState<Locale>(getStoredLocale)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setLocaleState(getStoredLocale())
-    setMounted(true)
+    const id = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(id)
   }, [])
 
   useEffect(() => {
