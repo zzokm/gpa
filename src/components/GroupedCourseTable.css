@@ -8,29 +8,69 @@
   padding-left: var(--space-xl); /* Balance with right padding */
 }
 
-/* ===== Expand/collapse: grid 0fr/1fr (no max-height jank, smooth both directions) ===== */
-.level-container,
-.term-container {
+/* ===== Expand/collapse: same for level and term – grid + max-height + opacity ===== */
+/* Use higher-specificity selectors so these always win over global/universal rules */
+.table-box .level-container,
+.table-box .term-group .term-container {
   display: grid;
   overflow: hidden;
   grid-template-rows: 1fr;
-  transition: grid-template-rows 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  max-height: 5000px;
+  opacity: 1;
+  transition:
+    max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    grid-template-rows 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
-.level-container.collapsed,
-.term-container.collapsed {
+.table-box .level-container.collapsed,
+.table-box .term-group .term-container.collapsed {
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  max-height: 0;
+  opacity: 0;
+  transition:
+    max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    grid-template-rows 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
   pointer-events: none;
   user-select: none;
   touch-action: none;
 }
 
+.table-box .level-container.expanded,
+.table-box .term-group .term-container.expanded {
+  grid-template-rows: 1fr;
+  max-height: 5000px;
+  opacity: 1;
+  transition:
+    max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    grid-template-rows 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  pointer-events: auto;
+}
+
+/* Keep base class rules for pointer-events/visibility (other files reference .level-container, .term-container) */
+.level-container,
+.term-container {
+  display: grid;
+  overflow: hidden;
+  grid-template-rows: 1fr;
+  max-height: 5000px;
+  opacity: 1;
+}
+
+.level-container.collapsed,
+.term-container.collapsed {
+  grid-template-rows: 0fr;
+  max-height: 0;
+  opacity: 0;
+}
+
 .level-container.expanded,
 .term-container.expanded {
   grid-template-rows: 1fr;
-  transition: grid-template-rows 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-  pointer-events: auto;
+  max-height: 5000px;
+  opacity: 1;
 }
 
 /* Inner content must allow grid row to shrink to 0 */
@@ -41,9 +81,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .level-container,
-  .term-container {
-    transition-duration: 0.12s;
+  .table-box .level-container,
+  .table-box .term-group .term-container {
+    transition-duration: 0.15s !important;
   }
 }
 
@@ -76,8 +116,11 @@
   --term-indent: 3%;
   --course-width: 100%;
   --stats-button-right-distance: 0px;
-  /* Spacing between groups - consistent spacing */
-  --group-spacing: 0px; /* Space between level-term and term-term */
+  /* Spacing: single source for gap between level selector and first term selector */
+  --level-to-first-term-gap: 2px;
+  /* Gap between consecutive term selectors */
+  --term-to-term-gap: 6px;
+  --group-spacing: 0px; /* legacy, use variables above */
   /* Button sizing - match grade badge height */
   --remove-btn-base-size: 30px;  /* Match grade badge height for consistency */
   --remove-btn-size: clamp(30px, 3.5vw, var(--remove-btn-base-size));  /* Size of remove button - same height as grade badge */
@@ -240,7 +283,7 @@
 
 .level-header {
   width: var(--level-width);
-  margin-bottom: var(--group-spacing); /* Consistent spacing between level and term */
+  margin-bottom: 0; /* Gap controlled by .course-group.level-group > .group-header via --level-to-first-term-gap */
 }
 
 /* ===== Term Group Styling ===== */
@@ -254,12 +297,12 @@
 }
 
 .term-group {
-  margin-top: 0 !important; /* Reset all margins */
+  margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
 
 .term-group:first-child {
-  margin-top: 6px !important; /* Reduced spacing for first term */
+  margin-top: 0 !important; /* No extra gap – level header uses --level-to-first-term-gap */
 }
 
 .term-group:last-child {
@@ -267,7 +310,7 @@
 }
 
 .term-group:not(:first-child) {
-  margin-top: 6px !important; /* Reduced spacing between terms */
+  margin-top: var(--term-to-term-gap) !important; /* Gap between term selectors */
 }
 
 .level-container-inner > .term-group .group-header {
@@ -387,7 +430,7 @@
 /* ===== Course Table Styling ===== */
 .term-group .table-container {
   width: 100%;
-  padding-top: 6px !important; /* Reduced space between term header and first course */
+  padding-top: 12px !important; /* Gap between term selector and course table */
 }
 
 .course-container {
@@ -395,6 +438,22 @@
   display: flex;
   justify-content: center;
   overflow: visible;  /* Allow remove button drop shadow to show */
+}
+
+/* Course table under term: same look as term header – rounded, glass, thin border */
+.term-group .course-container {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.term-group .course-container .course-table {
+  background: transparent;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .level-container-inner > .term-group .table-container table,
@@ -471,9 +530,9 @@
   justify-content: space-between;
 }
 
-/* Fix spacing between group headers and their content */
+/* Fix spacing between group headers and their content – single source for level-to-first-term gap */
 .course-group.level-group > .group-header {
-  margin-bottom: 15px; /* Increased space between level header and its content */
+  margin-bottom: var(--level-to-first-term-gap) !important;
 }
 
 .group-header.clickable {
@@ -613,23 +672,23 @@
     width: 100% !important;
   }
   
-  /* Slightly faster expand/collapse on mobile */
-  .level-container,
-  .term-container {
-    transition-duration: 0.32s;
+  /* Slightly faster but still visible on mobile */
+  .table-box .level-container,
+  .table-box .term-group .term-container {
+    transition-duration: 0.45s !important;
   }
   
-  /* Keep consistent spacing on mobile */
-  .course-group.level-group > .group-header {
-    margin-bottom: 6px !important; /* Reduced spacing for level header */
+  /* Centralized gap: smaller on mobile */
+  :root {
+    --level-to-first-term-gap: 0px;
   }
   
   .term-group:not(:first-child) {
-    margin-top: 6px !important; /* Reduced spacing between terms */
+    margin-top: var(--term-to-term-gap) !important;
   }
   
   .term-group:first-child {
-    margin-top: 6px !important; /* Same reduced spacing for first term */
+    margin-top: 0 !important;
   }
   
   .term-group:last-child {
@@ -637,7 +696,7 @@
   }
   
   .term-group .table-container {
-    padding-top: 4px !important; /* Reduced padding for mobile */
+    padding-top: 10px !important; /* Gap between term selector and course table */
   }
   
   .course-group .course-table {
@@ -826,16 +885,13 @@
   }
   
   /* Maintain spacing proportion even on smaller screens */
-  .term-group:not(:first-child) {
-    margin-top: 4px !important; /* Further reduced for very small screens */
+  :root {
+    --level-to-first-term-gap: 2px;
+    --term-to-term-gap: 4px;
   }
   
   .term-group:first-child {
-    margin-top: 4px !important; /* Match the other term spacing */
-  }
-  
-  .course-group.level-group > .group-header {
-    margin-bottom: 4px !important; /* Matching spacing for consistency */
+    margin-top: 0 !important;
   }
   
   /* Make term titles even more compact on very small screens */
@@ -875,20 +931,20 @@
   }
 }
 
-/* Override any responsive-fixes.css margins for terms */
-.term-group {
-  margin-top: 6px !important;
+/* Centralized term spacing: first term has no top margin; others use --term-to-term-gap */
+.term-group:not(:first-child) {
+  margin-top: var(--term-to-term-gap) !important;
 }
 
-/* Term group in responsive-fixes.css has margin-top 5px - override it */
-body .term-group {
-  margin-top: 6px !important;
+body .term-group:first-child,
+body .level-container .term-group:first-child {
+  margin-top: 0 !important;
+}
+
+body .term-group:not(:first-child),
+body .level-container .term-group:not(:first-child) {
+  margin-top: var(--term-to-term-gap) !important;
   margin-bottom: 0 !important;
-}
-
-/* Even more specific override to ensure we win specificity wars */
-body .level-container .term-group {
-  margin-top: 6px !important;
 }
 
 /* ===== Collapsed state: disable interaction only (animation is grid height) ===== */

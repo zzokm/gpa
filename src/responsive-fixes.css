@@ -345,11 +345,14 @@ body {
     height: 14px !important;
   }
   
-  /* Term groups more compact */
+  /* Term groups more compact – first term gap is in GroupedCourseTable.css (--level-to-first-term-gap) */
   .term-group {
     margin-left: var(--space-sm) !important;
     margin-bottom: 0 !important;
-    margin-top: 5px !important; /* Minimal spacing between groups */
+  }
+  
+  .term-group:not(:first-child) {
+    margin-top: 5px !important; /* Minimal spacing between term selectors */
   }
   
   .term-group .group-header {
@@ -498,6 +501,14 @@ body {
   .credit-hours-container.slide-right .credit-hours-pending {
     transition: opacity 0.1s ease !important;
     animation: none !important;
+  }
+
+  /* Level/term collapse must stay visibly animated; override index.css universal * rule */
+  .level-container,
+  .term-container,
+  .table-box .level-container,
+  .table-box .term-group .term-container {
+    transition-duration: 0.35s !important;
   }
 }
 

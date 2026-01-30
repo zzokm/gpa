@@ -19,15 +19,20 @@
 }
 
 /* Critical fix for collapsed sections - disable interactions */
-.table-container.collapsed .course-row,
-.level-container.collapsed .course-row,
-.term-container.collapsed .course-row {
+/* Manual .table-container: hide rows immediately (no animation) */
+.table-container.collapsed:not(.level-container):not(.term-container) .course-row {
   pointer-events: none !important;
   visibility: hidden !important;
   position: absolute !important;
   height: 0 !important;
   overflow: hidden !important;
   opacity: 0 !important;
+}
+
+/* Level/term: only disable pointer-events during collapse; do NOT hide rows so container height can animate */
+.level-container.collapsed .course-row,
+.term-container.collapsed .course-row {
+  pointer-events: none !important;
 }
 
 /* Ensure normal rows work properly */

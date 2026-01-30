@@ -1566,6 +1566,13 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  /* Collapse panels must stay visibly animated; override universal rule above */
+  .level-container,
+  .term-container,
+  .table-box .level-container,
+  .table-box .term-group .term-container {
+    transition-duration: 0.5s !important;
+  }
 }
 
 /* Focus States */
@@ -2323,6 +2330,13 @@ body.modal-open {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  /* Collapse panels must stay visibly animated; override universal rule above */
+  .level-container,
+  .term-container,
+  .table-box .level-container,
+  .table-box .term-group .term-container {
+    transition-duration: 0.5s !important;
   }
 }
 
