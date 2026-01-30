@@ -1,9 +1,8 @@
 /* Mobile Responsiveness Fixes */
+/* This file intentionally overrides global styles (index.css, Bootstrap) for mobile. */
+/* Credit-hours responsive behavior: RotatingNumberInput.css + MobileCreditHoursOverride.css. */
 
 /* === Rotating Number Input Centering Fix === */
-/* Credit-hours-input layout and glass owned by RotatingNumberInput.css; MobileCreditHoursOverride.css for mobile. */
-/* IMPORTANT: Main credit-hours-input styling has been moved to RotatingNumberInput.css */
-/* and MobileCreditHoursOverride.css to prevent conflicts and ensure proper mobile display */
 
 /* Core fixes for the number strip */
 .number-strip {
@@ -58,39 +57,13 @@
 /* Rules moved to RotatingNumberInput.css for better organization */
 
 /* === Critical Mobile Fixes === */
-/* Credit hours input rules moved to RotatingNumberInput.css for better organization */
+/* Credit hours responsive rules: RotatingNumberInput.css + MobileCreditHoursOverride.css. Breakpoints: 480px (--bp-sm), 360px (--bp-xs). */
 
 /* Critical mobile fixes to prevent disappearing inputs */
 @media (max-width: 480px) {
-  /* Ensure form has proper display */
   .course-form {
     display: flex !important;
     flex-wrap: wrap !important;
-  }
-}
-
-/* Even smaller screens (mobile phones) */
-@media (max-width: 360px) {
-  .credit-hours-input {
-    min-width: 100px !important;
-  }
-  
-  .credit-arrow {
-    width: 28px !important;
-    min-width: 28px !important;
-    max-width: 28px !important;
-    flex: 0 0 28px !important;
-  }
-  
-  .perspective-container {
-    min-width: 44px !important;
-  }
-    .number-item {
-    width: 36px !important;
-    min-width: 36px !important;
-    max-width: 36px !important;
-    flex: 0 0 36px !important;
-    /* font-size: 1.6rem !important; */ /* Removed to prevent conflict with ConsolidatedFixes.css */
   }
 }
 
@@ -311,6 +284,7 @@ body {
   .modal-footer .btn-secondary {
     margin: 0 4px !important;
     min-width: 0 !important;
+    min-height: 44px !important;
     flex: 1 !important;
     padding: 8px 12px !important;
     font-size: 0.9rem !important;
@@ -406,7 +380,7 @@ body {
 
 /* === Grade Dropdown Mobile Improvements === */
 @media (max-width: 480px) {
-  /* Grade dropdown better mobile positioning */
+  /* Grade dropdown better mobile positioning; option sizing/touch target owned by index.css */
   .grade-dropdown-menu {
     width: 140px !important;
     position: fixed !important; /* To ensure it appears above content */
@@ -414,13 +388,6 @@ body {
   
   .grade-dropdown-content {
     padding: var(--space-sm) !important;
-  }
-  
-  .grade-dropdown-option {
-    padding: 8px !important;
-    height: 32px !important;
-    font-size: 0.8rem !important;
-    margin-bottom: 2px !important;
   }
   
   .grade-badge-container {
@@ -519,9 +486,11 @@ body {
     padding: var(--space-sm) !important;
   }
   
-  /* Simplify modals */
+  /* Simplify modals; prevent horizontal overflow */
   .modal-content {
     border-radius: var(--radius-md) !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
   
   .modal-header {
@@ -543,20 +512,21 @@ body {
   .modal-footer .btn-primary,
   .modal-footer .btn-secondary {
     margin: 0 2px !important;
+    min-height: 44px !important;
     font-size: 0.8rem !important;
     padding: 6px 10px !important;
   }
-  
+
   /* Hide unnecessary interface elements */
   .app-subtitle {
     display: none !important;
   }
-  
+
   /* Super compact course table */
   .course-table td {
     padding: var(--space-sm) 4px !important;
   }
-  
+
   /* Very tiny screens - minimize everything for usability */
   @media (max-width: 330px) {
     body {

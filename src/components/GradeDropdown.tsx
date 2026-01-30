@@ -53,10 +53,10 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
     
     const updatePosition = () => {
       const triggerRect = triggerRef.current!.getBoundingClientRect();
-      const dropdownWidth = 165; // Match width in CSS
+      const dropdownWidth = 220; // Match width in CSS (.grade-dropdown-menu)
         // Calculate position relative to viewport
-      let top = triggerRect.bottom + 8; // Closer to the arrow but still with some visual separation
-      let left = triggerRect.left + (triggerRect.width / 2) - (dropdownWidth / 2); // Center without transform
+      let top = triggerRect.bottom; /* No gap – dropdown sits right under input */
+      let left = triggerRect.left + (triggerRect.width / 2) - (dropdownWidth / 2) - 10; /* Centered, offset 10px left */
         // Ensure dropdown stays within viewport horizontally
       const viewportWidth = document.documentElement.clientWidth;
       if (left < 10) {
@@ -74,7 +74,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectGrade, triggerRef }
       if (top + estimatedDropdownHeight > viewportHeight) {
         // Show dropdown above the trigger if not enough space below
         // Adjusted spacing to match the bottom spacing
-        top = Math.max(10, triggerRect.top - estimatedDropdownHeight - 8);
+        top = Math.max(10, triggerRect.top - estimatedDropdownHeight);
       }
       
       // Position the portal container at the scroll position using ref
@@ -257,8 +257,8 @@ const GradeDropdown: React.FC<GradeDropdownProps> = ({
           </span>
         )}        <svg 
           className={`grade-dropdown-arrow ${isOpen ? 'open' : ''}`} 
-          width="8" 
-          height="8" 
+          width="14" 
+          height="14" 
           viewBox="0 0 12 12" 
           fill="currentColor"
         >

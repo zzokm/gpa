@@ -1,5 +1,5 @@
 /* Mobile Credit Hours Input Override */
-/* Supplements RotatingNumberInput.css: only mobile overrides not covered there. Base/breakpoints live in RotatingNumberInput.css. */
+/* Supplements RotatingNumberInput.css. Breakpoints: 768px, 480px, 360px (--bp-md, --bp-sm, --bp-xs). */
 
 @media (max-width: 768px) {
   /* Override index.css form/input rules that can break layout; keep overflow on inner so backdrop-filter works */

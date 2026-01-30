@@ -64,7 +64,7 @@
   transition: var(--transition-base);
   text-decoration: none;
   letter-spacing: 0.025em;
-  min-height: 40px; /* Same height as other buttons */
+  min-height: 44px; /* Touch target; match other modal buttons */
   position: relative;
   overflow: hidden;
   min-width: 120px; /* Match the min-width from .modal-footer .btn-primary */
@@ -109,8 +109,10 @@
     width: 100%;
   }
   
-  .confirmation-modal .button-group button {
+  .confirmation-modal .button-group button,
+  .confirmation-modal .modal-footer .btn-danger {
     width: 100%;
+    min-height: 44px;
     margin-top: var(--space-sm);
     margin-bottom: var(--space-sm);
   }

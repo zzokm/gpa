@@ -413,7 +413,7 @@
 }
 
 /* ====== Responsive & Mobile - Comprehensive Fixes ====== */
-/* Override any conflicting styles from index.css and ensure proper display */
+/* Breakpoints: 768px (--bp-md), 480px (--bp-sm), 360px (--bp-xs). Override index.css where needed. */
 
 /* Global mobile fix to prevent thin white line issue */
 @media (max-width: 768px) {
@@ -566,9 +566,10 @@
     opacity: 1 !important;
   }
 }
-@media (max-width: 393px) {
+/* Align with --bp-xs (360px) scale; 400px for intermediate narrow */
+@media (max-width: 400px) {
   .credit-hours-input {
-    min-width: 180px !important; /* Slightly smaller but still adequate */
+    min-width: 180px !important;
     isolation: isolate !important;
   }
   .number-item {

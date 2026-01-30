@@ -109,6 +109,7 @@
 }
 
 /* ===== Variables for responsive sizing ===== */
+/* Breakpoints: 768px, 600px, 480px (--bp-sm), 430/400/380 for narrow. */
 :root {
   /* Width proportions */
   --level-width: 100%;
@@ -122,9 +123,12 @@
   --term-to-term-gap: 6px;
   --group-spacing: 0px; /* legacy, use variables above */
   /* Button sizing - match grade badge height */
-  --remove-btn-base-size: 30px;  /* Match grade badge height for consistency */
-  --remove-btn-size: clamp(30px, 3.5vw, var(--remove-btn-base-size));  /* Size of remove button - same height as grade badge */
-  --remove-btn-min-size: 42px;  /* Increased minimum size for remove button on mobile */
+  --remove-btn-base-size: 30px;
+  --remove-btn-size: clamp(30px, 3.5vw, var(--remove-btn-base-size));
+  --remove-btn-min-size: 42px;
+  /* Narrow breakpoint sizing – set in media queries, used for consistency */
+  --group-header-min-height: 52px;
+  --info-btn-size: 32px;
 }
 
 /* Reset button styles */
@@ -802,14 +806,12 @@
     font-size: 0.95rem;
   }
 
-  /* Make group headers higher on smaller devices */
   .group-header {
-    min-height: 52px;
+    min-height: var(--group-header-min-height);
   }
   
-  /* Ensure remove button is large enough on mobile */
   :root {
-    --remove-btn-min-size: 44px;  /* Increased size for remove button on mobile */
+    --remove-btn-min-size: 44px;
   }
   
   .remove-btn {
@@ -824,12 +826,11 @@
     height: calc(var(--remove-btn-min-size) * 0.9);
   }
   
-  /* Make info button larger and more prominent on mobile */
   .info-btn {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    min-height: 32px;
+    width: var(--info-btn-size);
+    height: var(--info-btn-size);
+    min-width: var(--info-btn-size);
+    min-height: var(--info-btn-size);
   }
   
   .info-btn svg {
@@ -839,12 +840,16 @@
 }
 
 @media (max-width: 430px) {
-  /* Improve info button size and positioning - align with arrow svg */
+  :root {
+    --group-header-min-height: 56px;
+    --info-btn-size: 36px;
+  }
+
   .info-btn {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+    width: var(--info-btn-size);
+    height: var(--info-btn-size);
+    min-width: var(--info-btn-size);
+    min-height: var(--info-btn-size);
     padding: 4px;
     display: flex;
     align-items: center;
@@ -860,7 +865,6 @@
     height: 22px;
   }
 
-  /* Adjust group title for better balance */
   .group-title {
     padding-right: var(--stats-button-right-distance);
     display: flex;
@@ -868,9 +872,8 @@
     justify-content: flex-start;
   }
 
-  /* Make group headers even higher for better touch targets */
   .group-header {
-    min-height: 56px;
+    min-height: var(--group-header-min-height);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -899,31 +902,32 @@
     font-size: 0.85rem;
   }
 
-  /* Maximum height for smallest screens */
+  :root {
+    --group-header-min-height: 60px;
+  }
+
   .group-header {
-    min-height: 60px;
+    min-height: var(--group-header-min-height);
   }
 }
 
 @media (max-width: 380px) {
-  /* Keep the same settings as 400px for very small screens */
-  /* Even larger on very small screens */
+  :root {
+    --info-btn-size: 38px;
+    --remove-btn-min-size: 46px;
+  }
+
   .info-btn {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-    min-height: 38px;
+    width: var(--info-btn-size);
+    height: var(--info-btn-size);
+    min-width: var(--info-btn-size);
+    min-height: var(--info-btn-size);
     padding: 5px;
   }
   
   .info-btn svg {
     width: 24px;
     height: 24px;
-  }
-  
-  /* Make remove buttons even bigger for the smallest screens */
-  :root {
-    --remove-btn-min-size: 46px;  /* Maximum size for smallest screens */
   }
   
   .group-header {

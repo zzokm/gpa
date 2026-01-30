@@ -91,6 +91,12 @@
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Responsive breakpoints â€“ use in media queries: (max-width: var(--bp-sm)) etc. */
+  --bp-xs: 360px;   /* Very small phones */
+  --bp-sm: 480px;   /* Phones */
+  --bp-md: 768px;   /* Tablets / narrow desktop */
+  --bp-lg: 1024px;  /* Desktop */
 }
 
 /* Modern CSS Reset */
@@ -183,6 +189,43 @@ select {
   letter-spacing: 0.025em;
   /* Enhanced visibility 
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);*/
+}
+
+/* Save notification â€“ base and responsive */
+.save-notification {
+  position: fixed;
+  top: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 600;
+  z-index: 9999;
+  max-width: min(90vw, 400px);
+  box-shadow: var(--shadow-md);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.save-notification.success {
+  background: rgba(34, 197, 94, 0.95);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.save-notification.error {
+  background: rgba(239, 68, 68, 0.95);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 480px) {
+  .save-notification {
+    top: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-sm);
+    max-width: calc(100vw - 2 * var(--space-md));
+  }
 }
 
 /* Modern Card Components - Ultra-Enhanced Glassmorphism for Light Background */
@@ -943,77 +986,10 @@ select {
   }
 }
 
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-xl);
-  padding-bottom: var(--space-lg);
-  border-bottom: 2px solid var(--border-light);
-}
-
-.modal-title {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--text-color);
-  margin: 0;
-}
-
-.modal-close {
-  width: 24px;
-  height: 24px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition-base);
-  padding: 0;
-}
-
-.modal-close:hover {
-  color: var(--primary-600);
-  transform: scale(1.1);
-}
-
-/* Modal Body and Footer Styles */
-.modal-body {
-  padding: var(--space-sm) var(--space-2xl) var(--space-xl); /* Adjusted top padding */
-}
-
-.modal-description {
-  margin-bottom: var(--space-lg);
-  color: var(--text-secondary);
-  font-size: var(--text-base);
-  line-height: 1.5;
-}
-
 .textarea-container {
   position: relative;
   margin-bottom: var(--space-sm);
   width: 100%;
-}
-
-/* Modal button spacing */
-.modal-footer {
-  padding: var(--space-md) var(--space-2xl); /* Reduced top padding from lg to md */
-  border-top: 1px solid var(--border-light);
-  margin-top: auto;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.modal-footer .button-group {
-  justify-content: flex-end;
-  margin-top: 0;
-  gap: var(--space-md); /* Reduced spacing between buttons */
-}
-
-.modal-footer .btn-primary,
-.modal-footer .btn-secondary {
-  margin: var(--space-sm); /* Add margins around buttons */
-  min-width: 120px; /* Ensure consistent button widths */
 }
 
 /* Import and Paste Button Styles - Enhanced with Glassmorphism Elements */
@@ -1164,7 +1140,7 @@ select {
 .grade-dropdown-menu {
   position: absolute; /* Use absolute positioning within the portal */
   z-index: 100000; /* High z-index to stay above other elements */
-  width: 165px; /* Slightly wider to accommodate the increased padding */
+  width: 220px; /* Wider to suit form input and options */
   background: white;
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-lg);
@@ -1174,7 +1150,7 @@ select {
   /* Force the dropdown to appear in its own stacking context to fix flickering issues */
   isolation: isolate;
   pointer-events: auto; /* Ensure clicks work properly */
-  margin-top: 8px; /* Slightly larger gap between trigger and dropdown */
+  margin-top: 0; /* Dropdown right under trigger */
 }
 
 /* Removed arrow pointer */
@@ -1287,14 +1263,28 @@ select {
   }
 }
 
-/* Even smaller screens */
+/* Even smaller screens â€“ touch targets at least 44px */
 @media (max-width: 480px) {
   .grade-dropdown-menu {
-    width: 120px; /* Smaller dropdown menu */
+    width: 120px;
+  }
+
+  .grade-dropdown-option {
+    min-height: 44px;
+    height: auto;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  /* Compact trigger in table: 44px touch target */
+  .course-table .grade-dropdown-trigger {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
   }
 
   .course-grade-badge {
-    min-width: 40px; /* Keep consistent across all screen sizes */
+    min-width: 40px;
     width: 40px;
     height: 28px;
     padding: 0;
@@ -1360,6 +1350,12 @@ select {
   .btn-primary,
   .btn-secondary {
     width: 100%;
+    min-height: 44px;
+  }
+  
+  .modal-footer .btn-primary,
+  .modal-footer .btn-secondary {
+    min-height: 44px;
   }
   
   .course-table th,
@@ -1431,6 +1427,22 @@ select {
   .remove-btn svg {
     width: 16px;
     height: 16px;
+  }
+}
+
+/* Very narrow screens â€“ allow form labels to wrap; prevent modal overflow (--bp-xs) */
+@media (max-width: 360px) {
+  .form-label {
+    min-width: 0;
+  }
+
+  .modal-content {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .modal-overlay {
+    padding: var(--space-sm);
   }
 }
 
@@ -1612,6 +1624,7 @@ select {
   min-width: 200px;
   width: 100%;
   height: 50px;
+  margin: 0; /* Align with other form inputs â€“ base .grade-dropdown-trigger has margin-left */
   padding: var(--space-md) var(--space-lg);
   border: 2px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--radius-md);
@@ -1654,6 +1667,8 @@ select {
 
 .grade-dropdown-input-mode .grade-dropdown-arrow {
   margin-left: var(--space-md); /* Increased spacing */
+  width: 14px; /* Larger arrow to suit input size */
+  height: 14px;
 }
 
 
@@ -1861,511 +1876,4 @@ body.modal-open {
   width: 14px;
   height: 14px;
   margin-right: var(--space-xs);
-}
-
-/* Grade Dropdown Styling */
-.grade-dropdown {
-  position: relative;
-  display: inline-block;
-  width: 100%; /* Make the dropdown take the full width of its container */
-}
-
-.grade-dropdown-input-mode {
-  width: 100%; /* Ensure input mode takes full width */
-  display: block; /* Change from inline-block to block for full width */
-}
-
-.grade-dropdown-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: var(--gray-200);
-  color: var(--gray-800);
-  border: none;
-  border-radius: 50%;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition-base);
-  text-align: center;
-  position: relative;
-  padding: 0;
-  margin-left: 8px; /* Fixed distance from badge */
-}
-
-.grade-dropdown-trigger:hover {
-  background: var(--gray-300);
-}
-
-.grade-dropdown-trigger:active {
-  transform: translateY(0);
-}
-
-.grade-dropdown-trigger-compact {
-  min-width: auto;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  box-shadow: var(--shadow-xs);
-}
-
-.grade-dropdown-text {
-  flex-shrink: 0;
-}
-
-.grade-dropdown-arrow {
-  transition: var(--transition-base);
-  flex-shrink: 0;
-  width: 8px; /* Smaller arrow */
-  height: 8px; /* Smaller arrow */
-}
-
-.grade-dropdown-arrow.open {
-  transform: rotate(180deg);
-}
-
-.grade-dropdown-menu {
-  position: absolute; /* Use absolute positioning within the portal */
-  z-index: 100000; /* High z-index to stay above other elements */
-  width: 165px; /* Slightly wider to accommodate the increased padding */
-  background: white;
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg);
-  overflow: hidden; /* Changed from visible to hidden for clean edges */
-  animation: dropdownSlideIn 0.25s var(--ease-out);
-  box-shadow: var(--shadow-md);
-  /* Force the dropdown to appear in its own stacking context to fix flickering issues */
-  isolation: isolate;
-  pointer-events: auto; /* Ensure clicks work properly */
-  margin-top: 8px; /* Slightly larger gap between trigger and dropdown */
-}
-
-/* Removed arrow pointer */
-
-.grade-dropdown-content {
-  max-height: 300px;
-  overflow-y: auto;
-  padding: var(--space-md); /* Increased padding */
-  scrollbar-width: thin;
-  scrollbar-color: var(--gray-300) transparent;
-}
-
-.grade-dropdown-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.grade-dropdown-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.grade-dropdown-content::-webkit-scrollbar-thumb {
-  background-color: var(--gray-300);
-  border-radius: 3px;
-}
-
-.grade-dropdown-option {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: var(--space-md) var(--space-lg);
-  border: none;
-  border-radius: var(--radius-md); /* More rounded */
-  font-size: var(--text-sm);
-  font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-  transition: var(--transition-fast);
-  margin-bottom: 4px; /* Slightly increased spacing */
-  color: white !important;
-  height: 36px; /* Slightly increased height for better touch targets */
-}
-
-.grade-dropdown-option:last-child {
-  margin-bottom: 0;
-}
-
-.grade-dropdown-option:hover {
-  transform: scale(1.02); /* Subtler scale effect */
-  box-shadow: var(--shadow-sm);
-  filter: brightness(1.05); /* Subtle brightness increase */
-}
-
-/* Fix for dropdown to stay above other elements and avoid flickering */
-.grade-dropdown-option:hover::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1; /* Behind the option */
-}
-
-.grade-dropdown-separator {
-  height: 1px;
-  background: var(--gray-200);
-  margin: 6px 12px; /* More spacing around separators */
-  border-radius: var(--radius-full); /* Rounded edges for separator */
-}
-
-@keyframes dropdownSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-4px);
-    scale: 0.98;
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    scale: 1;
-  }
-}
-
-/* Responsive Grade Dropdown */
-@media (max-width: 768px) {
-  .grade-dropdown-trigger {
-    min-width: 20px; /* Standardize size */
-    width: 20px;
-    height: 20px;
-    padding: 0;
-    font-size: var(--text-xs);
-  }
-  
-  .grade-dropdown-option {
-    padding: var(--space-xs) var(--space-sm);
-    font-size: var(--text-xs);
-    height: 28px; /* Smaller height on mobile */
-  }
-  
-  .grade-dropdown-menu {
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); /* Stronger shadow on mobile */
-    width: 140px; /* Slightly narrower on mobile */
-  }  .course-grade-badge {
-    min-width: 40px; /* Maintain consistent size */
-    width: 40px;
-    height: 28px;
-    padding: 0;
-    font-size: var(--text-xs);
-  }
-}
-
-/* Even smaller screens */
-@media (max-width: 480px) {
-  .grade-dropdown-menu {
-    width: 120px; /* Smaller dropdown menu */
-  }
-
-  .course-grade-badge {
-    min-width: 40px; /* Keep consistent across all screen sizes */
-    width: 40px;
-    height: 28px;
-    padding: 0;
-    font-size: var(--text-xs);
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .container {
-    padding: var(--space-lg) var(--space-md);
-    gap: var(--space-lg);
-  }
-  
-  .app-title {
-    font-size: var(--text-2xl);
-  }
-  
-  .app-subtitle {
-    font-size: var(--text-base);
-  }
-  
-  .top-box,
-  .table-box {
-    padding: var(--space-lg);
-    border-radius: var(--radius-xl);
-  }
-  
-  .form-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-sm);
-  }
-    .form-label {
-    text-align: left;
-    min-width: auto;
-    font-size: var(--text-lg);
-  }  .form-input,
-  .form-select,
-  .credit-hours-input,
-  .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
-    min-width: 100%;
-    max-width: 100%;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .credit-hours-input {
-    display: flex; /* Ensure flexbox is preserved on mobile */
-    margin: 0; /* Remove centering to match other inputs */
-  }
-  
-  .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
-    display: flex; /* Ensure flexbox is preserved on mobile */
-    margin: 0; /* Remove centering to match other inputs */
-  }
-  
-  .button-group {
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-  
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-  }
-  
-  .course-table th,
-  .course-table td {
-    padding: var(--space-md) var(--space-sm);
-    font-size: var(--text-sm);
-  }
-    .gpa-display {
-    max-width: 100%;
-  }
-  
-  .modal-content {
-    margin: var(--space-lg);
-    padding: var(--space-xl) var(--space-xl);
-    border-radius: var(--radius-xl);
-    width: calc(100% - 2 * var(--space-lg));
-    max-width: 500px;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: var(--space-md);
-  }
-  
-  /* Improved modal styling for small screens */
-  .modal-content {
-    margin: var(--space-md);
-    padding: var(--space-lg);
-    border-radius: var(--radius-lg);
-    width: calc(100% - 2 * var(--space-md));
-  }
-  
-  .course-table th:first-child,
-  .course-table td:first-child {
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-    /* Additional fixes for credit hours input on smaller screens */
-  .form-input,
-  .form-select,
-  .credit-hours-input,
-  .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
-    height: 45px; /* Slightly smaller height for better mobile fit */
-    padding: var(--space-sm) var(--space-md); /* Reduce padding for smaller screens */
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-  
-  .credit-hours-number {
-    min-width: 30px; /* Ensure number remains visible */
-    font-size: calc(var(--text-base) - 1px); /* Slightly smaller font */
-    padding: var(--space-sm); /* Reduce padding */
-  }
-  
-  .credit-arrow {
-    width: 36px; /* Slightly smaller on very small screens */
-    min-width: 36px;
-  }
-  
-  .gpa-value {
-    font-size: var(--text-3xl);
-  }
-  
-  /* Adjust remove button on small screens */
-  .remove-btn svg {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-/* Accessibility - Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-  body {
-    animation: none;
-    background-attachment: local;
-  }
-  
-  .credit-hours-number.sliding-out-left,
-  .credit-hours-number.sliding-out-right,
-  .credit-hours-number.sliding-in-left,
-  .credit-hours-number.sliding-in-right,
-  .credit-hours-number.shake,
-  .credit-hours-number.pulse {
-    animation: none;
-    transition: none;
-  }
-  
-  .top-box,
-  .table-box,
-  .gpa-display,
-  .form-input,
-  .form-select,
-  .btn-primary,
-  .btn-secondary {
-    transition: none;
-    transform: none;
-  }
-}
-
-/* Enhanced Mobile Glassmorphism */
-@media (max-width: 480px) {
-  .top-box,
-  .table-box,
-  .gpa-display {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1.5px solid rgba(255, 255, 255, 0.6);
-  }    .form-input,
-  .form-select,
-  .credit-hours-input,
-  .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
-    width: 100%;
-  }
-    
-  .credit-arrow {
-    width: 40px;
-    min-width: 40px; /* Ensure fixed width on mobile */
-    flex-shrink: 0; /* Prevent arrows from shrinking */
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1; /* Maintain square shape */
-  }
-    .paste-btn {
-    background: rgba(255, 255, 255, 0.35);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.45);
-  }
-  
-  /* Ensure remove button remains transparent on all device sizes */
-  .remove-btn {
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border: none;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  .top-box,
-  .table-box,
-  .gpa-display {
-    background: var(--white);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border: 2px solid var(--border-color);
-  }
-  
-  .form-input,
-  .form-select,
-  .credit-hours-input,
-  .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
-    background: var(--white);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border: 2px solid var(--border-color);
-  }
-}
-
-/* Loading States */
-.loading {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.loading::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  border: 2px solid var(--primary-color);
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  /* Collapse panels must stay visibly animated; override universal rule above */
-  .level-container,
-  .term-container,
-  .table-box .level-container,
-  .table-box .term-group .term-container {
-    transition-duration: 0.5s !important;
-  }
-}
-
-/* Focus States */
-.btn-primary:focus-visible,
-.btn-secondary:focus-visible,
-.form-input:focus-visible,
-.form-select:focus-visible {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-/* Print Styles */
-@media print {
-  .btn-primary,
-  .btn-secondary,
-  .remove-btn {
-    display: none;
-  }
-  
-  .container {
-    padding: 0;
-    max-width: none;
-  }
-  
-  .top-box,
-  .table-box,
-  .gpa-display {
-    box-shadow: none;
-    border: 1px solid var(--border-color);
-  }
 }
