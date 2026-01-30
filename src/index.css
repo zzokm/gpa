@@ -290,6 +290,128 @@ html[lang="ar"] .language-switcher {
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
+/* Undo bar – centered; equal spacing so circle/button align with left/right edge radius */
+.undo-bar {
+  position: fixed;
+  top: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
+  animation: undoBarEnter 0.4s var(--ease-out) forwards;
+}
+
+[dir="rtl"] .undo-bar {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+.undo-bar-exit {
+  animation: undoBarExit 0.4s var(--ease-in) forwards;
+  pointer-events: none;
+}
+
+@keyframes undoBarEnter {
+  from {
+    transform: translate(-50%, -100%);
+  }
+  to {
+    transform: translate(-50%, 0);
+  }
+}
+
+[dir="rtl"] .undo-bar-exit {
+  animation: undoBarExitRtl 0.4s var(--ease-in) forwards;
+}
+
+@keyframes undoBarExit {
+  from {
+    transform: translate(-50%, 0);
+  }
+  to {
+    transform: translate(-50%, -100%);
+  }
+}
+
+@keyframes undoBarExitRtl {
+  from {
+    transform: translate(-50%, 0);
+  }
+  to {
+    transform: translate(-50%, -100%);
+  }
+}
+
+.undo-bar-progress-wrap {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.undo-bar-circle {
+  width: 40px;
+  height: 40px;
+  transform: rotate(-90deg);
+}
+
+.undo-bar-circle-bg {
+  fill: none;
+  stroke: var(--gray-200);
+  stroke-width: 4;
+}
+
+.undo-bar-circle-fill {
+  fill: none;
+  stroke: var(--primary-color);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.01s linear;
+}
+
+.undo-bar-countdown {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.undo-bar-btn {
+  height: 40px;
+  padding: 0 var(--space-lg);
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.undo-bar-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
 @media (max-width: 480px) {
   .save-notification {
     top: var(--space-md);

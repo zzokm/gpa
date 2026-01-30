@@ -29,12 +29,41 @@ function loadCoursesFromStorage(): Course[] {
 
 function HomeContent() {
   const { t } = useLocale()
-  const [courses, setCourses] = useState<Course[]>(loadCoursesFromStorage)
+  const [courses, setCourses] = useState<Course[]>(() => [])
   const [showImportModal, setShowImportModal] = useState(false)
   const [saveNotification, setSaveNotification] = useState<{show: boolean, message: string}>({
     show: false,
     message: ''
   })
+  const [undoBarVisible, setUndoBarVisible] = useState(false)
+  const [undoSnapshot, setUndoSnapshot] = useState<Course[] | null>(null)
+  const [undoCountdown, setUndoCountdown] = useState(5)
+  const [undoExiting, setUndoExiting] = useState(false)
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setCourses(loadCoursesFromStorage()))
+    return () => cancelAnimationFrame(id)
+  }, [])
+
+  useEffect(() => {
+    if (!undoBarVisible || undoExiting) return
+    const interval = setInterval(() => {
+      setUndoCountdown(prev => {
+        const next = Math.max(0, Math.round((prev - 0.01) * 100) / 100)
+        if (next <= 0) {
+          setUndoExiting(true)
+          setTimeout(() => {
+            setUndoBarVisible(false)
+            setUndoSnapshot(null)
+            setUndoCountdown(5)
+            setUndoExiting(false)
+          }, 400)
+        }
+        return next
+      })
+    }, 10)
+    return () => clearInterval(interval)
+  }, [undoBarVisible, undoExiting])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -60,16 +89,21 @@ function HomeContent() {
     }
   }, [])
 
-  const clearAllCourses = useCallback(() => {
+  const clearAllCourses = useCallback((currentCourses: Course[]) => {
+    setUndoSnapshot(currentCourses)
     setCourses([])
-    setSaveNotification({
-      show: true,
-      message: t('notify.cleared')
-    })
-    setTimeout(() => {
-      setSaveNotification(prev => ({...prev, show: false}))
-    }, 1500)
-  }, [t])
+    setUndoCountdown(5)
+    setUndoExiting(false)
+    setUndoBarVisible(true)
+  }, [])
+
+  const handleUndoClear = useCallback(() => {
+    if (undoSnapshot) {
+      setCourses(undoSnapshot)
+      setUndoSnapshot(null)
+      setUndoBarVisible(false)
+    }
+  }, [undoSnapshot])
 
   const addCourse = useCallback((course: Course) => {
     const courseName = course.name.trim() || t('course.autoName', { n: courses.length + 1 })
@@ -144,9 +178,31 @@ function HomeContent() {
     <>
       <DocumentTitleMeta />
       <Container className="container">
-        {saveNotification.show && (
+        {saveNotification.show && !undoBarVisible && (
           <div className={`save-notification ${isError ? 'error' : 'success'}`}>
             {saveNotification.message}
+          </div>
+        )}
+        {undoBarVisible && (
+          <div className={`undo-bar ${undoExiting ? 'undo-bar-exit' : ''}`} role="status" aria-live="polite">
+            <div className="undo-bar-progress-wrap">
+              <svg className="undo-bar-circle" viewBox="0 0 36 36">
+                <path
+                  className="undo-bar-circle-bg"
+                  d="M18 2.5 a 15.5 15.5 0 0 1 0 31 a 15.5 15.5 0 0 1 0 -31"
+                />
+                <path
+                  className="undo-bar-circle-fill"
+                  strokeDasharray="97.4"
+                  strokeDashoffset={97.4 * (1 - undoCountdown / 5)}
+                  d="M18 2.5 a 15.5 15.5 0 0 1 0 31 a 15.5 15.5 0 0 1 0 -31"
+                />
+              </svg>
+              <span className="undo-bar-countdown">{undoCountdown > 0 ? Math.ceil(undoCountdown) : 0}</span>
+            </div>
+            <button type="button" className="undo-bar-btn" onClick={handleUndoClear}>
+              {t('common.undo')}
+            </button>
           </div>
         )}
         <div className="app-header">
@@ -166,7 +222,7 @@ function HomeContent() {
           onRemoveCourse={removeCourse}
           onUpdateGrade={updateCourseGrade}
           onUpdateCreditHours={updateCreditHours}
-          onClearCourses={clearAllCourses}
+          onClearCourses={(clearedCourses) => clearAllCourses(clearedCourses)}
         />
 
         <GPADisplay gpa={gpa} />

@@ -59,6 +59,7 @@
   "stats.credits": "س.م",
   "stats.scrollToBottom": "لف لتحت",
   "common.close": "إغلاق",
+  "common.undo": "تراجع",
   "aria.changeGrade": "تغيير الدرجة لـ {{name}}",
   "aria.selectGrade": "اختر الدرجة لـ {{name}}",
   "aria.changeHours": "تغيير الساعات المعتمدة لـ {{name}}",

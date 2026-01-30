@@ -59,6 +59,7 @@
   "stats.credits": "credits",
   "stats.scrollToBottom": "Scroll to bottom",
   "common.close": "Close",
+  "common.undo": "Undo",
   "aria.changeGrade": "Change grade for {{name}}",
   "aria.selectGrade": "Select grade for {{name}}",
   "aria.changeHours": "Change credit hours for {{name}}",

@@ -15,7 +15,7 @@ interface GroupedCourseTableProps {
   onRemoveCourse: (id: string) => void;
   onUpdateGrade: (id: string, grade: Grade) => void;
   onUpdateCreditHours: (id: string, hours: number) => void;
-  onClearCourses: () => void;
+  onClearCourses: (clearedCourses: Course[]) => void;
 }
 
 interface NestedGroupedCourses {
@@ -503,7 +503,7 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
         confirmText={t('confirm.reset')}
         cancelText={t('confirm.cancel')}
         onConfirm={() => {
-          onClearCourses();
+          onClearCourses(courses);
           setShowConfirmModal(false);
         }}
         onCancel={() => setShowConfirmModal(false)}
