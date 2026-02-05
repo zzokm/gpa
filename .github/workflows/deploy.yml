@@ -5,81 +5,38 @@ on:
     branches:
       - main
       - Feature-Testing
-  workflow_dispatch:  # Allows manual triggering from GitHub UI
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  build-and-deploy:
+  redirect-only:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-        
-      # Set base path based on branch for Next.js
-      - name: Set Next.js base path for main branch
-        if: github.ref == 'refs/heads/main'
+
+      - name: Create redirect pages
         run: |
-          echo "module.exports = {
-            output: 'export',
-            basePath: '/gpa',
-            assetPrefix: 'https://zzokm.github.io/gpa/',
-            images: { unoptimized: true },
-            trailingSlash: true,
-            reactStrictMode: true,
-            swcMinify: true,
-            compiler: {
-              removeConsole: { exclude: ['error', 'warn'] }
-            }
-          }" > next.config.js
-          
-      - name: Set Next.js base path for Feature-Testing branch
-        if: github.ref == 'refs/heads/Feature-Testing'
-        run: |
-          echo "module.exports = {
-            output: 'export',
-            basePath: '/gpa/beta',
-            assetPrefix: 'https://zzokm.github.io/gpa/beta/',
-            images: { unoptimized: true },
-            trailingSlash: true,
-            reactStrictMode: true,
-            swcMinify: true,
-            compiler: {
-              removeConsole: { exclude: ['error', 'warn'] }
-            }
-          }" > next.config.js
-          
-      - name: Build
-        run: npm run build
-        
-      # Create .nojekyll file to prevent Jekyll from ignoring _next/ folder
-      - name: Create .nojekyll file
-        run: touch out/.nojekyll
-        
-      # Deploy to different target folders based on branch
-      - name: Deploy to root (main branch)
+          mkdir -p redirect-pages
+          echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=https://gpa.zokm.me"><title>Redirect</title><script>location.replace("https://gpa.zokm.me");</script></head><body><p><a href="https://gpa.zokm.me">Go to GPA Calculator</a></p></body></html>' > redirect-pages/index.html
+          cp redirect-pages/index.html redirect-pages/404.html
+          touch redirect-pages/.nojekyll
+
+      - name: Deploy redirect (main → root)
         if: github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: out
+          folder: redirect-pages
           branch: gh-pages
-          clean: false  # Don't remove existing files
-          
-      - name: Deploy to beta folder (Feature-Testing branch)
+          clean: true
+
+      - name: Deploy redirect (Feature-Testing → beta)
         if: github.ref == 'refs/heads/Feature-Testing'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: out
+          folder: redirect-pages
           branch: gh-pages
-          target-folder: beta  # Deploy to /gpa/beta subdirectory
-          clean: false  # Don't remove existing files
+          target-folder: beta
+          clean: false
