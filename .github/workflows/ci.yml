@@ -22,6 +22,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm audit --audit-level=low
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Audit"
+            echo ""
+            echo "- Node: 20"
+            echo "- Command: \`npm audit --audit-level=low\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   lint:
     name: lint
@@ -34,6 +43,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Lint"
+            echo ""
+            echo "- Command: \`npm run lint\`"
+            echo "- Policy: ESLint warnings must be 0"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   typecheck:
     name: typecheck
@@ -46,6 +64,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Typecheck"
+            echo ""
+            echo "- Command: \`npm run typecheck\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   unit:
     name: unit
@@ -64,6 +90,15 @@ jobs:
           name: coverage
           path: coverage/
           retention-days: 7
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Unit tests"
+            echo ""
+            echo "- Command: \`npm run test:coverage\`"
+            echo "- Artifact: \`coverage\` (7 days)"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   build:
     name: build
@@ -82,6 +117,15 @@ jobs:
         with:
           path: .next/cache
           key: next-cache-${{ github.sha }}
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Build"
+            echo ""
+            echo "- Command: \`npm run build\`"
+            echo "- Cache: \`.next/cache\` saved as \`next-cache-${{ github.sha }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   e2e:
     name: e2e
@@ -98,3 +142,12 @@ jobs:
       - run: npm run test:e2e
         env:
           CI: true
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## E2E smoke"
+            echo ""
+            echo "- Browser: Chromium"
+            echo "- Command: \`npm run test:e2e\`"
+          } >> "$GITHUB_STEP_SUMMARY"
