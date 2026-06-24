@@ -412,6 +412,48 @@ html[lang="ar"] .app-title {
   box-shadow: var(--shadow-xs);
 }
 
+.top-box-compact {
+  padding: var(--space-md) var(--space-lg);
+}
+
+.course-form-compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  justify-content: center;
+}
+
+.course-form-compact .btn-primary,
+.course-form-compact .btn-secondary {
+  flex: 1 1 auto;
+  min-width: 10rem;
+}
+
+.course-form-collapse-btn {
+  display: block;
+  margin-bottom: var(--space-md);
+  margin-inline-start: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.course-form-collapse-btn:hover {
+  color: var(--primary-color);
+}
+
+.course-form-collapse-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
 /* Course Form Styling */
 .form-row {
   display: flex;
@@ -1960,6 +2002,32 @@ body.modal-open {
 
 .how-to-link:hover {
   color: var(--primary-hover);
+}
+
+.import-error {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: var(--gray-800);
+}
+
+.import-error p {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.import-error-action {
+  display: inline-block;
+  margin-top: var(--space-sm);
+}
+
+.import-textarea.import-textarea-error {
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.12);
 }
 
 /* How-to modal */

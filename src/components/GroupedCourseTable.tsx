@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Course, Grade } from '../types/Course';
 import { getGradeStyles, calculateGPA } from '../utils/gradeUtils';
-import { getCreditHoursBreakdown } from '../utils/creditHours';
 import { useLocale } from '../i18n/LocaleContext';
 import GradeDropdown from './GradeDropdown';
 import CreditHoursDropdown from './CreditHoursDropdown';
@@ -47,7 +46,138 @@ interface ModalData {
 // Local storage key for group states
 const GROUP_STATE_KEY = STORAGE_KEYS.GROUP_STATES;
 
-const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({ 
+const TERM_ORDER: Record<string, number> = {
+  'First Term': 1,
+  'Second Term': 2,
+  'Summer Term': 3,
+};
+
+function sortTerms(terms: string[]): string[] {
+  return [...terms].sort((a, b) => {
+    const orderA = TERM_ORDER[a] ?? 3;
+    const orderB = TERM_ORDER[b] ?? 3;
+    if (orderA !== orderB) return orderA - orderB;
+    return a.localeCompare(b);
+  });
+}
+
+function getLatestTermKey(nested: NestedGroupedCourses): string | null {
+  const levels = Object.keys(nested).sort();
+  if (levels.length === 0) return null;
+  const lastLevel = levels[levels.length - 1];
+  const terms = sortTerms(Object.keys(nested[lastLevel]));
+  if (terms.length === 0) return null;
+  return `term-${lastLevel}-${terms[terms.length - 1]}`;
+}
+
+function applyDefaultGroupStates(
+  nested: NestedGroupedCourses,
+  stored: GroupState,
+  courseCount: number
+): GroupState {
+  const states: GroupState = { ...stored };
+  const collapseTerms = courseCount > 6;
+  const latestTermKey = collapseTerms ? getLatestTermKey(nested) : null;
+
+  Object.keys(nested)
+    .sort()
+    .forEach((level) => {
+      const levelKey = `level-${level}`;
+      if (!(levelKey in states)) {
+        states[levelKey] = true;
+      }
+
+      sortTerms(Object.keys(nested[level])).forEach((term) => {
+        const termKey = `term-${level}-${term}`;
+        if (!(termKey in states)) {
+          states[termKey] = collapseTerms ? termKey === latestTermKey : true;
+        }
+      });
+    });
+
+  return states;
+}
+
+function parseStoredGroupStates(raw: unknown): GroupState {
+  if (!raw || typeof raw !== 'object') return {};
+  const states: GroupState = {};
+  Object.entries(raw as Record<string, unknown>).forEach(([key, value]) => {
+    states[key] = typeof value === 'number' ? value === 1 : Boolean(value);
+  });
+  return states;
+}
+
+function groupStatesEqual(a: GroupState, b: GroupState): boolean {
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((key) => a[key] === b[key]);
+}
+
+function buildGroupStructureKey(courses: Course[]): string {
+  const keys = new Set<string>();
+  courses.forEach((course) => {
+    if (course.isImported && course.level && course.term) {
+      keys.add(`${course.level}|${course.term}`);
+    }
+  });
+  return [...keys].sort().join('||');
+}
+
+function buildNestedGroupedCourses(courses: Course[]): NestedGroupedCourses {
+  const grouped: NestedGroupedCourses = {};
+
+  courses.forEach((course) => {
+    if (course.isImported && course.level && course.term) {
+      if (!grouped[course.level]) {
+        grouped[course.level] = {};
+      }
+      if (!grouped[course.level][course.term]) {
+        grouped[course.level][course.term] = [];
+      }
+      grouped[course.level][course.term].push(course);
+    }
+  });
+
+  return grouped;
+}
+
+interface GroupHeaderStatsProps {
+  stats: GroupStats;
+  label: string;
+}
+
+function GroupHeaderStats({ stats, label }: GroupHeaderStatsProps) {
+  const { t } = useLocale();
+
+  return (
+    <div className="group-header-stats-row" aria-label={label}>
+      <span className="group-metric gpa">
+        {t('gpa.label')} {stats.gpa.toFixed(2)}
+      </span>
+      {stats.failedCredits > 0 ? (
+        <>
+          <span className="group-metric-sep" aria-hidden="true">
+            ·
+          </span>
+          <span className="group-metric credits">
+            <span className="passed">{stats.passedCredits}</span>
+            <span className="sep">/</span>
+            <span className="failed">{stats.failedCredits}</span>
+          </span>
+        </>
+      ) : null}
+      <span className="group-metric-sep" aria-hidden="true">
+        ·
+      </span>
+      <span className="group-metric total">
+        {stats.totalCredits} {t('table.hrs')}
+      </span>
+    </div>
+  );
+}
+
+const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
   courses, 
   onRemoveCourse, 
   onUpdateGrade,
@@ -59,58 +189,47 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
   const [modalData, setModalData] = useState<ModalData | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const hasHydratedGroupStates = useRef(false);
 
-  // Load group states from localStorage on component mount and initialize missing ones
+  const manualCourses = useMemo(
+    () => courses.filter((course) => !course.isImported),
+    [courses]
+  );
+
+  const nestedGroupedCourses = useMemo(
+    () => buildNestedGroupedCourses(courses),
+    [courses]
+  );
+
+  const groupStructureKey = useMemo(
+    () => buildGroupStructureKey(courses),
+    [courses]
+  );
+
+  // Sync group expand/collapse state when level/term structure changes — not on every grade edit.
   useEffect(() => {
-    try {
-      const storedStates = localStorage.getItem(GROUP_STATE_KEY);
-      const initialStates: GroupState = {};
+    const nested = buildNestedGroupedCourses(courses);
+    let stored: GroupState = {};
 
-      if (storedStates) {
-        const parsedStates = JSON.parse(storedStates);
-        // Convert old numerical states to boolean if needed
-        Object.keys(parsedStates).forEach(key => {
-          const value = parsedStates[key];
-          // Handle both old numerical (0/1) and new boolean states
-          initialStates[key] = typeof value === 'number' ? value === 1 : Boolean(value);
-        });
-      }
-
-      // Initialize any missing group states with default values
-      Object.keys(nestedGroupedCourses).forEach(level => {
-        const levelKey = `level-${level}`;
-        if (!(levelKey in initialStates)) {
-          initialStates[levelKey] = true; // Default to expanded
+    if (!hasHydratedGroupStates.current) {
+      hasHydratedGroupStates.current = true;
+      try {
+        const storedStates = localStorage.getItem(GROUP_STATE_KEY);
+        if (storedStates) {
+          stored = parseStoredGroupStates(JSON.parse(storedStates));
         }
-
-        Object.keys(nestedGroupedCourses[level]).forEach(term => {
-          const termKey = `term-${level}-${term}`;
-          if (!(termKey in initialStates)) {
-            initialStates[termKey] = true; // Default to expanded
-          }
-        });
-      });
-
-      setGroupStates(initialStates);
-      setIsInitialized(true);
-    } catch (error) {
-      console.error('Failed to load group states from localStorage:', error);
-
-      // Initialize with default values on error
-      const defaultStates: GroupState = {};
-      Object.keys(nestedGroupedCourses).forEach(level => {
-        const levelKey = `level-${level}`;
-        defaultStates[levelKey] = true;
-        Object.keys(nestedGroupedCourses[level]).forEach(term => {
-          const termKey = `term-${level}-${term}`;
-          defaultStates[termKey] = true;
-        });
-      });
-      setGroupStates(defaultStates);
-      setIsInitialized(true);
+      } catch (error) {
+        console.error('Failed to load group states from localStorage:', error);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courses]); // nestedGroupedCourses is memoized from courses, so courses dependency is sufficient
+
+    setGroupStates((prev) => {
+      const base = Object.keys(prev).length > 0 ? prev : stored;
+      const next = applyDefaultGroupStates(nested, base, courses.length);
+      return groupStatesEqual(prev, next) ? prev : next;
+    });
+    setIsInitialized(true);
+  }, [groupStructureKey, courses.length]);
 
   // Save group states to localStorage whenever they change (but not during initial load)
   useEffect(() => {
@@ -123,41 +242,19 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
     }
   }, [groupStates, isInitialized]);
 
-  // Separate imported and manually added courses
-  const importedCourses = courses.filter(course => course.isImported);
-  const manualCourses = courses.filter(course => !course.isImported);
-
-  // Credit hours breakdown: total (graded), passed (non-F), failed (F only)
-  const creditHoursBreakdown = useMemo(
-    () => getCreditHoursBreakdown(courses),
-    [courses]
-  );
-
-  // Group imported courses by level first, then by term
-  const nestedGroupedCourses: NestedGroupedCourses = useMemo(() => {
-    const grouped: NestedGroupedCourses = {};
-    
-    importedCourses.forEach(course => {
-      if (course.level && course.term) {
-        if (!grouped[course.level]) {
-          grouped[course.level] = {};
-        }
-        if (!grouped[course.level][course.term]) {
-          grouped[course.level][course.term] = [];
-        }
-        grouped[course.level][course.term].push(course);
-      }
-    });
-    
-    return grouped;
-  }, [importedCourses]);
-
   // Toggle group expansion; CSS transition in GroupedCourseTable.css handles smooth expand/collapse (0.35s)
   const toggleGroup = (groupKey: string) => {
-    setGroupStates(prev => ({
+    setGroupStates((prev) => ({
       ...prev,
-      [groupKey]: !prev[groupKey]
+      [groupKey]: prev[groupKey] === false,
     }));
+  };
+
+  const handleHeaderKeyDown = (event: React.KeyboardEvent, groupKey: string) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleGroup(groupKey);
+    }
   };
 
   // Check if a group is expanded (default to expanded if not set)
@@ -276,28 +373,6 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
     );
   }  return (
     <div className="table-box">
-      {/* Passed credit hours – top center, with info icon showing full breakdown */}
-      <div className="table-total-hours" aria-live="polite">
-        <span
-          className="total-hours-info-icon"
-          title={t('table.creditHoursTooltip', {
-            total: creditHoursBreakdown.totalCredits,
-            failed: creditHoursBreakdown.failedCredits,
-            passed: creditHoursBreakdown.passedCredits
-          })}
-          aria-label={t('table.creditHoursTooltip', {
-            total: creditHoursBreakdown.totalCredits,
-            failed: creditHoursBreakdown.failedCredits,
-            passed: creditHoursBreakdown.passedCredits
-          })}
-          role="img"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-          </svg>
-        </span>
-        {t('table.totalHoursCompleted')}: <strong>{creditHoursBreakdown.passedCredits}</strong> {t('table.hrs')}
-      </div>
       {/* Render manually added courses first */}
       {manualCourses.length > 0 && (
         <div className="course-group level-group">
@@ -333,55 +408,42 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
         return (
           <div key={level} className="course-group level-group">
             {/* Level Header */}
-            <div 
-              className="group-header level-header clickable" 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                toggleGroup(`level-${level}`);
-              }}
-              role="button"
-              tabIndex={-1}
-            >
-              <h3 className="group-title">
-                <span className={`group-toggle ${isLevelExpanded ? 'expanded' : 'collapsed'}`}>
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                  </svg>
-                </span>
-                {translateLevelOrTerm(level)}
-                <span className="group-header-metrics group-header-metrics-inline" aria-hidden="true">
-                  <span className="group-metric gpa">{t('gpa.label')} {levelStats.gpa.toFixed(2)}</span>
-                  {levelStats.failedCredits > 0 ? (
-                    <>
-                      <span className="group-metric-sep" aria-hidden="true">·</span>
-                      <span className="group-metric credits">
-                        <span className="passed">{levelStats.passedCredits}</span>
-                        <span className="sep">/</span>
-                        <span className="failed">{levelStats.failedCredits}</span>
-                      </span>
-                    </>
-                  ) : null}
-                  <span className="group-metric-sep" aria-hidden="true">·</span>
-                  <span className="group-metric total">{levelStats.totalCredits} {t('table.hrs')}</span>
-                </span>
-                <span className="group-header-metrics-narrow">
-                  <button
-                    className="info-btn"
-                    title={`${t('gpa.label')}: ${levelStats.gpa.toFixed(2)}`}
-                    aria-label={t('aria.viewStats', { name: translateLevelOrTerm(level) })}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      openModal(translateLevelOrTerm(level), levelStats, levelCourses);
-                    }}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M10 .4C4.697.4.399 4.698.399 10A9.6 9.6 0 0 0 10 19.601c5.301 0 9.6-4.298 9.6-9.601 0-5.302-4.299-9.6-9.6-9.6zm.896 3.466c.936 0 1.211.543 1.211 1.164 0 .775-.62 1.492-1.679 1.492-.886 0-1.308-.445-1.282-1.182 0-.621.519-1.474 1.75-1.474zM8.498 15.75c-.64 0-1.107-.389-.66-2.094l.733-3.025c.127-.484.148-.678 0-.678-.191 0-1.022.334-1.512.664l-.319-.523c1.555-1.299 3.343-2.061 4.108-2.061.64 0 .746.756.427 1.92l-.84 3.18c-.149.562-.085.756.064.756.192 0 .82-.232 1.438-.719l.362.486c-1.513 1.512-3.162 2.094-3.801 2.094z" fill="#ff7955"/>
+            <div className="group-header level-header">
+              <button
+                type="button"
+                className="group-header-toggle"
+                aria-expanded={isLevelExpanded}
+                onClick={() => toggleGroup(`level-${level}`)}
+                onKeyDown={(event) => handleHeaderKeyDown(event, `level-${level}`)}
+              >
+                <div className="group-header-primary">
+                  <span className={`group-toggle ${isLevelExpanded ? 'expanded' : 'collapsed'}`}>
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                     </svg>
-                  </button>
-                </span>
-              </h3>
+                  </span>
+                  <span className="group-header-name">{translateLevelOrTerm(level)}</span>
+                </div>
+                <GroupHeaderStats
+                  stats={levelStats}
+                  label={t('aria.viewStats', { name: translateLevelOrTerm(level) })}
+                />
+              </button>
+              <button
+                type="button"
+                className="info-btn group-header-info-narrow"
+                title={`${t('gpa.label')}: ${levelStats.gpa.toFixed(2)}`}
+                aria-label={t('aria.viewStats', { name: translateLevelOrTerm(level) })}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  openModal(translateLevelOrTerm(level), levelStats, levelCourses);
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M10 .4C4.697.4.399 4.698.399 10A9.6 9.6 0 0 0 10 19.601c5.301 0 9.6-4.298 9.6-9.601 0-5.302-4.299-9.6-9.6-9.6zm.896 3.466c.936 0 1.211.543 1.211 1.164 0 .775-.62 1.492-1.679 1.492-.886 0-1.308-.445-1.282-1.182 0-.621.519-1.474 1.75-1.474zM8.498 15.75c-.64 0-1.107-.389-.66-2.094l.733-3.025c.127-.484.148-.678 0-.678-.191 0-1.022.334-1.512.664l-.319-.523c1.555-1.299 3.343-2.061 4.108-2.061.64 0 .746.756.427 1.92l-.84 3.18c-.149.562-.085.756.064.756.192 0 .82-.232 1.438-.719l.362.486c-1.513 1.512-3.162 2.094-3.801 2.094z" fill="#ff7955"/>
+                </svg>
+              </button>
             </div>
             
             {/* Level Content – grid 0fr/1fr drives smooth height animation */}
@@ -390,27 +452,7 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
               aria-hidden={!isLevelExpanded}
             >
               <div className="level-container-inner">
-              {Object.keys(nestedGroupedCourses[level])
-                .sort((a, b) => {
-                  // Define recognized terms and their order
-                  const termOrder = {
-                    'First Term': 1,
-                    'Second Term': 2,
-                    'Summer Term': 3
-                  };
-                  
-                  // Get order for each term, defaulting to 3 (after recognized terms) if not found
-                  const orderA = termOrder[a as keyof typeof termOrder] || 3;
-                  const orderB = termOrder[b as keyof typeof termOrder] || 3;
-                  
-                  // First sort by the defined term order
-                  if (orderA !== orderB) {
-                    return orderA - orderB;
-                  }
-                  
-                  // If both are "other" terms (not in our predefined list), sort alphabetically
-                  return a.localeCompare(b);
-                })
+              {sortTerms(Object.keys(nestedGroupedCourses[level]))
                 .map(term => {
                   const termCourses = nestedGroupedCourses[level][term];
                   const termStats = calculateGroupStats(termCourses);
@@ -418,55 +460,42 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                     return (
                     <div key={`${level}-${term}`} className="course-group term-group">
                       {/* Term Header */}
-                      <div 
-                        className="group-header term-header clickable" 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          toggleGroup(`term-${level}-${term}`);
-                        }}
-                        role="button"
-                        tabIndex={-1}
-                      >
-                        <h4 className="group-title term-title">
-                          <span className={`group-toggle ${isTermExpanded ? 'expanded' : 'collapsed'}`}>
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-                            </svg>
-                          </span>
-                          {translateLevelOrTerm(term)}
-                          <span className="group-header-metrics group-header-metrics-inline" aria-hidden="true">
-                            <span className="group-metric gpa">{t('gpa.label')} {termStats.gpa.toFixed(2)}</span>
-                            {termStats.failedCredits > 0 ? (
-                              <>
-                                <span className="group-metric-sep" aria-hidden="true">·</span>
-                                <span className="group-metric credits">
-                                  <span className="passed">{termStats.passedCredits}</span>
-                                  <span className="sep">/</span>
-                                  <span className="failed">{termStats.failedCredits}</span>
-                                </span>
-                              </>
-                            ) : null}
-                            <span className="group-metric-sep" aria-hidden="true">·</span>
-                            <span className="group-metric total">{termStats.totalCredits} {t('table.hrs')}</span>
-                          </span>
-                          <span className="group-header-metrics-narrow">
-                            <button
-                              className="info-btn"
-                              title={`${t('gpa.label')}: ${termStats.gpa.toFixed(2)}`}
-                              aria-label={t('aria.viewStats', { name: translateLevelOrTerm(term) })}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                openModal(`${translateLevelOrTerm(level)} - ${translateLevelOrTerm(term)}`, termStats, termCourses);
-                              }}
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                <path d="M10 .4C4.697.4.399 4.698.399 10A9.6 9.6 0 0 0 10 19.601c5.301 0 9.6-4.298 9.6-9.601 0-5.302-4.299-9.6-9.6-9.6zm.896 3.466c.936 0 1.211.543 1.211 1.164 0 .775-.62 1.492-1.679 1.492-.886 0-1.308-.445-1.282-1.182 0-.621.519-1.474 1.75-1.474zM8.498 15.75c-.64 0-1.107-.389-.66-2.094l.733-3.025c.127-.484.148-.678 0-.678-.191 0-1.022.334-1.512.664l-.319-.523c1.555-1.299 3.343-2.061 4.108-2.061.64 0 .746.756.427 1.92l-.84 3.18c-.149.562-.085.756.064.756.192 0 .82-.232 1.438-.719l.362.486c-1.513 1.512-3.162 2.094-3.801 2.094z" fill="#ff7955"/>
+                      <div className="group-header term-header">
+                        <button
+                          type="button"
+                          className="group-header-toggle"
+                          aria-expanded={isTermExpanded}
+                          onClick={() => toggleGroup(`term-${level}-${term}`)}
+                          onKeyDown={(event) => handleHeaderKeyDown(event, `term-${level}-${term}`)}
+                        >
+                          <div className="group-header-primary">
+                            <span className={`group-toggle ${isTermExpanded ? 'expanded' : 'collapsed'}`}>
+                              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                               </svg>
-                            </button>
-                          </span>
-                        </h4>
+                            </span>
+                            <span className="group-header-name">{translateLevelOrTerm(term)}</span>
+                          </div>
+                          <GroupHeaderStats
+                            stats={termStats}
+                            label={t('aria.viewStats', { name: translateLevelOrTerm(term) })}
+                          />
+                        </button>
+                        <button
+                          type="button"
+                          className="info-btn group-header-info-narrow"
+                          title={`${t('gpa.label')}: ${termStats.gpa.toFixed(2)}`}
+                          aria-label={t('aria.viewStats', { name: translateLevelOrTerm(term) })}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openModal(`${translateLevelOrTerm(level)} - ${translateLevelOrTerm(term)}`, termStats, termCourses);
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">
+                            <path d="M10 .4C4.697.4.399 4.698.399 10A9.6 9.6 0 0 0 10 19.601c5.301 0 9.6-4.298 9.6-9.601 0-5.302-4.299-9.6-9.6-9.6zm.896 3.466c.936 0 1.211.543 1.211 1.164 0 .775-.62 1.492-1.679 1.492-.886 0-1.308-.445-1.282-1.182 0-.621.519-1.474 1.75-1.474zM8.498 15.75c-.64 0-1.107-.389-.66-2.094l.733-3.025c.127-.484.148-.678 0-.678-.191 0-1.022.334-1.512.664l-.319-.523c1.555-1.299 3.343-2.061 4.108-2.061.64 0 .746.756.427 1.92l-.84 3.18c-.149.562-.085.756.064.756.192 0 .82-.232 1.438-.719l.362.486c-1.513 1.512-3.162 2.094-3.801 2.094z" fill="#ff7955"/>
+                          </svg>
+                        </button>
                       </div>
                       
                       {/* Term Content */}

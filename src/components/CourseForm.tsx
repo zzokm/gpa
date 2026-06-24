@@ -119,13 +119,16 @@ const getAllCourses = (): CourseSuggestion[] => {
 interface CourseFormProps {
   onAddCourse: (course: Course) => void;
   onShowImport: () => void;
+  hasCourses?: boolean;
 }
 
 const CourseForm: React.FC<CourseFormProps> = ({ 
   onAddCourse, 
-  onShowImport 
+  onShowImport,
+  hasCourses = false,
 }) => {
   const { t } = useLocale();
+  const [isExpanded, setIsExpanded] = useState(!hasCourses);
   const [courseName, setCourseName] = useState('');
   const [courseHours, setCourseHours] = useState(2);
   const [courseGrade, setCourseGrade] = useState<Grade>('A+');
@@ -135,6 +138,12 @@ const CourseForm: React.FC<CourseFormProps> = ({
   const [allCourses] = useState<CourseSuggestion[]>(() => getAllCourses());
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!hasCourses) {
+      setIsExpanded(true);
+    }
+  }, [hasCourses]);
 
   // Close suggestions when clicking outside
   useEffect(() => {
@@ -345,12 +354,40 @@ const CourseForm: React.FC<CourseFormProps> = ({
 
     // Reset form
     setCourseName('');
-    setCourseHours(2); // Reset to default value
+    setCourseHours(2);
     setCourseGrade('A+');
+    if (hasCourses) {
+      setIsExpanded(false);
+    }
   };
+
+  if (hasCourses && !isExpanded) {
+    return (
+      <div className="top-box top-box-compact">
+        <div className="course-form-compact">
+          <button type="button" className="btn-primary" onClick={() => setIsExpanded(true)}>
+            {t('form.showAddForm')}
+          </button>
+          <button type="button" className="btn-secondary" onClick={onShowImport}>
+            {t('form.importCourses')}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="top-box">
+      {hasCourses && (
+        <button
+          type="button"
+          className="course-form-collapse-btn"
+          onClick={() => setIsExpanded(false)}
+          aria-expanded="true"
+        >
+          {t('form.hideAddForm')}
+        </button>
+      )}
       <Form onSubmit={handleSubmit}>
         <div className="form-row">
           <label className="form-label" htmlFor="courseName">{t('form.courseName')}</label>

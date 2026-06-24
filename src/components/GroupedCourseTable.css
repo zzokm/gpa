@@ -3,53 +3,12 @@
 /* Table box container - extends base .table-box from index.css */
 .table-box {
   position: relative;
-  padding-top: calc(var(--space-xl) + 28px); /* More space from top above first level */
-  padding-right: var(--space-xl); /* Equal padding on the right to match top */
-  padding-left: var(--space-xl); /* Balance with right padding */
+  padding-top: var(--space-xl);
+  padding-right: var(--space-xl);
+  padding-left: var(--space-xl);
 }
 
-/* Total hours completed – centered horizontally, recalculates with courses/grades */
-.table-total-hours {
-  position: absolute;
-  top: 20px;
-  left: 0;
-  right: 0;
-  width: 100%;
-  z-index: 10;
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  text-align: center;
-}
-
-.table-total-hours strong {
-  color: var(--text-color);
-  font-weight: 600;
-}
-
-.total-hours-info-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 6px;
-  color: var(--text-muted);
-  cursor: help;
-  vertical-align: middle;
-}
-
-[dir="rtl"] .total-hours-info-icon {
-  margin-right: 0;
-  margin-left: 6px;
-}
-
-.total-hours-info-icon:hover {
-  color: var(--primary-color);
-}
-
-.total-hours-info-icon svg {
-  width: 16px;
-  height: 16px;
-}
+/* Legacy total-hours row removed – credits live in GPAStickySummary */
 
 /* ===== Expand/collapse: same for level and term – grid + max-height + opacity ===== */
 /* Use higher-specificity selectors so these always win over global/universal rules */
@@ -244,12 +203,8 @@ html[lang="ar"] .reset-button,
   color: #ff7955; /* Match text color */
 }
 
-/* Responsive styles for reset button and total hours */
+/* Responsive styles for reset button */
 @media (max-width: 768px) {
-  .table-total-hours {
-    top: 15px;
-    font-size: 1.05rem;
-  }
   .reset-button-container {
     top: 15px;
     right: 15px; /* Keep consistent distance from right */
@@ -272,10 +227,6 @@ html[lang="ar"] .reset-button,
 }
 
 @media (max-width: 480px) {
-  .table-total-hours {
-    top: 12px;
-    font-size: 1rem;
-  }
   .reset-button-container {
     top: 12px;
     right: 12px; /* Keep consistent proportion from right */
@@ -341,7 +292,7 @@ html[lang="ar"] .reset-button,
 
 /* First level group should have top margin to make room for the reset button */
 .level-group:first-child {
-  margin-top: 74px; /* More space above first level */
+  margin-top: 56px;
 }
 
 .level-group:last-child {
@@ -397,6 +348,80 @@ html[lang="ar"] .reset-button,
   align-items: center;
   position: relative;
   height: 100%;
+}
+
+/* Group header toggle + stats row */
+.group-header {
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.group-header-toggle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.group-header-toggle:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.group-header-primary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  min-width: 0;
+}
+
+.group-header-name {
+  font-size: var(--text-lg);
+  font-weight: 650;
+  color: var(--text-color);
+  letter-spacing: 0.025em;
+  text-wrap: balance;
+}
+
+.group-header-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
+  padding-inline-start: calc(24px + var(--space-md));
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.group-header-info-narrow {
+  display: none;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+  .group-header-stats-row {
+    display: none;
+  }
+
+  .group-header-info-narrow {
+    display: flex;
+  }
 }
 
 /* Inline metrics on wide screens: visible; on narrow: hidden */
@@ -617,17 +642,9 @@ html[lang="ar"] .reset-button,
   position: relative;
   z-index: 1;
   touch-action: manipulation;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
-.group-header.clickable * {
-  pointer-events: none;
-}
-
-.group-header.clickable .info-btn {
+.group-header-info-narrow.info-btn {
   pointer-events: auto;
 }
 
