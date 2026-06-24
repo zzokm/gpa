@@ -3,7 +3,7 @@
  * Runs on the server; clients read cached status and subscribe via SSE for updates.
  */
 
-const FCAI_URLS = [
+export const FCAI_URLS = [
   'http://newecom.fci.cu.edu.eg/',
   'http://193.227.14.58/',
 ]
@@ -12,21 +12,27 @@ const TIMEOUT_MS = 4.5 * 60 * 1000
 const INTERVAL_OFFLINE_MS = 5 * 60 * 1000
 const INTERVAL_ONLINE_MS = 10 * 60 * 1000
 
-interface CachedResult {
+export interface CachedResult {
   online: boolean
   lastCheck: number
 }
+
+type FetchFn = typeof fetch
 
 let cached: CachedResult = { online: false, lastCheck: 0 }
 const sseClients = new Set<ReadableStreamDefaultController<Uint8Array>>()
 let intervalId: ReturnType<typeof setInterval> | null = null
 let checkInProgress = false
 
-async function checkUrl(url: string): Promise<boolean> {
+export async function checkUrlWithFetch(
+  url: string,
+  fetchFn: FetchFn = fetch,
+  timeoutMs = TIMEOUT_MS
+): Promise<boolean> {
   try {
     const controller = new AbortController()
-    const id = setTimeout(() => controller.abort(), TIMEOUT_MS)
-    const res = await fetch(url, {
+    const id = setTimeout(() => controller.abort(), timeoutMs)
+    const res = await fetchFn(url, {
       method: 'HEAD',
       signal: controller.signal,
       cache: 'no-store',
@@ -36,6 +42,17 @@ async function checkUrl(url: string): Promise<boolean> {
   } catch {
     return false
   }
+}
+
+/** Returns true when any URL responds successfully. */
+export async function evaluateFcaiUrls(
+  urls: string[],
+  fetchFn: FetchFn = fetch
+): Promise<boolean> {
+  for (const url of urls) {
+    if (await checkUrlWithFetch(url, fetchFn)) return true
+  }
+  return false
 }
 
 function pushToClients(): void {
@@ -56,14 +73,7 @@ async function runCheck(): Promise<void> {
   checkInProgress = true
   try {
     const now = Date.now()
-    let online = false
-    for (const url of FCAI_URLS) {
-      if (await checkUrl(url)) {
-        online = true
-        break
-      }
-    }
-
+    const online = await evaluateFcaiUrls(FCAI_URLS)
     const changed = cached.online !== online
     cached = { online, lastCheck: now }
     if (changed) pushToClients()
@@ -93,4 +103,13 @@ export function removeSseClient(ctrl: ReadableStreamDefaultController<Uint8Array
 export function startBackgroundChecker(): void {
   if (intervalId) return
   runCheck()
+}
+
+/** Clears module state between tests. */
+export function __resetFcaiStatusForTests(): void {
+  if (intervalId) clearInterval(intervalId)
+  intervalId = null
+  checkInProgress = false
+  cached = { online: false, lastCheck: 0 }
+  sseClients.clear()
 }
