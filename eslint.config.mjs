@@ -12,6 +12,8 @@ const config = [
       "playwright-report/**",
       "test-results/**",
       ".playwright/**",
+      ".cursor/**",
+      ".impeccable/**",
     ],
   },
   ...(Array.isArray(nextPlugin) ? nextPlugin : [nextPlugin]),

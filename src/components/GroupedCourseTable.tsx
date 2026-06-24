@@ -205,7 +205,6 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
 
   // Sync group expand/collapse state when level/term structure changes — not on every grade edit.
   useEffect(() => {
-    const nested = buildNestedGroupedCourses(courses);
     let stored: GroupState = {};
 
     if (!hasHydratedGroupStates.current) {
@@ -222,11 +221,16 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
 
     setGroupStates((prev) => {
       const base = Object.keys(prev).length > 0 ? prev : stored;
-      const next = applyDefaultGroupStates(nested, base, courses.length, hasManualCourses);
+      const next = applyDefaultGroupStates(
+        nestedGroupedCourses,
+        base,
+        courses.length,
+        hasManualCourses,
+      );
       return groupStatesEqual(prev, next) ? prev : next;
     });
     setIsInitialized(true);
-  }, [groupStructureKey, courses.length, hasManualCourses]);
+  }, [groupStructureKey, courses.length, hasManualCourses, nestedGroupedCourses]);
 
   // Save group states to localStorage whenever they change (but not during initial load)
   useEffect(() => {

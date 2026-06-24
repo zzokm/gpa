@@ -156,6 +156,7 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
     gapCenter: 0,
     height: 36,
   })
+  const dockMetricsRef = useRef(dockMetrics)
   const [animFrame, setAnimFrame] = useState<AnimFrame | null>(null)
   const [isUndocking, setIsUndocking] = useState(false)
 
@@ -219,6 +220,10 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
   useLayoutEffect(() => {
     isDockedRef.current = isDocked
   }, [isDocked])
+
+  useLayoutEffect(() => {
+    dockMetricsRef.current = dockMetrics
+  }, [dockMetrics])
 
   useLayoutEffect(() => {
     updateDockMetrics()
@@ -295,7 +300,7 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
           },
         })
       } else if (!shouldDock && isDockedRef.current) {
-        const metrics = computeDockMetrics() ?? dockMetrics
+        const metrics = computeDockMetrics() ?? dockMetricsRef.current
         const to = measureRestFromSlot(root, spacerHeight || summary.offsetHeight)
         const from = measureDocked(metrics, dockTop)
 
