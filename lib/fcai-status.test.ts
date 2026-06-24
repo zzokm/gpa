@@ -1,10 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   __resetFcaiStatusForTests,
+  __setCachedForTests,
   addSseClient,
   checkUrlWithFetch,
   evaluateFcaiUrls,
   getCached,
+  getPublicStatus,
   removeSseClient,
 } from './fcai-status'
 
@@ -48,6 +50,15 @@ describe('fcai status cache and SSE clients', () => {
 
   it('returns cached snapshot', () => {
     expect(getCached()).toEqual({ online: false, lastCheck: 0 })
+  })
+
+  it('returns null public status before first check', () => {
+    expect(getPublicStatus()).toEqual({ online: null })
+  })
+
+  it('returns boolean public status after a check is recorded', () => {
+    __setCachedForTests({ online: true, lastCheck: Date.now() })
+    expect(getPublicStatus()).toEqual({ online: true })
   })
 
   it('tracks SSE clients', () => {

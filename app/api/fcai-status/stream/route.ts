@@ -1,4 +1,4 @@
-import { addSseClient, getCached, removeSseClient, startBackgroundChecker } from '@/lib/fcai-status'
+import { addSseClient, getPublicStatus, removeSseClient, startBackgroundChecker } from '@/lib/fcai-status'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -11,7 +11,7 @@ export async function GET() {
     start(controller) {
       controllerRef = controller
       addSseClient(controller)
-      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ online: getCached().online })}\n\n`))
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify(getPublicStatus())}\n\n`))
     },
     cancel() {
       removeSseClient(controllerRef!)

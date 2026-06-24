@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { DropdownManager } from '../utils/dropdownManager';
-
-// Define credit hours options (0-3)
-const CREDIT_HOURS_OPTIONS = [0, 1, 2, 3];
+import { CREDIT_HOURS_OPTIONS } from '../utils/creditHours';
 
 // Dropdown Menu component that uses portal to render outside the table
 interface DropdownMenuProps {
@@ -158,13 +156,15 @@ interface CreditHoursDropdownProps {
   courseName: string;
   onSelectCreditHours: (courseId: string, hours: number) => void;
   currentHours: number;
+  variant?: 'icon' | 'pill';
 }
 
 const CreditHoursDropdown: React.FC<CreditHoursDropdownProps> = ({ 
   courseId, 
   courseName, 
   onSelectCreditHours,
-  currentHours: _currentHours
+  currentHours,
+  variant = 'icon',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -235,17 +235,21 @@ const CreditHoursDropdown: React.FC<CreditHoursDropdownProps> = ({
     dropdownManager.closeDropdown(dropdownId);
   };
     return (
-    <div className="credit-hours-dropdown" ref={dropdownRef}>      <button
-        className="credit-hours-dropdown-trigger static-arrow"
+    <div className={`credit-hours-dropdown ${variant === 'pill' ? 'credit-hours-pill-mode' : ''}`} ref={dropdownRef}>
+      <button
+        className={`credit-hours-dropdown-trigger ${variant === 'pill' ? 'credit-hours-pill' : 'static-arrow'}`}
         onClick={handleToggle}
         aria-label={`Change credit hours for ${courseName}`}
         aria-expanded={isOpen}
         type="button"
       >
+        {variant === 'pill' && (
+          <span className="credit-hours-pill-value">{currentHours}</span>
+        )}
         <svg 
           className={`credit-hours-dropdown-arrow ${isOpen ? 'open' : ''}`} 
-          width="8" 
-          height="8" 
+          width={variant === 'pill' ? 10 : 8} 
+          height={variant === 'pill' ? 10 : 8} 
           viewBox="0 0 12 12" 
           fill="currentColor"
         >

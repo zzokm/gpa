@@ -1,18 +1,9 @@
 import React from 'react';
-import './GPADisplayStyles.css';
 import { useLocale } from '../i18n/LocaleContext';
+import { getGPAAssessment } from '../utils/gpaAssessment';
 
 interface GPADisplayProps {
   gpa: number;
-}
-
-function getGPAAssessment(gpa: number): { key: string; color: string } {
-  if (gpa < 1) return { key: 'gpa.veryPoor', color: '#B71C1C' };
-  if (gpa < 2) return { key: 'gpa.poor', color: '#E65100' };
-  if (gpa < 2.5) return { key: 'gpa.acceptable', color: '#FFC200' };
-  if (gpa < 3) return { key: 'gpa.good', color: '#2E7D32' };
-  if (gpa < 3.5) return { key: 'gpa.veryGood', color: '#0D47A1' };
-  return { key: 'gpa.excellent', color: '#4A148C' };
 }
 
 const GPADisplay: React.FC<GPADisplayProps> = ({ gpa }) => {
@@ -20,6 +11,125 @@ const GPADisplay: React.FC<GPADisplayProps> = ({ gpa }) => {
   const assessment = getGPAAssessment(gpa);
 
   return (
+    <>
+      <style jsx global>{`/* GPADisplayStyles.css */
+
+.gpa-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1rem 0;
+}
+
+.gpa-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+  margin-bottom: 0.25rem;
+}
+
+.gpa-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.gpa-scale {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-bottom: 0.75rem;
+}
+
+.gpa-assessment {
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.3rem 1rem;
+  border-radius: 3rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .gpa-value {
+    font-size: 2.2rem;
+  }
+  
+  .gpa-assessment {
+    font-size: 1rem;
+    padding: 0.25rem 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gpa-value {
+    font-size: 2rem;
+  }
+  
+  .gpa-assessment {
+    font-size: 0.9rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+
+/* GPA Display Component - Ultra-Enhanced Glassmorphism for Light Background */
+.gpa-display {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-radius: var(--radius-xl); /* Slightly smaller radius for a squarer feel */
+  padding: var(--space-lg); /* Reduced padding */
+  text-align: center;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  transition: var(--transition-base);
+  width: 200px; /* Fixed width */
+  height: 200px; /* Fixed height to make it square */
+  max-width: 200px; /* Ensure it doesn't exceed this */
+  margin: 0 auto;
+  display: flex; /* For centering content */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+}
+
+.gpa-label {
+  font-size: var(--text-lg);
+  font-weight: 650;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.gpa-value {
+  font-size: var(--text-3xl); /* Adjusted for new size */
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: -0.025em;
+  filter: drop-shadow(0 1px 2px rgba(255, 255, 255, 0.6));
+}
+
+.gpa-scale {
+  font-size: var(--text-xs); /* Adjusted for new size */
+  color: var(--text-muted);
+  margin-top: var(--space-sm);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}`}</style>
     <div className="gpa-display">
       <div className="gpa-label">{t('gpa.label')}</div>
       <div className="gpa-value">{gpa.toFixed(2)}</div>
@@ -37,6 +147,7 @@ const GPADisplay: React.FC<GPADisplayProps> = ({ gpa }) => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

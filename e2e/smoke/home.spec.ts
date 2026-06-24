@@ -4,7 +4,10 @@ test.describe('smoke', () => {
   test('home page loads with title and FCAI indicator', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('heading', { name: 'GPA Calculator' })).toBeVisible()
-    await expect(page.locator('.fcai-status-indicator')).toBeVisible()
+    const fcaiLink = page.locator('.fcai-status-indicator')
+    await expect(fcaiLink).toBeVisible()
+    await expect(fcaiLink).toHaveAttribute('href', 'http://193.227.14.58/')
+    await expect(fcaiLink).toHaveAttribute('target', '_blank')
   })
 
   test('how-to modal opens and closes', async ({ page }) => {
@@ -20,6 +23,8 @@ test.describe('smoke', () => {
     await page.locator('button.btn-secondary', { hasText: 'Import Courses' }).click()
     await expect(page.getByRole('heading', { name: /import registered courses/i })).toBeVisible()
     await expect(page.locator('.import-modal .btn-primary')).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('heading', { name: /import registered courses/i })).toBeHidden()
   })
 
   test('can add a course manually', async ({ page }) => {
@@ -31,7 +36,7 @@ test.describe('smoke', () => {
 
   test('gpa display shows zero initially', async ({ page }) => {
     await page.goto('/')
-    await expect(page.locator('.gpa-display .gpa-value')).toHaveText('0.00')
+    await expect(page.locator('.gpa-sticky-summary .gpa-sticky-value').first()).toHaveText('0.00')
   })
 
   test('fcai status API responds', async ({ request }) => {
@@ -39,7 +44,7 @@ test.describe('smoke', () => {
     expect(res.ok()).toBeTruthy()
     const body = await res.json()
     expect(body).toHaveProperty('online')
-    expect(typeof body.online).toBe('boolean')
+    expect(body.online === null || typeof body.online === 'boolean').toBe(true)
   })
 
   test('language switcher toggles document language', async ({ page }) => {

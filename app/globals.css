@@ -1,8 +1,0 @@
-body {
-  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-}
-
-html[lang="ar"] body,
-[dir="rtl"] body {
-  font-family: var(--font-rubik), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-}

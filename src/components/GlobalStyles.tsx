@@ -1,0 +1,1100 @@
+'use client'
+
+export default function GlobalStyles() {
+  return (
+    <style jsx global>{`body {
+  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+html[lang="ar"] body,
+[dir="rtl"] body {
+  font-family: var(--font-rubik), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+
+/* Modern design system with Bricolage Grotesque font */
+
+:root {
+  /* Primary Color Palette */
+  --primary-50: #fef7f3;
+  --primary-100: #fdeee7;
+  --primary-200: #faddd0;
+  --primary-300: #f6c2a8;
+  --primary-400: #f19f7e;
+  --primary-500: #ff7955;
+  --primary-600: #e85a37;
+  --primary-700: #c44729;
+  --primary-800: #9f3a25;
+  --primary-900: #803024;
+  
+  /* Semantic Colors */
+  --primary-color: var(--primary-500);
+  --primary-hover: var(--primary-600);
+  --primary-active: var(--primary-700);
+  --accent-color: var(--primary-500);
+  
+  /* Neutral Palette */
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  
+  /* Background Colors */
+  --bg-color: var(--gray-50);
+  --bg-secondary: var(--gray-100);
+  --white: #ffffff;
+  
+  /* Text Colors */
+  --text-color: var(--gray-900);
+  --text-secondary: var(--gray-600);
+  --text-muted: var(--gray-500);
+  
+  /* Border & Dividers */
+  --border-color: var(--gray-200);
+  --border-light: var(--gray-100);
+  /* Shadows - More Scattered, Subtle, and Centered */
+  --shadow-xs: 0 0 12px 6px rgba(0, 0, 0, 0.02);
+  --shadow-sm: 0 0 18px 8px rgba(0, 0, 0, 0.025);
+  --shadow-md: 0 0 24px 12px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 0 32px 16px rgba(0, 0, 0, 0.035);
+  --shadow-xl: 0 0 40px 20px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 0 50px 25px rgba(0, 0, 0, 0.045);
+  
+  /* Border Radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
+  --radius-full: 9999px;
+  
+  /* Spacing Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  
+  /* Typography Scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  
+  /* Transitions */
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Animation Curves */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-back: var(--ease-out-quart);
+
+  /* Z-index scale */
+  --z-sticky: 200;
+  --z-header-float: 250;
+  --z-dropdown: 300;
+  --z-modal-backdrop: 1000;
+  --z-modal: 1100;
+  --z-toast: 1200;
+
+  /* Glass surface — matches level/term group headers */
+  --glass-bg: rgba(255, 255, 255, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-blur: blur(12px);
+
+  /* Responsive breakpoints â€“ use in media queries: (max-width: var(--bp-sm)) etc. */
+  --bp-xs: 360px;   /* Very small phones */
+  --bp-sm: 480px;   /* Phones */
+  --bp-md: 768px;   /* Tablets / narrow desktop */
+  --bp-lg: 1024px;  /* Desktop */
+}
+
+/* Modern CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #ffe2da; /* Fallback until Three.js canvas paints */
+}
+
+body {
+  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'pnum' 1, 'tnum' 0, 'onum' 1, 'lnum' 0, 'dlig' 0;
+  /* Canvas provides the page background; keep body transparent for backdrop-filter on fixed controls */
+  background-color: transparent;
+  color: var(--text-color);
+  line-height: 1.6;
+  font-size: var(--text-base);
+  font-weight: 450;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+ 
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Button Styles - Enhanced with Glassmorphism Elements */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 650;
+  cursor: pointer;
+  transition: var(--transition-base);
+  /* No shadow for glassmorphism */
+  text-decoration: none;
+  letter-spacing: 0.025em;
+  min-height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: var(--transition-slow);
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  /* No shadow for glassmorphism */
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  /* No shadow for glassmorphism */
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--primary-color);
+  border: 2px solid rgba(255, 121, 85, 0.6);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 650;
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-decoration: none;
+  letter-spacing: 0.025em;
+  min-height: 40px;
+}
+
+.btn-secondary:hover {
+  background: var(--primary-color);
+  color: var(--white);
+  /* No shadow for glassmorphism */
+  transform: translateY(-1px);
+}
+
+.button-group {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--space-lg);
+}
+
+/* Accessibility - Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+    background-attachment: local;
+  }
+  
+  .credit-hours-number.sliding-out-left,
+  .credit-hours-number.sliding-out-right,
+  .credit-hours-number.sliding-in-left,
+  .credit-hours-number.sliding-in-right,
+  .credit-hours-number.shake,
+  .credit-hours-number.pulse {
+    animation: none;
+    transition: none;
+  }
+  
+  .top-box,
+  .table-box,
+  .gpa-display,
+  .form-input,
+  .form-select,
+  .btn-primary,
+  .btn-secondary {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* Collapse panels must stay visibly animated; override universal rule above */
+  .level-container,
+  .term-container,
+  .manual-container,
+  .table-box .level-container,
+  .table-box .term-group .term-container,
+  .table-box .manual-container {
+    transition: grid-template-rows var(--clist-collapse-duration, 0.16s) var(--clist-collapse-ease, ease-in-out) !important;
+  }
+}
+
+/* Focus States */
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.form-input:focus-visible,
+.form-select:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+
+/* Print Styles */
+@media print {
+  .btn-primary,
+  .btn-secondary,
+  .remove-btn {
+    display: none;
+  }
+  
+  .container {
+    padding: 0;
+    max-width: none;
+  }
+  
+  .top-box,
+  .table-box,
+  .gpa-display {
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+  }
+}
+
+/* Mobile Responsiveness Fixes */
+/* This file intentionally overrides global styles (index.css, Bootstrap) for mobile. */
+/* Credit-hours responsive behavior: RotatingNumberInput.css + MobileCreditHoursOverride.css. */
+
+/* === Rotating Number Input Centering Fix === */
+
+/* Core fixes for the number strip */
+.number-strip {
+  /* Critical positioning */
+  position: absolute !important;
+  left: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) translateX(var(--x-offset, 0)) !important;
+  -webkit-transform: translateY(-50%) translateX(var(--x-offset, 0)) !important;
+  height: 100% !important;
+  align-items: center !important;
+  
+  /* Prevent any CSS collisions */
+  margin: 0 !important;
+  padding: 0 !important;
+  
+  /* Force hardware acceleration */
+  will-change: transform !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  
+  /* Container settings */
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
+  width: auto !important;
+}
+
+/* Container settings */
+.perspective-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  height: 100% !important;
+  flex: 1 !important;
+  min-width: 60px !important; /* Ensure there's always room for the number */
+}
+
+.number-dial-viewport {
+  position: relative !important;
+  overflow: visible !important;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Fix for credit hours input to ensure it's always visible */
+/* Rules moved to RotatingNumberInput.css - this file now defers to component CSS */
+
+/* Global mobile fixes */
+/* Rules moved to RotatingNumberInput.css for better organization */
+
+/* === Critical Mobile Fixes === */
+/* Credit hours responsive rules: RotatingNumberInput.css + MobileCreditHoursOverride.css. Breakpoints: 480px (--bp-sm), 360px (--bp-xs). */
+
+/* Critical mobile fixes to prevent disappearing inputs */
+@media (max-width: 480px) {
+  .course-form {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+}
+
+/* === Font Fixes === */
+body {
+  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* === Critical Fix for Collapsed Elements === */
+/* Level/term/manual use grid collapse in GroupedCourseTable — exclude all three */
+.table-container.collapsed:not(.level-container):not(.term-container):not(.manual-container) {
+  pointer-events: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+.level-container.collapsed,
+.term-container.collapsed,
+.manual-container.collapsed {
+  pointer-events: none !important;
+  overflow: hidden !important;
+}
+
+/* Ensure group headers remain clickable */
+.group-header {
+  pointer-events: auto !important;
+  visibility: visible !important;
+  position: relative !important;
+  height: auto !important;
+}
+
+/* === Credit Hours Input Improvements === */
+/* Make number animation smoother with longer travel distance */
+@keyframes slideOutLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(-200%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(200%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-200%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(200%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Improved credit hours animation styling */
+.credit-hours-container.slide-left .credit-hours-current,
+.credit-hours-container.slide-right .credit-hours-current,
+.credit-hours-container.slide-left .credit-hours-pending,
+.credit-hours-container.slide-right .credit-hours-pending {
+  animation-duration: 0.4s !important;
+  animation-timing-function: var(--ease-out-quart) !important;
+}
+
+/* Full height arrows with improved styling */
+.credit-arrow {
+  height: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  min-width: 46px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* === Course Table Mobile Improvements === */
+/* Fix for course name visibility on mobile */
+@media (max-width: 480px) {
+  .table-box .course-table td:first-child {
+    width: auto;
+    max-width: none;
+    white-space: normal;
+    word-break: break-word;
+    text-align: left;
+    padding-inline: var(--clist-name-px, 8px);
+  }
+  
+  .table-box .course-name {
+    font-size: 0.85rem;
+    line-height: 1.3;
+    padding: 0;
+    width: 100%;
+    display: block;
+  }
+  
+  .table-box .course-table td {
+    padding-block: var(--clist-row-py, 8px);
+    padding-inline: 0;
+  }
+
+  .table-box .course-table td:first-child {
+    padding-inline: var(--clist-name-px, 8px);
+  }
+
+  .table-box .course-table td.course-remove {
+    padding-block: var(--clist-row-py, 8px);
+    padding-inline: 0 var(--clist-name-px, 8px);
+  }
+}
+
+/* === Modal Shell (shared by all modals — always loaded) === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-backdrop);
+  padding: var(--space-xl);
+  margin: 0;
+  box-sizing: border-box;
+  pointer-events: auto;
+  overflow: auto;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-overlay.modal-visible {
+  opacity: 1;
+  pointer-events: auto;
+  animation: modalFadeIn 0.3s ease forwards;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.modal-content {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: var(--z-modal);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  transform: translateY(0);
+  transition: transform 0.3s var(--ease-out-quart);
+  margin: 0 auto;
+  padding: 0;
+  animation: modalSlideUp 0.3s var(--ease-out-quart);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+  padding: var(--space-xl) var(--space-2xl) var(--space-md);
+  border-bottom: 1px solid var(--gray-200);
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  padding: var(--space-xs);
+  cursor: pointer;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  line-height: 0;
+}
+
+.modal-close:hover {
+  color: var(--text-color);
+  background: var(--gray-100);
+}
+
+.modal-close:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.modal-body {
+  padding: var(--space-sm) var(--space-2xl) var(--space-xl);
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.modal-description {
+  margin-bottom: var(--space-lg);
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.modal-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: var(--space-md) var(--space-2xl);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-footer .button-group {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: flex-end;
+}
+
+.modal-footer .btn-primary,
+.modal-footer .btn-secondary {
+  min-width: 120px;
+}
+
+/* Course form — unified control height (overrides Bootstrap + component defaults) */
+.course-form input.form-input,
+.course-form .credit-hours-input,
+.course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  box-sizing: border-box !important;
+  line-height: 1.25 !important;
+}
+
+.course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+  width: 100% !important;
+  margin-inline-start: 0 !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.modal-content.how-to-modal {
+  max-width: 640px !important;
+}
+
+/* === Modal Improvements === */
+.modal-overlay {
+  padding: 16px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.modal-content {
+  width: 95% !important;
+  max-width: 500px !important;
+  max-height: 85vh !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.modal-body {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  flex: 1 !important;
+}
+
+/* Import modal specific improvements */
+.import-textarea {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace !important;
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 12px !important;
+  }
+  
+  .modal-content {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: var(--radius-lg) !important;
+  }
+  
+  .modal-header {
+    padding: 12px 16px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .modal-body {
+    padding: 8px 16px 16px !important;
+  }
+  
+  .modal-title {
+    font-size: 1.2rem !important;
+  }
+  
+  .modal-description {
+    font-size: 0.9rem !important;
+    margin-bottom: 12px !important;
+  }
+  
+  /* Import textarea smaller font for mobile */
+  .import-textarea {
+    font-size: 0.8rem !important;
+    min-height: 160px !important;
+    line-height: 1.4 !important;
+    padding: 8px !important;
+  }
+  
+  .modal-footer {
+    padding: 12px 16px !important;
+  }
+  
+  .modal-footer .button-group {
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+  
+  .modal-footer .btn-primary,
+  .modal-footer .btn-secondary {
+    margin: 0 4px !important;
+    min-width: 0 !important;
+    min-height: 44px !important;
+    flex: 1 !important;
+    padding: 8px 12px !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* === Form Input Consistency Fixes === */
+/* Form control responsive styles consolidated into index.css */
+
+/* === Grouped Course Tables Mobile Improvements === */
+@media (max-width: 480px) {
+  /* Group header more compact and readable */
+  .group-header {
+    padding: var(--space-sm) !important;
+    margin-bottom: var(--space-xs) !important;
+    border-radius: var(--radius-md) !important;
+  }
+  
+  .group-title {
+    font-size: 1rem !important;
+    gap: var(--space-sm) !important;
+  }
+  
+  .group-toggle {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+  }
+  
+  .group-toggle svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  
+  /* Term spacing handled by .table-box .level-container-inner flex gap */
+  .table-box .level-container-inner > .term-group {
+    margin-top: 0 !important;
+    margin-left: var(--term-indent) !important;
+    margin-right: var(--term-indent) !important;
+  }
+  
+  .term-group .group-header {
+    width: 100% !important;
+    margin-right: 0 !important;
+    display: flex;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  
+  .term-title {
+    font-size: 0.9rem !important;
+  }
+  
+  /* Tables inside term groups */
+  .term-group .table-container table {
+    width: 100% !important;
+  }
+  
+  /* Hide table header on very small screens to save space */
+  @media (max-width: 380px) {
+    .table-header-hidden {
+      display: none !important;
+    }
+  }
+}
+
+/* === GPA Display Mobile Improvements === */
+@media (max-width: 480px) {
+  .gpa-display {
+    width: 160px !important;
+    height: 160px !important;
+    max-width: 160px !important;
+    padding: var(--space-md) !important;
+  }
+  
+  .gpa-label {
+    font-size: 1rem !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .gpa-value {
+    font-size: 2rem !important;
+  }
+  
+  .gpa-scale {
+    font-size: 0.7rem !important;
+    margin-top: 4px !important;
+  }
+}
+
+/* === Grade Dropdown Mobile Improvements === */
+@media (max-width: 480px) {
+  /* Grade dropdown better mobile positioning; option sizing/touch target owned by index.css */
+  .grade-dropdown-menu {
+    width: 140px !important;
+    position: fixed !important; /* To ensure it appears above content */
+  }
+  
+  .grade-dropdown-content {
+    padding: var(--space-sm) !important;
+  }
+  
+  .grade-badge-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .course-grade-badge {
+    min-width: 40px !important;
+    min-height: 28px !important;
+    width: 40px !important; 
+    height: 28px !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+/* === Accessibility Improvements === */
+
+/* Improved support for high contrast mode */
+@media (prefers-contrast: high) {
+  .form-input,
+  .form-select,
+  .credit-hours-input,
+  .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+    border: 2px solid black !important;
+    background: white !important;
+    color: black !important;
+  }
+  
+  .course-table th {
+    background: black !important;
+    color: white !important;
+  }
+  
+  .course-grade-badge {
+    border: 2px solid black !important;
+  }
+  
+  .btn-primary {
+    background: black !important;
+    color: white !important;
+    border: 2px solid black !important;
+  }
+  
+  .modal-content,
+  .top-box,
+  .table-box {
+    background: white !important;
+    border: 2px solid black !important;
+  }
+}
+
+/* Reduced motion support – do not touch level/term (they use grid in GroupedCourseTable.css) */
+@media (prefers-reduced-motion: reduce) {
+  .table-container:not(.level-container):not(.term-container):not(.manual-container),
+  .table-container.expanded:not(.level-container):not(.term-container):not(.manual-container),
+  .table-container.collapsed:not(.level-container):not(.term-container):not(.manual-container) {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .table-container.expanded:not(.level-container):not(.term-container):not(.manual-container) {
+    max-height: 2000px !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+  
+  .table-container.collapsed:not(.level-container):not(.term-container):not(.manual-container) {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+  
+  .credit-hours-container.slide-left .credit-hours-current,
+  .credit-hours-container.slide-right .credit-hours-current,
+  .credit-hours-container.slide-left .credit-hours-pending,
+  .credit-hours-container.slide-right .credit-hours-pending {
+    transition: opacity 0.1s ease !important;
+    animation: none !important;
+  }
+
+  .modal-overlay,
+  .modal-content {
+    animation: none !important;
+    transition: opacity 0.1s ease !important;
+  }
+
+  /* Level/term/manual collapse must stay visibly animated; override index.css universal * rule */
+  .level-container,
+  .term-container,
+  .manual-container,
+  .table-box .level-container,
+  .table-box .term-group .term-container,
+  .table-box .manual-container {
+    transition: grid-template-rows var(--clist-collapse-duration, 0.16s) var(--clist-collapse-ease, ease-in-out) !important;
+  }
+}
+
+/* === Very Small Screen Support === */
+@media (max-width: 360px) {
+  /* Make everything more compact on very small screens */
+  .container {
+    padding: var(--space-sm) !important;
+  }
+  
+  /* Simplify modals; prevent horizontal overflow */
+  .modal-content {
+    border-radius: var(--radius-md) !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  .modal-header {
+    padding: 10px 12px !important;
+  }
+  
+  .modal-body {
+    padding: 8px 12px 12px !important;
+  }
+  
+  .modal-footer {
+    padding: 10px 12px !important;
+  }
+  
+  .modal-footer .button-group {
+    gap: 6px !important;
+  }
+  
+  .modal-footer .btn-primary,
+  .modal-footer .btn-secondary {
+    margin: 0 2px !important;
+    min-height: 44px !important;
+    font-size: 0.8rem !important;
+    padding: 6px 10px !important;
+  }
+
+  /* Hide unnecessary interface elements */
+  .app-subtitle {
+    display: none !important;
+  }
+
+  /* Compact course table inside grouped list */
+  .table-box .course-table td {
+    padding: 0 !important;
+  }
+
+  /* Very tiny screens - minimize everything for usability */
+  @media (max-width: 330px) {
+    body {
+      font-size: 0.85rem !important;
+    }
+    
+    .app-title {
+      font-size: 1.3rem !important;
+    }
+    
+    .top-box,
+    .table-box {
+      padding: var(--space-md) var(--space-sm) !important;
+    }
+      .form-input, 
+    .form-select,
+    .credit-hours-input,
+    .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+      height: 36px !important;
+      font-size: 0.8rem !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+    }
+  }
+}
+
+/* === Remove Button Mobile Styling === */
+@media (max-width: 480px) {
+  .remove-btn:hover {
+    transform: none !important;
+  }
+
+  .remove-btn:hover svg,
+  .remove-btn:hover svg path {
+    filter: none !important;
+  }
+
+  /* Always show the remove button on mobile */
+  td .remove-btn {
+    opacity: 1 !important;
+  }
+}
+`}</style>
+  )
+}

@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import { getCached, startBackgroundChecker } from '@/lib/fcai-status'
+import { getPublicStatus, startBackgroundChecker } from '@/lib/fcai-status'
 
 export async function GET() {
   startBackgroundChecker()
-  const { online } = getCached()
-  return NextResponse.json({ online })
+  return NextResponse.json(getPublicStatus())
 }

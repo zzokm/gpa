@@ -6,7 +6,7 @@ import { LocaleProvider, useLocale } from '../src/i18n/LocaleContext'
 import LanguageSwitcher from '../src/components/LanguageSwitcher'
 import CourseForm from '../src/components/CourseForm'
 import GroupedCourseTable from '../src/components/GroupedCourseTable'
-import GPADisplay from '../src/components/GPADisplay'
+import GPAStickySummary from '../src/components/GPAStickySummary'
 import ImportModal from '../src/components/ImportModal'
 import HowToModal from '../src/components/HowToModal'
 import HowToButton from '../src/components/HowToButton'
@@ -15,8 +15,8 @@ import ThreeJSBackground from '../src/components/ThreeJSBackground'
 import Footer from '../src/components/Footer'
 import { DocumentTitleMeta } from '../src/components/DocumentTitleMeta'
 import { Course, Grade } from '../src/types/Course'
-import { calculateGPA } from '../src/utils/gradeUtils'
 import { migrateStorageIfNeeded, STORAGE_KEYS } from '../src/utils/storage-keys'
+import { normalizeCreditHours } from '../src/utils/creditHours'
 
 migrateStorageIfNeeded()
 
@@ -105,8 +105,9 @@ function HomeContent() {
   }, [])
 
   const updateCreditHours = useCallback((courseId: string, hours: number) => {
+    const normalized = normalizeCreditHours(hours)
     setCourses(prev => prev.map(course =>
-      course.id === courseId ? { ...course, hours } : course
+      course.id === courseId ? { ...course, hours: normalized } : course
     ))
     setSaveNotification({
       show: true,
@@ -154,12 +155,280 @@ function HomeContent() {
     }
   }, [courses, t, hasLoadedFromStorage])
 
-  const gpa = calculateGPA(courses)
   const isError = saveNotification.message === t('notify.saveFailed')
 
   return (
     <>
+      <style jsx global>{`/* Main Container */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+/* Typography */
+.app-title {
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+  font-weight: 700;
+  color: var(--primary-600);
+  text-align: center;
+  margin: 0;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  padding-bottom: 0;
+  text-wrap: balance;
+}
+
+.app-subtitle {
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+  margin: var(--space-sm) 0 0 0;
+  letter-spacing: 0.025em;
+  /* Enhanced visibility 
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);*/
+}
+
+.app-header-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: 0;
+}
+
+.app-header-titles {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.app-header .app-title {
+  text-align: center;
+}
+
+.app-header .app-subtitle {
+  text-align: center;
+  margin-top: var(--space-xs);
+}
+
+[dir="rtl"] .app-title,
+html[lang="ar"] .app-title {
+  padding-bottom: 6px;
+}
+
+/* Header floating buttons – see HeaderFloatBtn.css (imported by HowToButton / LanguageSwitcher) */
+
+/* Save notification â€“ base and responsive */
+.save-notification {
+  position: fixed;
+  top: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 600;
+  z-index: var(--z-toast);
+  max-width: min(90vw, 400px);
+  box-shadow: var(--shadow-md);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.save-notification.success {
+  background: rgba(34, 197, 94, 0.95);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.save-notification.error {
+  background: rgba(239, 68, 68, 0.95);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Undo bar – centered; equal spacing so circle/button align with left/right edge radius */
+.undo-bar {
+  position: fixed;
+  top: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
+  animation: undoBarEnter 0.4s var(--ease-out) forwards;
+}
+
+[dir="rtl"] .undo-bar {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+.undo-bar-exit {
+  animation: undoBarExit 0.4s var(--ease-in) forwards;
+  pointer-events: none;
+}
+
+@keyframes undoBarEnter {
+  from {
+    transform: translate(-50%, -100%);
+  }
+  to {
+    transform: translate(-50%, 0);
+  }
+}
+
+[dir="rtl"] .undo-bar-exit {
+  animation: undoBarExitRtl 0.4s var(--ease-in) forwards;
+}
+
+@keyframes undoBarExit {
+  from {
+    transform: translate(-50%, 0);
+  }
+  to {
+    transform: translate(-50%, -100%);
+  }
+}
+
+@keyframes undoBarExitRtl {
+  from {
+    transform: translate(-50%, 0);
+  }
+  to {
+    transform: translate(-50%, -100%);
+  }
+}
+
+.undo-bar-progress-wrap {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.undo-bar-circle {
+  width: 40px;
+  height: 40px;
+  transform: rotate(-90deg);
+}
+
+.undo-bar-circle-bg {
+  fill: none;
+  stroke: var(--gray-200);
+  stroke-width: 4;
+}
+
+.undo-bar-circle-fill {
+  fill: none;
+  stroke: var(--primary-color);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.01s linear;
+}
+
+.undo-bar-countdown {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.undo-bar-btn {
+  height: 40px;
+  padding: 0 var(--space-lg);
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.undo-bar-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .save-notification {
+    top: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-sm);
+    max-width: calc(100vw - 2 * var(--space-md));
+  }
+}
+
+.app-course-workspace {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-lg) var(--space-md);
+    gap: var(--space-lg);
+  }
+  
+  .app-title {
+    font-size: var(--text-2xl);
+  }
+  
+  .app-subtitle {
+    font-size: var(--text-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-md);
+  }`}</style>
+
       <DocumentTitleMeta />
+      <ThreeJSBackground />
+      <HowToButton onClick={() => setShowHowToModal(true)} />
+      <LanguageSwitcher />
       <Container className="container">
         {saveNotification.show && !undoBarVisible && (
           <div className={`save-notification ${isError ? 'error' : 'success'}`}>
@@ -194,24 +463,26 @@ function HomeContent() {
               <h1 className="app-title">{t('app.title')}</h1>
               <h5 className="app-subtitle">{t('app.subtitle')}</h5>
             </div>
-            <HowToButton onClick={() => setShowHowToModal(true)} />
-            <LanguageSwitcher />
           </div>
           <FCAIStatusIndicator />
           <CourseForm
             onAddCourse={addCourse}
             onShowImport={() => setShowImportModal(true)}
+            hasCourses={courses.length > 0}
           />
         </div>
-        <GroupedCourseTable
-          courses={courses}
-          onRemoveCourse={removeCourse}
-          onUpdateGrade={updateCourseGrade}
-          onUpdateCreditHours={updateCreditHours}
-          onClearCourses={(clearedCourses) => clearAllCourses(clearedCourses)}
-        />
 
-        <GPADisplay gpa={gpa} />
+        <div className="app-course-workspace">
+          <GPAStickySummary courses={courses} />
+          <GroupedCourseTable
+            courses={courses}
+            onRemoveCourse={removeCourse}
+            onUpdateGrade={updateCourseGrade}
+            onUpdateCreditHours={updateCreditHours}
+            onClearCourses={(clearedCourses) => clearAllCourses(clearedCourses)}
+          />
+        </div>
+
         <ImportModal
           show={showImportModal}
           onHide={() => setShowImportModal(false)}
@@ -222,7 +493,6 @@ function HomeContent() {
         <HowToModal show={showHowToModal} onHide={() => setShowHowToModal(false)} />
       </Container>
 
-      <ThreeJSBackground />
       <Footer />
     </>
   )
