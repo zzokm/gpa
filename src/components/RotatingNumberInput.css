@@ -862,15 +862,3 @@
     transform: rotate(360deg);
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .number-strip {
-    transition: none !important;
-  }
-  .number-strip.animating {
-    transition: none !important;
-  }
-  .number-strip.shaking {
-    transition: none !important;
-  }
-}

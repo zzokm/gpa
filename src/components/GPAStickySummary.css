@@ -308,14 +308,3 @@
     display: none;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .gpa-sticky-value,
-  .gpa-sticky-label,
-  .gpa-sticky-unit,
-  .gpa-sticky-divider,
-  .gpa-sticky-assessment,
-  .gpa-sticky-scale {
-    transition: none;
-  }
-}

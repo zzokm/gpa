@@ -314,55 +314,6 @@ select {
   margin-top: var(--space-lg);
 }
 
-/* Accessibility - Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-  body {
-    animation: none;
-    background-attachment: local;
-  }
-  
-  .credit-hours-number.sliding-out-left,
-  .credit-hours-number.sliding-out-right,
-  .credit-hours-number.sliding-in-left,
-  .credit-hours-number.sliding-in-right,
-  .credit-hours-number.shake,
-  .credit-hours-number.pulse {
-    animation: none;
-    transition: none;
-  }
-  
-  .top-box,
-  .table-box,
-  .gpa-display,
-  .form-input,
-  .form-select,
-  .btn-primary,
-  .btn-secondary {
-    transition: none;
-    transform: none;
-  }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  /* Collapse panels must stay visibly animated; override universal rule above */
-  .level-container,
-  .term-container,
-  .manual-container,
-  .table-box .level-container,
-  .table-box .term-group .term-container,
-  .table-box .manual-container {
-    transition: grid-template-rows var(--clist-collapse-duration, 0.16s) var(--clist-collapse-ease, ease-in-out) !important;
-  }
-}
-
 /* Focus States */
 .btn-primary:focus-visible,
 .btn-secondary:focus-visible,
@@ -652,10 +603,8 @@ body {
   z-index: var(--z-modal-stacked);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .modal-overlay.modal-visible {
-    animation: modalFadeIn 0.22s ease forwards;
-  }
+.modal-overlay.modal-visible {
+  animation: modalFadeIn 0.22s ease forwards;
 }
 
 @keyframes modalFadeIn {
@@ -702,10 +651,8 @@ body.modal-open .app-root {
   isolation: isolate;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .modal-content {
-    animation: modalSlideUp 0.26s var(--ease-out-quart);
-  }
+.modal-content {
+  animation: modalSlideUp 0.26s var(--ease-out-quart);
 }
 
 .modal-header {
@@ -1072,61 +1019,6 @@ body.modal-open .app-root {
   .table-box {
     background: white !important;
     border: 2px solid black !important;
-  }
-}
-
-/* Reduced motion support – do not touch level/term (they use grid in GroupedCourseTable.css) */
-@media (prefers-reduced-motion: reduce) {
-  .table-container:not(.level-container):not(.term-container):not(.manual-container),
-  .table-container.expanded:not(.level-container):not(.term-container):not(.manual-container),
-  .table-container.collapsed:not(.level-container):not(.term-container):not(.manual-container) {
-    transition: none !important;
-    animation: none !important;
-  }
-  
-  .table-container.expanded:not(.level-container):not(.term-container):not(.manual-container) {
-    max-height: 2000px !important;
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-  }
-  
-  .table-container.collapsed:not(.level-container):not(.term-container):not(.manual-container) {
-    max-height: 0 !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-  }
-  
-  .credit-hours-container.slide-left .credit-hours-current,
-  .credit-hours-container.slide-right .credit-hours-current,
-  .credit-hours-container.slide-left .credit-hours-pending,
-  .credit-hours-container.slide-right .credit-hours-pending {
-    transition: opacity 0.1s ease !important;
-    animation: none !important;
-  }
-
-  .modal-overlay,
-  .modal-content {
-    animation: none !important;
-    transition: opacity 0.1s ease !important;
-  }
-
-  body.modal-open .app-root {
-    filter: none;
-  }
-
-  .modal-overlay.modal-overlay--stacked {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  /* Level/term/manual collapse must stay visibly animated; override index.css universal * rule */
-  .level-container,
-  .term-container,
-  .manual-container,
-  .table-box .level-container,
-  .table-box .term-group .term-container,
-  .table-box .manual-container {
-    transition: grid-template-rows var(--clist-collapse-duration, 0.16s) var(--clist-collapse-ease, ease-in-out) !important;
   }
 }
 

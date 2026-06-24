@@ -79,9 +79,6 @@ function HomeContent() {
       has_persisted_courses: courses.length > 0,
       returning_visitor: returning,
     })
-    track('reduced_motion_preference', {
-      prefers_reduced_motion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    })
     syncUserPropertiesFromCourses(locale, courses)
   }, [hasLoadedFromStorage, locale, courses])
 

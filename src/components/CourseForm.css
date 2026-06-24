@@ -310,14 +310,6 @@
   text-align: start;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .course-form .form-input,
-  .course-form .credit-hours-input,
-  .course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
-    transition: none;
-  }
-}
-
 @media (max-width: 768px) {
   .top-box {
     padding: var(--space-lg);

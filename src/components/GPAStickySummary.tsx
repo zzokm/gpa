@@ -1,7 +1,7 @@
 'use client'
 
 import './GPAStickySummary.css'
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import {
   useCallback,
   useEffect,
@@ -240,7 +240,6 @@ function shouldUndock(slot: HTMLElement, dockTop: number): boolean {
 
 export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
   const { t, locale } = useLocale()
-  const prefersReducedMotion = useReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
   const slotRef = useRef<HTMLDivElement>(null)
   const summaryRef = useRef<HTMLElement | null>(null)
@@ -271,7 +270,7 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
     }
   }, [showAssessment, assessment.key])
 
-  const transition = layoutInstant || prefersReducedMotion
+  const transition = layoutInstant
     ? { duration: 0 }
     : isUndocking
       ? UNDOCK_TRANSITION
@@ -340,12 +339,8 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
       setLayoutInstant(false)
       layoutRef.current = to
       setLayout(to)
-      if (prefersReducedMotion) {
-        animatingRef.current = false
-        pendingAnimRef.current = null
-      }
     })
-  }, [prefersReducedMotion])
+  }, [])
 
   const beginUndock = useCallback((
     _root: HTMLElement,
@@ -365,19 +360,7 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
     layoutRef.current = to
     setLayoutInstant(false)
     setLayout(to)
-
-    if (prefersReducedMotion) {
-      dockedRef.current = false
-      setIsFloating(false)
-      setIsCompact(false)
-      setIsUndocking(false)
-      setAnchorX(null)
-      layoutRef.current = null
-      setLayout(null)
-      animatingRef.current = false
-      pendingAnimRef.current = null
-    }
-  }, [prefersReducedMotion])
+  }, [])
 
   const handleAnimationComplete = useCallback(() => {
     if (!animatingRef.current || layoutInstantRef.current) return

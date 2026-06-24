@@ -9,13 +9,7 @@ import {
   normalizeCreditHours,
 } from '../utils/creditHours';
 
-function prefersReducedMotion(): boolean {
-  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
-function stripTransition(reduced = prefersReducedMotion()): string {
-  return reduced ? 'none' : 'transform 0.4s var(--ease-out-quart)';
-}
+const STRIP_TRANSITION = 'transform 0.4s var(--ease-out-quart)';
 
 interface RotatingNumberInputProps {
   value: number;
@@ -180,8 +174,6 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
   const animateShake = (direction: 'left' | 'right') => {
     if (!stripRef.current) return;
 
-    if (prefersReducedMotion()) return;
-    
     // Calculate and ensure we start from the exact center position
     updateDisplay();
     
@@ -231,7 +223,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
                 stripRef.current.classList.remove('shaking');
                 
                 // Reset to normal transition
-                stripRef.current.style.transition = stripTransition();
+                stripRef.current.style.transition = STRIP_TRANSITION;
                 
                 // First set exact center using the initial position
                 stripRef.current.style.setProperty('--x-offset', initialCenterPosition);

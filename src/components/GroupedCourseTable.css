@@ -256,22 +256,6 @@
   overflow: visible;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .table-box {
-    --clist-collapse-duration: 0.16s;
-    --clist-collapse-ease: ease-in-out;
-  }
-
-  .table-box .level-container,
-  .table-box .term-group .term-container,
-  .table-box .manual-container,
-  .level-container,
-  .term-container,
-  .manual-container {
-    transition: grid-template-rows var(--clist-collapse-duration) var(--clist-collapse-ease) !important;
-  }
-}
-
 /* Ensure group headers are still clickable */
 .group-header {
   pointer-events: auto !important;
@@ -1160,13 +1144,6 @@ html[lang="ar"] .reset-button,
 .course-table td.course-remove .remove-btn:active svg path {
   color: #ffffff;
   stroke: #ffffff;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .course-table td.course-remove .remove-btn,
-  .course-table .remove-btn svg {
-    transition: none;
-  }
 }
 
 .course-table .remove-btn:focus-visible {
