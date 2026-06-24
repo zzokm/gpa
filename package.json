@@ -22,7 +22,7 @@
   "dependencies": {
     "@next/third-parties": "^16.2.9",
     "@types/bootstrap": "^5.2.10",
-    "@types/three": "^0.176.0",
+    "@types/three": "^0.184.1",
     "bootstrap": "^5.3.6",
     "motion": "^12.41.0",
     "next": "^16.1.4",
