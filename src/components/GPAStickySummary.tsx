@@ -45,6 +45,12 @@ const DOCK_GAP = 8
 const DOCK_MAX_CONTAINER_RATIO = 0.9
 const DOCK_EASE = [0.22, 1, 0.36, 1] as const
 const DOCK_MIN_SAFE_WIDTH = 280
+const MOBILE_DOCK_MQ = '(max-width: 640px)'
+
+function isDockingEnabled(): boolean {
+  if (typeof window === 'undefined') return true
+  return !window.matchMedia(MOBILE_DOCK_MQ).matches
+}
 
 const DOCK_TRANSITION = {
   duration: 0.24,
@@ -151,7 +157,7 @@ function snapshotRest(summary: HTMLElement): LayoutSnapshot {
     borderRadius: readCSSValue('--radius-lg', 16),
     backgroundColor: glassColor(0.28),
     borderColor: glassColor(0.5),
-    backdropFilter: 'blur(0px)',
+    backdropFilter: 'blur(12px)',
   }
 }
 
@@ -166,7 +172,7 @@ function snapshotSlot(slot: HTMLElement, height: number): LayoutSnapshot {
     borderRadius: readCSSValue('--radius-lg', 16),
     backgroundColor: glassColor(0.28),
     borderColor: glassColor(0.5),
-    backdropFilter: 'blur(0px)',
+    backdropFilter: 'blur(12px)',
   }
 }
 
@@ -272,6 +278,7 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
       : DOCK_TRANSITION
 
   const updateDockedLayout = useCallback((root: HTMLElement) => {
+    if (!isDockingEnabled()) return
     if (!dockedRef.current || animatingRef.current) return
 
     const metrics = computeDockMetrics()
@@ -300,6 +307,8 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
   }, [])
 
   const beginDock = useCallback((summary: HTMLElement, root: HTMLElement, slot: HTMLElement) => {
+    if (!isDockingEnabled()) return
+
     const metrics = computeDockMetrics()
     if (!metrics) return
 
@@ -408,6 +417,13 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
     const evaluateScroll = () => {
       if (animatingRef.current) return
 
+      if (!isDockingEnabled()) {
+        if (dockedRef.current) {
+          beginUndock(root, slot, spacerHeightRef.current || measureSlotFootprint(slot))
+        }
+        return
+      }
+
       const rootRect = root.getBoundingClientRect()
       const shouldDock = rootRect.top <= dockTop + 1
 
@@ -439,13 +455,23 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
       })
     }
 
+    const dockMq = window.matchMedia(MOBILE_DOCK_MQ)
+    const onDockMqChange = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        evaluateScroll()
+      })
+    }
+
     evaluateScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize, { passive: true })
+    dockMq.addEventListener('change', onDockMqChange)
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
+      dockMq.removeEventListener('change', onDockMqChange)
     }
   }, [beginDock, beginUndock, locale, updateDockedLayout])
 

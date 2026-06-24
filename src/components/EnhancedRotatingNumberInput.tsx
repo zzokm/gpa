@@ -110,33 +110,29 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
         item.style.opacity = '1';
         item.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.15), 0 0 15px rgba(255, 255, 255, 0.6)';
         item.style.background = 'radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)';
-        item.style.filter = 'none';
+        item.style.removeProperty('filter');
       } else {
-        // Inactive number styling
+        // Inactive number styling — blur from CSS (--credit-pane-blur); do not set filter inline
         const distance = Math.abs(itemValue - value);
         
-        // Farther numbers a bit bigger (higher scale floor)
         const scale = Math.max(0.72, 1 - (distance * 0.1));
         const opacity = Math.max(0.4, 1 - (distance * 0.17));
         
         if (distance === 1) {
-          // Direct neighbors - blurred behind pane
           item.style.transform = `translateX(${itemValue < value ? -55 : 55}px) translateZ(-25px) scale(0.78)`;
           item.style.color = '#4b5563';
           item.style.fontWeight = '600';
           item.style.opacity = '0.7';
-          item.style.filter = 'blur(2.5px) opacity(0.75)';
         } else {
-          // Further items - stronger blur
           item.style.transform = `scale(${scale}) translateZ(-${distance * 10}px)`;
           item.style.color = '#4b5563';
           item.style.fontWeight = distance <= 2 ? '500' : '400';
           item.style.opacity = opacity.toString();
-          item.style.filter = distance <= 2 ? 'blur(2.5px) opacity(0.7)' : 'blur(4px) opacity(0.5)';
         }
         
         item.style.textShadow = 'none';
         item.style.background = 'none';
+        item.style.removeProperty('filter');
       }
     });
   };// Enhanced effect for perfect positioning in all scenarios

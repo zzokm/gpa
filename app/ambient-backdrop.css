@@ -1,0 +1,31 @@
+/* Blur-able background for glass surfaces (backdrop-filter cannot sample WebGL canvas) */
+.ambient-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 85% 65% at 18% 22%, rgba(255, 165, 125, 0.72), transparent 56%),
+    radial-gradient(ellipse 78% 58% at 82% 78%, rgba(255, 195, 168, 0.68), transparent 58%),
+    radial-gradient(ellipse 95% 75% at 52% 48%, rgba(255, 248, 244, 0.88), transparent 64%),
+    radial-gradient(ellipse 62% 48% at 68% 12%, rgba(255, 238, 230, 0.92), transparent 52%),
+    radial-gradient(ellipse 70% 55% at 35% 88%, rgba(255, 210, 188, 0.55), transparent 60%),
+    #ffe2da;
+  filter: blur(36px) saturate(1.12);
+  transform: scale(1.1);
+  transform-origin: center center;
+}
+
+.three-bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  max-width: none;
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
+}

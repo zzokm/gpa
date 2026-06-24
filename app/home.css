@@ -259,7 +259,15 @@ html[lang="ar"] .app-title {
   }
 }
 
+@media (max-width: 640px) {
+  .container {
+    padding-top: calc(var(--header-clearance) + env(safe-area-inset-top, 0px));
+  }
+}
+
 @media (max-width: 480px) {
   .container {
-    padding: var(--space-md);
+    padding: max(var(--header-clearance), var(--space-md)) var(--space-md) var(--space-md);
+    padding-top: calc(var(--header-clearance) + env(safe-area-inset-top, 0px));
   }
+}

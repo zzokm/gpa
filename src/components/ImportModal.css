@@ -44,13 +44,14 @@
 .paste-btn {
   position: absolute;
   top: var(--space-sm);
-  right: var(--space-sm);
+  inset-inline-end: var(--space-sm);
   z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-xs) var(--space-sm);
-  min-height: 36px;
+  min-height: 44px;
+  min-width: 44px;
   background: var(--white);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
@@ -128,13 +129,9 @@
   justify-content: flex-end;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .import-textarea {
     min-height: 9.5rem;
     padding-inline-end: calc(var(--space-md) + 5.25rem);
-  }
-
-  .paste-btn {
-    min-height: 44px;
   }
 }

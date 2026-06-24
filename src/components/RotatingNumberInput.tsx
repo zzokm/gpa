@@ -119,9 +119,9 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
         item.style.opacity = '1';
         item.style.textShadow = '0 1px 3px rgba(0, 0, 0, 0.2)';
         item.style.background = 'radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)';
-        item.style.filter = 'none'; // Clear any blur effects on active number
+        item.style.removeProperty('filter');
       } else {
-        // Inactive number styling - blur behind panes, farther numbers a bit bigger
+        // Inactive number styling — blur from CSS (--credit-pane-blur); do not set filter inline
         const distance = Math.abs(itemValue - value);
         const scale = Math.max(0.7, 1 - (distance * 0.15));
         const opacity = Math.max(0.2, 1 - (distance * 0.35));
@@ -132,7 +132,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
         item.style.opacity = opacity.toString();
         item.style.textShadow = 'none';
         item.style.background = 'none';
-        item.style.filter = distance <= 1 ? 'blur(2.5px) opacity(0.75)' : 'blur(4px) opacity(0.6)';
+        item.style.removeProperty('filter');
       }
     });
   };// Enhanced effect for perfect positioning in all scenarios

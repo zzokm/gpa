@@ -26,10 +26,10 @@
   padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  background: rgba(255, 255, 255, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,6 +232,12 @@
 }
 
 @media (max-width: 640px) {
+  .gpa-sticky-summary:not(.is-floating) {
+    position: sticky;
+    top: calc(var(--header-clearance) + env(safe-area-inset-top, 0px));
+    z-index: var(--z-sticky);
+  }
+
   .gpa-sticky-summary.is-compact .gpa-sticky-side-end .gpa-sticky-label {
     position: absolute;
     width: 1px;

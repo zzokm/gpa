@@ -235,6 +235,7 @@
   min-height: var(--clist-pill-h, 28px);
   margin: 0;
   padding: 0 6px 0 8px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   gap: 4px;
 }
@@ -267,6 +268,7 @@
     max-width: var(--clist-pill-w, 50px);
     height: var(--clist-pill-h, 28px);
     min-height: var(--clist-pill-h, 28px);
+    border-radius: var(--radius-full);
   }
   
   .grade-dropdown-option {
@@ -299,12 +301,21 @@
     padding: var(--space-sm) var(--space-md);
   }
 
-  /* Compact trigger in table: 44px touch target */
-  .course-table .grade-dropdown-trigger {
+  /* Pill mode matches credit-hours pill — do not force circle dimensions */
+  .course-table .grade-dropdown-trigger:not(.grade-dropdown-pill) {
     min-width: 44px;
     min-height: 44px;
     width: 44px;
     height: 44px;
+  }
+
+  .course-table .grade-dropdown-pill {
+    width: var(--clist-pill-w, 52px);
+    min-width: var(--clist-pill-w, 52px);
+    max-width: var(--clist-pill-w, 52px);
+    height: var(--clist-pill-h, 36px);
+    min-height: var(--clist-pill-h, 36px);
+    border-radius: var(--radius-full);
   }
 
   .course-grade-badge {
