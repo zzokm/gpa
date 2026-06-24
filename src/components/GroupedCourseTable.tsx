@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Course, Grade } from '../types/Course';
 import { getGradeStyles, calculateGPA } from '../utils/gradeUtils';
+import { getCreditHoursBreakdown } from '../utils/creditHours';
 import { useLocale } from '../i18n/LocaleContext';
 import GradeDropdown from './GradeDropdown';
 import CreditHoursDropdown from './CreditHoursDropdown';
@@ -127,17 +128,10 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
   const manualCourses = courses.filter(course => !course.isImported);
 
   // Credit hours breakdown: total (graded), passed (non-F), failed (F only)
-  const creditHoursBreakdown = useMemo(() => {
-    const graded = courses.filter(c => c.grade != null);
-    const totalCredits = graded.reduce((sum, c) => sum + c.hours, 0);
-    const passedCredits = graded
-      .filter(c => c.grade !== 'F')
-      .reduce((sum, c) => sum + c.hours, 0);
-    const failedCredits = graded
-      .filter(c => c.grade === 'F')
-      .reduce((sum, c) => sum + c.hours, 0);
-    return { totalCredits, passedCredits, failedCredits };
-  }, [courses]);
+  const creditHoursBreakdown = useMemo(
+    () => getCreditHoursBreakdown(courses),
+    [courses]
+  );
 
   // Group imported courses by level first, then by term
   const nestedGroupedCourses: NestedGroupedCourses = useMemo(() => {

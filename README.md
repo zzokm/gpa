@@ -26,7 +26,6 @@ A modern, friendly calculator built for Faculty of Computer and Artificial Intel
 ## 🚀 Try it
 
 **Live app:** [**https://gpa.zokm.me**](https://gpa.zokm.me)  
-[https://zzokm.github.io/gpa/](https://zzokm.github.io/gpa/) redirects to the same site.
 
 ---
 
@@ -45,6 +44,28 @@ Setup, project structure, components, and technical specs are in **[TECHNICAL.md
 ## 🤝 Contributing
 
 Ideas and pull requests are welcome. Fork the repo, open a branch, and send a PR.
+
+### Quality checks
+
+Run the full pipeline locally before opening a PR:
+
+```bash
+npm ci
+npm run ci
+```
+
+Individual commands:
+
+| Command | Purpose |
+|---------|---------|
+| `npm run audit` | Security audit (fails on any vulnerability) |
+| `npm run lint` | ESLint with zero warnings allowed |
+| `npm run typecheck` | TypeScript strict check |
+| `npm run test` | Unit and component tests (Vitest) |
+| `npm run test:e2e` | Smoke E2E tests (Playwright) |
+| `npm run build` | Production build |
+
+CI runs automatically on pull requests and pushes to `main`.
 
 ---
 
