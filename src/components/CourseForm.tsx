@@ -61,52 +61,45 @@ const getAllCourses = (): CourseSuggestion[] => {
       });
     };
     
+    const processRequirementBlock = (block: Record<string, unknown>) => {
+      for (const value of Object.values(block)) {
+        if (
+          value &&
+          typeof value === 'object' &&
+          'courses' in value &&
+          Array.isArray((value as { courses: unknown }).courses)
+        ) {
+          processCoursesArray((value as { courses: RawCourseData[] }).courses);
+        }
+      }
+    };
+
     // Process general requirements
     if (courseData.program_requirements?.general_requirements) {
-      const generalReq = courseData.program_requirements.general_requirements;
-      if (generalReq.mandatory?.courses) {
-        processCoursesArray(generalReq.mandatory.courses);
-      }
-      if (generalReq.elective?.courses) {
-        processCoursesArray(generalReq.elective.courses);
-      }
+      processRequirementBlock(
+        courseData.program_requirements.general_requirements as Record<string, unknown>,
+      );
     }
-    
+
     // Process university requirements
     if (courseData.program_requirements?.university_requirements_no_credit?.courses) {
-      processCoursesArray(courseData.program_requirements.university_requirements_no_credit.courses);
+      processCoursesArray(
+        courseData.program_requirements.university_requirements_no_credit.courses,
+      );
     }
-    
+
     // Process college requirements
     if (courseData.program_requirements?.college_requirements) {
-      const collegeReq = courseData.program_requirements.college_requirements;
-      if (collegeReq.mathematics_and_basic_sciences?.courses) {
-        processCoursesArray(collegeReq.mathematics_and_basic_sciences.courses);
-      }
-      if (collegeReq.basic_computer_science?.courses) {
-        processCoursesArray(collegeReq.basic_computer_science.courses);
-      }
+      processRequirementBlock(
+        courseData.program_requirements.college_requirements as Record<string, unknown>,
+      );
     }
-    
-    // Process all majors
+
+    // Process all majors (sections vary: applied_sciences_mandatory vs mandatory, etc.)
     if (courseData.majors) {
-      Object.keys(courseData.majors).forEach(majorKey => {
-        const major = courseData.majors[majorKey as keyof typeof courseData.majors];
-        if (major && major.major_requirements) {
-          const majorReq = major.major_requirements;
-          
-          if (majorReq.applied_sciences_mandatory?.courses) {
-            processCoursesArray(majorReq.applied_sciences_mandatory.courses);
-          }
-          if (majorReq.electives?.courses) {
-            processCoursesArray(majorReq.electives.courses);
-          }
-          if (majorReq.graduation_project?.courses) {
-            processCoursesArray(majorReq.graduation_project.courses);
-          }
-          if (majorReq.field_training?.courses) {
-            processCoursesArray(majorReq.field_training.courses);
-          }
+      Object.values(courseData.majors).forEach((major) => {
+        if (major?.major_requirements) {
+          processRequirementBlock(major.major_requirements as Record<string, unknown>);
         }
       });
     }
