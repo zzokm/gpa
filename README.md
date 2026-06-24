@@ -26,7 +26,6 @@ A modern, friendly calculator built for Faculty of Computer and Artificial Intel
 ## 🚀 Try it
 
 **Live app:** [**https://gpa.zokm.me**](https://gpa.zokm.me)  
-[https://zzokm.github.io/gpa/](https://zzokm.github.io/gpa/) redirects to the same site.
 
 ---
 
@@ -66,7 +65,7 @@ Individual commands:
 | `npm run test:e2e` | Smoke E2E tests (Playwright) |
 | `npm run build` | Production build |
 
-CI runs automatically on pull requests and pushes to `main`. Deploy to GitHub Pages runs only after CI succeeds on `main`.
+CI runs automatically on pull requests and pushes to `main`.
 
 ---
 
