@@ -1,9 +1,11 @@
+import './ImportModal.css'
 import React, { useState, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Course, Grade, Term, Level } from '../types/Course';
 import { useLocale } from '../i18n/LocaleContext';
 import { useModalBehavior } from '../hooks/useModalBehavior';
 import { normalizeCreditHours } from '../utils/creditHours';
+import { FCAI_REGISTERED_COURSES_URL } from '../../lib/fcai-urls';
 
 interface ImportModalProps {
   show: boolean;
@@ -192,205 +194,6 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
   const showHowToHint = importErrorKey != null && HOW_TO_ERROR_KEYS.has(importErrorKey) && !!onOpenHowTo;
 
   return createPortal(
-    <>
-      <style jsx global>{`/* Import textarea styling */
-.import-textarea {
-  width: 100%;
-  min-height: 200px;
-  padding: var(--space-sm) var(--space-md); /* Smaller padding: top/bottom smaller, left/right smaller and same */
-  border: 1px solid var(--glass-border); /* Same as form-input */
-  border-radius: var(--radius-md);
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: var(--text-sm);
-  font-weight: 400;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  color: var(--text-color);
-  transition: var(--transition-base);
-  outline: none;
-  resize: none; /* Remove resize handle */
-  box-sizing: border-box;
-  text-align: left; /* Left align for code content */
-  overflow-y: auto; /* Enable vertical scrolling */  overflow-x: hidden; /* Hide horizontal scrollbar */
-  
-  /* Hide scrollbar completely while keeping scroll functionality */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-  
-  /* Same shadow as form-input */
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.03),
-    0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-
-/* Import and Paste Button Styles - Enhanced with Glassmorphism Elements */
-.import-btn,
-.paste-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-xs);
-  color: var(--text-secondary);
-  transition: var(--transition-base);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-.import-btn::before,
-.paste-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: var(--transition-slow);
-}
-
-.import-btn:hover::before,
-.paste-btn:hover::before {
-  left: 100%;
-}
-
-.import-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
-}
-
-.import-btn:active {
-  transform: translateY(0);
-}
-
-/* Updated Paste button styling - Glassmorphism */
-.paste-btn {
-  position: absolute;
-  top: var(--space-sm);
-  right: var(--space-sm);
-  background: rgba(255, 255, 255, 0.25); /* Glassmorphism background */
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Thin border */
-  border-radius: var(--radius-sm);
-  padding: var(--space-sm) var(--space-md); /* Bigger button with better padding */
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  cursor: pointer;
-  font-size: var(--text-sm); /* Slightly bigger font */
-  color: var(--text-secondary);
-  transition: var(--transition-base);
-  z-index: 2;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.paste-btn:hover {
-  background: rgba(255, 255, 255, 0.35); /* Enhanced glassmorphism on hover */
-  border-color: rgba(255, 121, 85, 0.3); /* Primary color border on hover */
-  color: var(--primary-color); /* Primary color text on hover */
-  transform: translateY(-1px);
-}
-
-.paste-btn svg {
-  width: 20px;
-  height: 20px;
-  margin-right: var(--space-xs);
-}
-
-
-/* Import modal: opaque background and proper footer spacing */
-.modal-content.import-modal {
-  background: var(--white);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-}
-
-.modal-content.import-modal .modal-body {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-}
-
-.modal-content.import-modal .modal-footer {
-  flex-shrink: 0;
-  margin-top: 0;
-  padding: var(--space-sm) var(--space-lg) var(--space-lg);
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.modal-content.import-modal .modal-footer .button-group {
-  justify-content: flex-end;
-  margin: 0;
-}
-
-.modal-content.import-modal .modal-footer .btn-primary {
-  border-radius: var(--radius-md);
-}
-
-/* How-to link in Import modal */
-.how-to-link {
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--primary-color);
-  font-size: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.how-to-link:hover {
-  color: var(--primary-hover);
-}
-
-.import-error {
-  margin: 0 0 var(--space-md);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  color: var(--gray-800);
-}
-
-.import-error p {
-  margin: 0;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  line-height: 1.5;
-}
-
-.import-error-action {
-  display: inline-block;
-  margin-top: var(--space-sm);
-}
-
-.import-textarea.import-textarea-error {
-  border-color: rgba(239, 68, 68, 0.6);
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.12);
-}
-
-.textarea-container {
-  position: relative;
-  margin-bottom: var(--space-sm);
-  width: 100%;
-}`}</style>
     <div
       className={`modal-overlay ${mounted ? 'modal-visible' : ''}`}
       onClick={handleClose}
@@ -424,12 +227,8 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
         <div className="modal-body">
           <p className="modal-description">
             {t('import.description')}{' '}
-            <a href="http://newecom.fci.cu.edu.eg/#/courses-per-students" target="_blank" rel="noopener noreferrer">
+            <a href={FCAI_REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer">
               {t('import.registeredCourses')}
-            </a>{' '}
-            {t('howTo.orAlternative')}{' '}
-            <a href="http://193.227.14.58/" target="_blank" rel="noopener noreferrer">
-              {t('howTo.alternativeLink')}
             </a>{' '}
             {t('import.descriptionSuffix')}
             {onOpenHowTo && (
@@ -483,8 +282,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
           </div>
         </div>
       </div>
-    </div>
-    </>,
+    </div>,
     document.body
   );
 };

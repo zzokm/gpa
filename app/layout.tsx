@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, Rubik } from 'next/font/google'
-// CSS: Bootstrap → GlobalStyles (tokens, reset, shared primitives — inlined in TSX)
 import 'bootstrap/dist/css/bootstrap.min.css'
-import GlobalStyles from '../src/components/GlobalStyles'
+import './globals.css'
+import './home.css'
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   variable: '--font-bricolage',
@@ -38,7 +38,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${bricolage.variable} ${rubik.variable}`}>
       <body>
-        <GlobalStyles />
         {children}
       </body>
     </html>

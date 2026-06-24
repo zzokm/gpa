@@ -1,0 +1,78 @@
+/* Glass shell for fixed header controls – separate file ensures backdrop-filter is emitted */
+.header-float-btn {
+  position: fixed;
+  top: var(--space-md);
+  z-index: var(--z-header-float);
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  min-height: 36px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  transition: var(--transition-base);
+}
+
+.header-float-btn:hover {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 121, 85, 0.4);
+}
+
+.header-float-btn-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.header-float-btn-inner:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.how-to-btn {
+  left: var(--space-md);
+}
+
+.language-switcher {
+  right: var(--space-md);
+  font-family: var(--font-rubik), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+[dir='rtl'] .language-switcher,
+html[lang='ar'] .language-switcher {
+  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.language-switcher-label {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 480px) {
+  .header-float-btn {
+    padding: var(--space-sm) var(--space-md);
+    min-height: 36px;
+  }
+
+  .header-float-btn-inner {
+    font-size: var(--text-sm);
+  }
+
+  .header-float-btn-inner svg {
+    width: 18px;
+    height: 18px;
+  }
+}

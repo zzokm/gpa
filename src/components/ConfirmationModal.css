@@ -1,0 +1,78 @@
+.confirmation-modal .modal-body {
+  padding-top: var(--space-md);
+  padding-bottom: var(--space-lg);
+}
+
+.confirmation-message {
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--text-color);
+  line-height: 1.55;
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.confirmation-modal .modal-footer .button-group {
+  justify-content: stretch;
+  gap: var(--space-sm);
+}
+
+.confirmation-modal .modal-footer .button-group button {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  padding: 0 var(--space-md);
+  box-sizing: border-box;
+}
+
+.confirmation-modal .modal-footer .btn-danger {
+  margin: 0;
+  border: none;
+  font-weight: 650;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 650;
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  min-height: 44px;
+  min-width: 7.5rem;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #b91c1c, #991b1b);
+}
+
+.btn-danger:active {
+  transform: translateY(1px);
+}
+
+.btn-danger:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .confirmation-modal .modal-footer .button-group {
+    flex-direction: column-reverse;
+  }
+
+  .confirmation-modal .modal-footer .button-group button {
+    width: 100%;
+  }
+}

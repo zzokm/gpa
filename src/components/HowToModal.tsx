@@ -1,5 +1,6 @@
 'use client'
 
+import './HowToModal.css'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useLocale } from '../i18n/LocaleContext'
@@ -18,6 +19,8 @@ function detectDeviceTab(): TabId {
 interface HowToModalProps {
   show: boolean
   onHide: () => void
+  /** When true, stacks above another open modal and blurs only that layer beneath */
+  stacked?: boolean
 }
 
 const COPY_HTML_EXTENSION_URL =
@@ -29,7 +32,7 @@ const LEMUR_BROWSER_PLAY_STORE_URL =
 const IOS_COPY_HTML_SHORTCUT_URL =
   'https://www.icloud.com/shortcuts/ed70823ea1384571ad90507bcd62dec7'
 
-export default function HowToModal({ show, onHide }: HowToModalProps) {
+export default function HowToModal({ show, onHide, stacked = false }: HowToModalProps) {
   const { t } = useLocale()
   const [activeTab, setActiveTab] = useState<TabId>('desktop')
   const closeButtonRef = useRef<HTMLButtonElement>(null)
@@ -59,73 +62,8 @@ export default function HowToModal({ show, onHide }: HowToModalProps) {
   ]
 
   return createPortal(
-    <>
-      <style jsx global>{`/* How-to modal */
-.how-to-modal-overlay {
-  z-index: var(--z-modal-backdrop);
-}
-
-.modal-content.how-to-modal {
-  max-width: 640px;
-  width: 100%;
-  background: var(--white);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: 1px solid var(--border-color);
-}
-
-.how-to-tabs {
-  display: flex;
-  gap: 0;
-  padding: 0 var(--space-2xl);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.how-to-tab {
-  padding: var(--space-md) var(--space-lg);
-  background: none;
-  border: none;
-  border-bottom: 3px solid transparent;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: var(--transition-base);
-}
-
-.how-to-tab:hover {
-  color: var(--text-color);
-}
-
-.how-to-tab.active {
-  color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
-}
-
-.how-to-body {
-  padding-top: var(--space-lg);
-}
-
-.how-to-steps {
-  margin: 0;
-  padding-left: var(--space-xl);
-  line-height: 1.7;
-}
-
-.how-to-steps li {
-  margin-bottom: var(--space-sm);
-}
-
-.how-to-steps a {
-  color: var(--primary-color);
-  font-weight: 600;
-}
-
-.how-to-steps a:hover {
-  text-decoration: underline;
-}`}</style>
     <div
-      className={`modal-overlay how-to-modal-overlay ${mounted ? 'modal-visible' : ''}`}
+      className={`modal-overlay ${stacked ? 'modal-overlay--stacked' : ''} ${mounted ? 'modal-visible' : ''}`}
       onClick={handleHide}
       role="presentation"
     >
@@ -145,7 +83,7 @@ export default function HowToModal({ show, onHide }: HowToModalProps) {
             onClick={handleHide}
             aria-label={t('common.close')}
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
               <path d="M14.7 1.3c-.4-.4-1-.4-1.4 0L8 6.6 2.7 1.3c-.4-.4-1-.4-1.4 0s-.4 1 0 1.4L6.6 8l-5.3 5.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3L8 9.4l5.3 5.3c.2.2.5.3.7.3.2 0 .5-.1.7-.3.4-.4.4-1 0-1.4L9.4 8l5.3-5.3c.4-.4.4-1 0-1.4z" />
             </svg>
           </button>
@@ -245,8 +183,7 @@ export default function HowToModal({ show, onHide }: HowToModalProps) {
           )}
         </div>
       </div>
-    </div>
-    </>,
+    </div>,
     document.body
   )
 }

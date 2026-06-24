@@ -1,0 +1,122 @@
+.how-to-modal .modal-header {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.how-to-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 var(--space-xl);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.how-to-tab {
+  position: relative;
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: -1px;
+  background: none;
+  border: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.how-to-tab::after {
+  content: '';
+  position: absolute;
+  left: var(--space-lg);
+  right: var(--space-lg);
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.how-to-tab:hover {
+  color: var(--text-color);
+}
+
+.how-to-tab.active {
+  color: var(--primary-color);
+}
+
+.how-to-tab.active::after {
+  background: var(--primary-color);
+}
+
+.how-to-tab:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: -2px;
+  border-radius: var(--radius-xs);
+}
+
+.how-to-body {
+  padding: var(--space-lg) var(--space-xl) var(--space-xl);
+}
+
+.how-to-steps {
+  margin: 0;
+  padding-inline-start: 1.35rem;
+  line-height: 1.65;
+  color: var(--text-color);
+}
+
+.how-to-steps li {
+  margin-bottom: var(--space-md);
+  padding-inline-start: var(--space-xs);
+}
+
+.how-to-steps li:last-child {
+  margin-bottom: 0;
+}
+
+.how-to-steps a {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.how-to-steps a:hover {
+  color: var(--primary-hover);
+}
+
+@media (max-width: 480px) {
+  .how-to-tabs {
+    padding: 0 var(--space-md);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .how-to-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .how-to-tab {
+    flex: 1 0 auto;
+    padding: var(--space-sm) var(--space-md);
+    min-height: 44px;
+  }
+
+  .how-to-tab::after {
+    left: var(--space-md);
+    right: var(--space-md);
+  }
+
+  .how-to-body {
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+  }
+
+  .how-to-steps {
+    font-size: var(--text-sm);
+    padding-inline-start: 1.15rem;
+  }
+
+  .how-to-steps li {
+    margin-bottom: var(--space-sm);
+  }
+}

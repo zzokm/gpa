@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { DropdownManager } from '../utils/dropdownManager';
 import { CREDIT_HOURS_OPTIONS } from '../utils/creditHours';
+import { WesternDigits } from './LocaleDisplay';
 
 // Dropdown Menu component that uses portal to render outside the table
 interface DropdownMenuProps {
@@ -137,7 +138,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onSelectCreditHours, trigge
               }}
               type="button"
             >
-              {hours}
+              <WesternDigits>{hours}</WesternDigits>
             </button>
             {index < CREDIT_HOURS_OPTIONS.length - 1 && (
               <div className="credit-hours-dropdown-separator"></div>
@@ -244,7 +245,7 @@ const CreditHoursDropdown: React.FC<CreditHoursDropdownProps> = ({
         type="button"
       >
         {variant === 'pill' && (
-          <span className="credit-hours-pill-value">{currentHours}</span>
+          <WesternDigits className="credit-hours-pill-value">{currentHours}</WesternDigits>
         )}
         <svg 
           className={`credit-hours-dropdown-arrow ${isOpen ? 'open' : ''}`} 
