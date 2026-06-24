@@ -3,6 +3,7 @@ import React from 'react'
 import { FaGithub, FaStar } from 'react-icons/fa'
 import { FiGithub } from 'react-icons/fi'
 import { useLocale } from '../i18n/LocaleContext'
+import { track } from '../analytics'
 
 const CREATOR_GITHUB_URL = 'https://github.com/zzokm'
 const REPO_GITHUB_URL = 'https://github.com/zzokm/gpa'
@@ -20,6 +21,7 @@ const Footer: React.FC = () => {
             rel="noopener noreferrer"
             className="footer-creator-link"
             title={t('footer.visitProfile')}
+            onClick={() => track('footer_creator_click')}
           >
             <FiGithub className="footer-creator-link-icon" aria-hidden="true" />
             <span>{t('footer.madeBy')}</span>
@@ -33,6 +35,7 @@ const Footer: React.FC = () => {
             rel="noopener noreferrer"
             className="footer-star-btn"
             title={t('footer.starRepo')}
+            onClick={() => track('footer_star_click')}
           >
             <FaGithub className="footer-star-btn-github" aria-hidden="true" />
             <span className="footer-star-btn-separator" aria-hidden="true" />

@@ -8,6 +8,7 @@ import CreditHoursDropdown from './CreditHoursDropdown';
 import ConfirmationModal from './ConfirmationModal';
 import { WesternDigits } from './LocaleDisplay';
 import { STORAGE_KEYS } from '../utils/storage-keys';
+import { track, courseCountBucket } from '../analytics';
 
 interface GroupedCourseTableProps {
   courses: Course[];
@@ -247,17 +248,39 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
   }, [groupStates, isInitialized]);
 
   // Toggle group expansion; CSS grid 0fr/1fr drives smooth height animation
-  const toggleGroup = (groupKey: string) => {
+  const setGroupExpanded = (
+    groupKey: string,
+    meta: { groupType: 'manual' | 'level' | 'term'; level?: string; term?: string },
+    eventName: 'group_toggle' | 'group_keyboard_toggle',
+  ) => {
+    const expanded = groupStates[groupKey] !== false;
+    track(eventName, {
+      group_type: meta.groupType,
+      action: expanded ? 'collapse' : 'expand',
+      level: meta.level ?? 'none',
+      term: meta.term ?? 'none',
+    });
     setGroupStates((prev) => ({
       ...prev,
       [groupKey]: prev[groupKey] === false,
     }));
   };
 
-  const handleHeaderKeyDown = (event: React.KeyboardEvent, groupKey: string) => {
+  const toggleGroup = (
+    groupKey: string,
+    meta: { groupType: 'manual' | 'level' | 'term'; level?: string; term?: string },
+  ) => {
+    setGroupExpanded(groupKey, meta, 'group_toggle');
+  };
+
+  const handleHeaderKeyDown = (
+    event: React.KeyboardEvent,
+    groupKey: string,
+    meta: { groupType: 'manual' | 'level' | 'term'; level?: string; term?: string },
+  ) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      toggleGroup(groupKey);
+      setGroupExpanded(groupKey, meta, 'group_keyboard_toggle');
     }
   };
 
@@ -361,7 +384,10 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
           <button
             type="button"
             className="reset-button"
-            onClick={() => setShowConfirmModal(true)}
+            onClick={() => {
+              track('clear_all_prompt', { course_count_bucket: courseCountBucket(courses.length) });
+              setShowConfirmModal(true);
+            }}
             title={t('aria.resetAll')}
             aria-label={t('aria.resetAll')}
           >
@@ -381,8 +407,8 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
             type="button"
             className="group-header level-header group-header-toggle"
             aria-expanded={isManualExpanded}
-            onClick={() => toggleGroup(MANUAL_GROUP_KEY)}
-            onKeyDown={(event) => handleHeaderKeyDown(event, MANUAL_GROUP_KEY)}
+            onClick={() => toggleGroup(MANUAL_GROUP_KEY, { groupType: 'manual' })}
+            onKeyDown={(event) => handleHeaderKeyDown(event, MANUAL_GROUP_KEY, { groupType: 'manual' })}
           >
             <div className="group-header-primary">
               <span className={`group-toggle ${isManualExpanded ? 'expanded' : 'collapsed'}`}>
@@ -426,8 +452,8 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
               type="button"
               className="group-header level-header group-header-toggle"
               aria-expanded={isLevelExpanded}
-              onClick={() => toggleGroup(`level-${level}`)}
-              onKeyDown={(event) => handleHeaderKeyDown(event, `level-${level}`)}
+              onClick={() => toggleGroup(`level-${level}`, { groupType: 'level', level })}
+              onKeyDown={(event) => handleHeaderKeyDown(event, `level-${level}`, { groupType: 'level', level })}
             >
               <div className="group-header-primary">
                 <span className={`group-toggle ${isLevelExpanded ? 'expanded' : 'collapsed'}`}>
@@ -460,8 +486,8 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
                         type="button"
                         className="group-header term-header group-header-toggle"
                         aria-expanded={isTermExpanded}
-                        onClick={() => toggleGroup(`term-${level}-${term}`)}
-                        onKeyDown={(event) => handleHeaderKeyDown(event, `term-${level}-${term}`)}
+                        onClick={() => toggleGroup(`term-${level}-${term}`, { groupType: 'term', level, term })}
+                        onKeyDown={(event) => handleHeaderKeyDown(event, `term-${level}-${term}`, { groupType: 'term', level, term })}
                       >
                         <div className="group-header-primary">
                           <span className={`group-toggle ${isTermExpanded ? 'expanded' : 'collapsed'}`}>
@@ -512,7 +538,10 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
           onClearCourses(courses);
           setShowConfirmModal(false);
         }}
-        onCancel={() => setShowConfirmModal(false)}
+        onCancel={() => {
+          track('clear_all_cancel');
+          setShowConfirmModal(false);
+        }}
         isDanger={true}
       />
     </div>

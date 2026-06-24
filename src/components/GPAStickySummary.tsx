@@ -4,10 +4,12 @@ import './GPAStickySummary.css'
 import { motion, useReducedMotion } from 'motion/react'
 import {
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react'
+import { track } from '../analytics'
 import { Course } from '../types/Course'
 import { calculateGPA } from '../utils/gradeUtils'
 import { getCreditHoursBreakdown } from '../utils/creditHours'
@@ -263,6 +265,12 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
   const assessment = getGPAAssessment(gpa)
   const showAssessment = gpa !== 0
 
+  useEffect(() => {
+    if (showAssessment) {
+      track('gpa_assessment_shown', { assessment_key: assessment.key.replace(/^gpa\./, '') })
+    }
+  }, [showAssessment, assessment.key])
+
   const transition = layoutInstant || prefersReducedMotion
     ? { duration: 0 }
     : isUndocking
@@ -316,6 +324,7 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
     animatingRef.current = true
     dockedRef.current = true
     pendingAnimRef.current = 'dock'
+    track('gpa_sticky_dock')
     setIsUndocking(false)
     setIsFloating(true)
     setIsCompact(true)
@@ -348,6 +357,7 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
 
     animatingRef.current = true
     pendingAnimRef.current = 'undock'
+    track('gpa_sticky_undock')
     setIsUndocking(true)
     setIsCompact(false)
     setIsFloating(true)

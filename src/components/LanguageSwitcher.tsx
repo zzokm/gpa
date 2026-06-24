@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
+import { track } from '../analytics'
 const headerGlassStyle: CSSProperties = {
   backdropFilter: 'blur(12px)',
   WebkitBackdropFilter: 'blur(12px)',
@@ -26,7 +27,9 @@ export default function LanguageSwitcher() {
   const { locale, setLocale, t } = useLocale()
 
   const handleClick = () => {
-    setLocale(locale === 'en' ? 'ar-EG' : 'en')
+    const next = locale === 'en' ? 'ar-EG' : 'en'
+    track('locale_change', { from_locale: locale, to_locale: next })
+    setLocale(next)
   }
 
   return (

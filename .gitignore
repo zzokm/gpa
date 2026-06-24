@@ -137,8 +137,11 @@ README.md
 !CHANGELOG.md
 !CONTRIBUTING.md
 !LICENSE.md
-!docs/**/*.md
-!docs/**/*.pdf
+!data/**/*.md
+!data/**/*.pdf
+!docs/PRIVACY.md
+data/google-analytics-integration.md
+data/ga4-admin-events.md
 
 # Documentation folders
 documentation/

@@ -1,14 +1,16 @@
 import './ImportModal.css'
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Course, Grade, Term, Level } from '../types/Course';
 import { useLocale } from '../i18n/LocaleContext';
 import { useModalBehavior } from '../hooks/useModalBehavior';
 import { normalizeCreditHours } from '../utils/creditHours';
 import { FCAI_REGISTERED_COURSES_URL } from '../../lib/fcai-urls';
+import { importErrorKeyToParam, track, trackTextLengthSuccess } from '../analytics';
 
 interface ImportModalProps {
   show: boolean;
+  entryPoint?: 'course_form' | 'other';
   onHide: () => void;
   onImport: (courses: Course[]) => void;
   currentCourses: Course[];
@@ -28,22 +30,34 @@ const HOW_TO_ERROR_KEYS = new Set<ImportErrorKey>([
   'import.noValidCourses',
 ]);
 
-const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, currentCourses, onOpenHowTo }) => {
+const ImportModal: React.FC<ImportModalProps> = ({ show, entryPoint = 'other', onHide, onImport, currentCourses, onOpenHowTo }) => {
   const { t } = useLocale();
   const [importText, setImportText] = useState('');
   const [importErrorKey, setImportErrorKey] = useState<ImportErrorKey | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const wasOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (show && !wasOpenRef.current) {
+      track('import_modal_open', { entry_point: entryPoint });
+    }
+    wasOpenRef.current = show;
+  }, [show, entryPoint]);
 
   const setImportError = useCallback((key: ImportErrorKey | null) => {
     setImportErrorKey(key);
   }, []);
 
   const handleClose = useCallback(() => {
+    track('import_modal_close', {
+      had_text: importText.trim().length > 0,
+      had_error: importErrorKey !== null,
+    });
     setImportText('');
     setImportError(null);
     onHide();
-  }, [onHide, setImportError]);
+  }, [onHide, setImportError, importText, importErrorKey]);
 
   const { mounted } = useModalBehavior({
     isOpen: show,
@@ -52,24 +66,30 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
   });
 
   const handlePaste = async () => {
+    track('import_paste_click');
     try {
       const text = await navigator.clipboard.readText();
       if (text) {
         setImportText(text);
         setImportError(null);
+        trackTextLengthSuccess(text.length);
       } else {
         setImportError('import.noText');
+        track('import_paste_failed', { reason: 'empty' });
       }
     } catch (err) {
       console.error('Failed to read clipboard contents: ', err);
       setImportError('import.clipboardDenied');
+      track('import_paste_failed', { reason: 'denied' });
     }
   };
 
   const handleImport = () => {
+    track('import_submit');
     const pastedHTML = importText.trim();
     if (!pastedHTML) {
       setImportError('import.pleasePaste');
+      track('import_failed', { error_key: importErrorKeyToParam('import.pleasePaste') });
       return;
     }
 
@@ -79,6 +99,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
     const tableRows = dummy.querySelectorAll('table.table.table-striped.col-md-12 tr');
     if (tableRows.length === 0) {
       setImportError('import.invalidHtml');
+      track('import_failed', { error_key: importErrorKeyToParam('import.invalidHtml') });
       return;
     }
 
@@ -166,6 +187,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
       setImportError(null);
     } else {
       setImportError('import.noValidCourses');
+      track('import_failed', { error_key: importErrorKeyToParam('import.noValidCourses') });
     }
   };
 
@@ -227,14 +249,26 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
         <div className="modal-body">
           <p className="modal-description">
             {t('import.description')}{' '}
-            <a href={FCAI_REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer">
+            <a
+              href={FCAI_REGISTERED_COURSES_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => track('import_registered_courses_link_click')}
+            >
               {t('import.registeredCourses')}
             </a>{' '}
             {t('import.descriptionSuffix')}
             {onOpenHowTo && (
               <>
                 {' '}
-                <button type="button" className="how-to-link" onClick={onOpenHowTo}>
+                <button
+                  type="button"
+                  className="how-to-link"
+                  onClick={() => {
+                    track('import_how_to_click', { context: 'help_link' });
+                    onOpenHowTo?.();
+                  }}
+                >
                   {t('import.howToLink')}
                 </button>
               </>
@@ -245,7 +279,14 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
             <div className="import-error" id="import-modal-error" role="alert" aria-live="polite">
               <p>{t(importErrorKey)}</p>
               {showHowToHint && (
-                <button type="button" className="how-to-link import-error-action" onClick={onOpenHowTo}>
+                <button
+                  type="button"
+                  className="how-to-link import-error-action"
+                  onClick={() => {
+                    track('import_how_to_click', { context: 'error' });
+                    onOpenHowTo?.();
+                  }}
+                >
                   {t('import.howToLink')}
                 </button>
               )}
