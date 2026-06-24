@@ -2,8 +2,6 @@
 
 import type { CSSProperties } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
-import './HeaderFloatBtn.css'
-
 const headerGlassStyle: CSSProperties = {
   backdropFilter: 'blur(12px)',
   WebkitBackdropFilter: 'blur(12px)',
