@@ -1,0 +1,140 @@
+.import-textarea::placeholder {
+  color: var(--gray-600);
+  opacity: 1;
+}
+
+.import-textarea {
+  width: 100%;
+  min-height: 11rem;
+  padding: var(--space-md);
+  padding-inline-end: calc(var(--space-md) + 5.75rem);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  background: var(--gray-50);
+  color: var(--text-color);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+  text-align: start;
+  line-height: 1.5;
+  vertical-align: top;
+  scrollbar-width: thin;
+}
+
+.import-textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.15);
+  background: var(--white);
+}
+
+.import-textarea.import-textarea-error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.textarea-container {
+  position: relative;
+  width: 100%;
+}
+
+.paste-btn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  min-height: 36px;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition: var(--transition-base);
+}
+
+.paste-btn:hover {
+  border-color: rgba(255, 121, 85, 0.45);
+  color: var(--primary-color);
+  background: var(--primary-50);
+}
+
+.paste-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.paste-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.how-to-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--primary-color);
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.how-to-link:hover {
+  color: var(--primary-hover);
+}
+
+.import-error {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  color: var(--gray-800);
+}
+
+.import-error p {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.import-error-action {
+  display: inline-block;
+  margin-top: var(--space-sm);
+}
+
+.import-modal .modal-body {
+  padding-bottom: var(--space-md);
+}
+
+.import-modal .modal-footer {
+  padding-top: var(--space-sm);
+}
+
+.import-modal .modal-footer .button-group {
+  justify-content: flex-end;
+}
+
+@media (max-width: 480px) {
+  .import-textarea {
+    min-height: 9.5rem;
+    padding-inline-end: calc(var(--space-md) + 5.25rem);
+  }
+
+  .paste-btn {
+    min-height: 44px;
+  }
+}
