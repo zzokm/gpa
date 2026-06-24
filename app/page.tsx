@@ -6,7 +6,7 @@ import { LocaleProvider, useLocale } from '../src/i18n/LocaleContext'
 import LanguageSwitcher from '../src/components/LanguageSwitcher'
 import CourseForm from '../src/components/CourseForm'
 import GroupedCourseTable from '../src/components/GroupedCourseTable'
-import GPADisplay from '../src/components/GPADisplay'
+import GPAStickySummary from '../src/components/GPAStickySummary'
 import ImportModal from '../src/components/ImportModal'
 import HowToModal from '../src/components/HowToModal'
 import HowToButton from '../src/components/HowToButton'
@@ -15,7 +15,6 @@ import ThreeJSBackground from '../src/components/ThreeJSBackground'
 import Footer from '../src/components/Footer'
 import { DocumentTitleMeta } from '../src/components/DocumentTitleMeta'
 import { Course, Grade } from '../src/types/Course'
-import { calculateGPA } from '../src/utils/gradeUtils'
 import { migrateStorageIfNeeded, STORAGE_KEYS } from '../src/utils/storage-keys'
 
 migrateStorageIfNeeded()
@@ -154,7 +153,6 @@ function HomeContent() {
     }
   }, [courses, t, hasLoadedFromStorage])
 
-  const gpa = calculateGPA(courses)
   const isError = saveNotification.message === t('notify.saveFailed')
 
   return (
@@ -202,17 +200,21 @@ function HomeContent() {
           <CourseForm
             onAddCourse={addCourse}
             onShowImport={() => setShowImportModal(true)}
+            hasCourses={courses.length > 0}
           />
         </div>
-        <GroupedCourseTable
-          courses={courses}
-          onRemoveCourse={removeCourse}
-          onUpdateGrade={updateCourseGrade}
-          onUpdateCreditHours={updateCreditHours}
-          onClearCourses={(clearedCourses) => clearAllCourses(clearedCourses)}
-        />
 
-        <GPADisplay gpa={gpa} />
+        <div className="app-course-workspace">
+          <GPAStickySummary courses={courses} />
+          <GroupedCourseTable
+            courses={courses}
+            onRemoveCourse={removeCourse}
+            onUpdateGrade={updateCourseGrade}
+            onUpdateCreditHours={updateCreditHours}
+            onClearCourses={(clearedCourses) => clearAllCourses(clearedCourses)}
+          />
+        </div>
+
         <ImportModal
           show={showImportModal}
           onHide={() => setShowImportModal(false)}
