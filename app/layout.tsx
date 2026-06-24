@@ -1,11 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, Rubik } from 'next/font/google'
-// CSS loading order: Bootstrap → globals (font) → index (tokens + base styles) → responsive-fixes (overrides)
+// CSS: Bootstrap → GlobalStyles (tokens, reset, shared primitives — inlined in TSX)
 import 'bootstrap/dist/css/bootstrap.min.css'
-import './globals.css'
-import '../src/index.css'
-import '../src/responsive-fixes.css'
-
+import GlobalStyles from '../src/components/GlobalStyles'
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   variable: '--font-bricolage',
@@ -40,7 +37,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${bricolage.variable} ${rubik.variable}`}>
-      <body>{children}</body>
+      <body>
+        <GlobalStyles />
+        {children}
+      </body>
     </html>
   )
 }
