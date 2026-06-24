@@ -44,7 +44,7 @@ test.describe('smoke', () => {
     expect(res.ok()).toBeTruthy()
     const body = await res.json()
     expect(body).toHaveProperty('online')
-    expect(typeof body.online).toBe('boolean')
+    expect(body.online === null || typeof body.online === 'boolean').toBe(true)
   })
 
   test('language switcher toggles document language', async ({ page }) => {

@@ -337,10 +337,6 @@ export default function GPAStickySummary({ courses }: GPAStickySummaryProps) {
     }
   }, [updateDockMetrics, runAnimation, courses.length, spacerHeight])
 
-  if (courses.length === 0) {
-    return null
-  }
-
   const summaryClassName = [
     'gpa-sticky-summary',
     isFloating ? 'is-floating' : '',
