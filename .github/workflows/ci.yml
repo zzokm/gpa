@@ -120,7 +120,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npm run test:coverage 2>&1 | tee vitest.log
+          npm run test:coverage -- --reporter=json --outputFile=vitest-results.json 2>&1 | tee vitest.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -134,8 +134,10 @@ jobs:
           echo "## Unit test results" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- Outcome: **${{ steps.unit_run.outcome }}**" >> "$GITHUB_STEP_SUMMARY"
-          if [ -f vitest.log ]; then
-            node -e "const fs=require('fs');const log=fs.readFileSync('vitest.log','utf8');const m=log.match(/Test Files\\s+(.+)\\n\\s*Tests\\s+(.+)\\n/s);if(m){console.log('- '+m[1].trim());console.log('- '+m[2].trim());}else{console.log('- Could not parse Vitest summary from vitest.log');}" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f vitest-results.json ]; then
+            node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('vitest-results.json','utf8'));const s=(r && typeof r==='object')?r:{};const suitesTotal=s.numTotalTestSuites??0;const suitesPassed=s.numPassedTestSuites??0;const suitesFailed=s.numFailedTestSuites??0;const testsTotal=s.numTotalTests??0;const testsPassed=s.numPassedTests??0;const testsFailed=s.numFailedTests??0;const testsPending=s.numPendingTests??0;const testsTodo=s.numTodoTests??0;console.log('- Suites: **'+suitesPassed+'/'+suitesTotal+'** passed (**'+suitesFailed+'** failed)');console.log('- Tests: **'+testsPassed+'/'+testsTotal+'** passed (**'+testsFailed+'** failed, **'+testsPending+'** pending, **'+testsTodo+'** todo)');if(s.testResults){const failed=(s.testResults||[]).filter(tr=>tr.status==='failed');if(failed.length){console.log('');console.log('### Failed suites (up to 10)');for(const f of failed.slice(0,10)){console.log('- `'+f.name+'`');const msgs=[];for(const a of (f.assertionResults||[])){for(const m of (a.failureMessages||[])) msgs.push(m);}if(msgs.length){const excerpt=msgs.join('\\n').split('\\n').slice(0,12).join('\\n');console.log('```');console.log(excerpt);console.log('```');}}}}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- vitest-results.json: **missing**" >> "$GITHUB_STEP_SUMMARY"
           fi
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- Coverage artifact: **coverage** (retention 7 days)" >> "$GITHUB_STEP_SUMMARY"
