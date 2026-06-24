@@ -137,9 +137,10 @@ README.md
 !CHANGELOG.md
 !CONTRIBUTING.md
 !LICENSE.md
+!docs/**/*.md
+!docs/**/*.pdf
 
 # Documentation folders
-docs/
 documentation/
 notes/
 *.txt
