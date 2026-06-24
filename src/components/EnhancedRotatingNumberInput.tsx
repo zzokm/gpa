@@ -1,6 +1,5 @@
 // EnhancedRotatingNumberInput.tsx
 import React, { useEffect, useRef } from 'react';
-import { useLocale } from '../i18n/LocaleContext';
 import {
   CREDIT_HOURS_OPTIONS,
   getNextCreditHoursWrap,
@@ -16,20 +15,12 @@ interface RotatingNumberInputProps {
   disabled?: boolean;
 }
 
-const ARABIC_NUMERALS = '٠١٢٣٤٥٦٧٨٩';
-
-function formatNumberForLocale(n: number, locale: string): string {
-  if (locale !== 'ar-EG') return String(n);
-  return String(n).replace(/\d/g, (d) => ARABIC_NUMERALS[parseInt(d, 10)] ?? d);
-}
-
 const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
   value,
   onChange,
   options = CREDIT_HOURS_OPTIONS,
   disabled = false
 }) => {
-  const { locale } = useLocale();
   const stripRef = useRef<HTMLDivElement>(null);
   const numbers = [...options];
 
@@ -294,13 +285,15 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
             {numbers.map((num) => (
               <div 
                 key={num} 
-                className={`number-item ${num === value ? 'active' :
+                className={`number-item western-digits ${num === value ? 'active' :
                   num === prevValue ? 'prev' :
                   num === nextValue ? 'next' : ''}`}
                 data-value={num}
                 aria-selected={num === value}
+                lang="en"
+                dir="ltr"
               >
-                {formatNumberForLocale(num, locale)}
+                {num}
               </div>
             ))}
           </div>
