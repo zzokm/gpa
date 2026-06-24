@@ -19,9 +19,6 @@ const rubik = Rubik({
 export const metadata: Metadata = {
   title: 'GPA Calculator - FCAI Cairo University',
   description: 'GPA Calculator for Faculty of Computer and Artificial Intelligence students at Cairo University',
-  icons: {
-    icon: '/favicon.ico',
-  },
 }
 
 export const viewport: Viewport = {
