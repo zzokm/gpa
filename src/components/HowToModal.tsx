@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useLocale } from '../i18n/LocaleContext'
 import { useModalBehavior } from '../hooks/useModalBehavior'
+import { durationSecondsBucket, track } from '../analytics'
 
 type TabId = 'desktop' | 'android' | 'ios'
 
@@ -19,6 +20,7 @@ function detectDeviceTab(): TabId {
 interface HowToModalProps {
   show: boolean
   onHide: () => void
+  entryPoint?: 'fab' | 'import_modal'
   /** When true, stacks above another open modal and blurs only that layer beneath */
   stacked?: boolean
 }
@@ -32,14 +34,29 @@ const LEMUR_BROWSER_PLAY_STORE_URL =
 const IOS_COPY_HTML_SHORTCUT_URL =
   'https://www.icloud.com/shortcuts/ed70823ea1384571ad90507bcd62dec7'
 
-export default function HowToModal({ show, onHide, stacked = false }: HowToModalProps) {
+export default function HowToModal({ show, onHide, entryPoint = 'fab', stacked = false }: HowToModalProps) {
   const { t } = useLocale()
   const [activeTab, setActiveTab] = useState<TabId>('desktop')
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const openedAtRef = useRef<number | null>(null)
+  const wasOpenRef = useRef(false)
 
   const handleHide = useCallback(() => {
+    if (openedAtRef.current !== null) {
+      const seconds = (Date.now() - openedAtRef.current) / 1000
+      track('how_to_close', {
+        active_tab: activeTab,
+        duration_seconds_bucket: durationSecondsBucket(seconds),
+        entry_point: entryPoint,
+      })
+      openedAtRef.current = null
+    }
     onHide()
-  }, [onHide])
+  }, [onHide, activeTab, entryPoint])
+
+  const trackLink = (linkId: string) => {
+    track('how_to_link_click', { link_id: linkId })
+  }
 
   const { mounted } = useModalBehavior({
     isOpen: show,
@@ -50,8 +67,15 @@ export default function HowToModal({ show, onHide, stacked = false }: HowToModal
   useEffect(() => {
     if (show) {
       setActiveTab(detectDeviceTab())
+      if (!wasOpenRef.current) {
+        track('how_to_open', { entry_point: entryPoint })
+        openedAtRef.current = Date.now()
+      }
+      wasOpenRef.current = true
+    } else {
+      wasOpenRef.current = false
     }
-  }, [show])
+  }, [show, entryPoint])
 
   if (!show) return null
 
@@ -95,7 +119,10 @@ export default function HowToModal({ show, onHide, stacked = false }: HowToModal
               key={id}
               type="button"
               className={`how-to-tab ${activeTab === id ? 'active' : ''}`}
-              onClick={() => setActiveTab(id)}
+              onClick={() => {
+                if (id !== activeTab) track('how_to_tab_change', { tab: id })
+                setActiveTab(id)
+              }}
             >
               {label}
             </button>
@@ -107,17 +134,17 @@ export default function HowToModal({ show, onHide, stacked = false }: HowToModal
             <ol className="how-to-steps">
               <li>
                 {t('howTo.desktop.install')}{' '}
-                <a href={COPY_HTML_EXTENSION_URL} target="_blank" rel="noopener noreferrer">
+                <a href={COPY_HTML_EXTENSION_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('copy_html_extension')}>
                   {t('howTo.copyHtmlExtension')}
                 </a>
               </li>
               <li>
                 {t('howTo.desktop.open')}{' '}
-                <a href={REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer">
+                <a href={REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_primary')}>
                   {t('import.registeredCourses')}
                 </a>{' '}
                 {t('howTo.orAlternative')}{' '}
-                <a href={REGISTERED_COURSES_ALT_URL} target="_blank" rel="noopener noreferrer">
+                <a href={REGISTERED_COURSES_ALT_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_alt')}>
                   {t('howTo.alternativeLink')}
                 </a>{' '}
                 {t('howTo.desktop.openSuffix')}
@@ -131,23 +158,23 @@ export default function HowToModal({ show, onHide, stacked = false }: HowToModal
               <li>{t('howTo.android.step1')}</li>
               <li>
                 {t('howTo.android.download')}{' '}
-                <a href={LEMUR_BROWSER_PLAY_STORE_URL} target="_blank" rel="noopener noreferrer">
+                <a href={LEMUR_BROWSER_PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('lemur_browser')}>
                   {t('howTo.android.playStore')}
                 </a>
               </li>
               <li>
                 {t('howTo.android.step2')}{' '}
-                <a href={COPY_HTML_EXTENSION_URL} target="_blank" rel="noopener noreferrer">
+                <a href={COPY_HTML_EXTENSION_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('copy_html_extension')}>
                   {t('howTo.copyHtmlExtension')}
                 </a>
               </li>
               <li>
                 {t('howTo.android.step3Prefix')}{' '}
-                <a href={REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer">
+                <a href={REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_primary')}>
                   {t('import.registeredCourses')}
                 </a>{' '}
                 {t('howTo.orAlternative')}{' '}
-                <a href={REGISTERED_COURSES_ALT_URL} target="_blank" rel="noopener noreferrer">
+                <a href={REGISTERED_COURSES_ALT_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_alt')}>
                   {t('howTo.alternativeLink')}
                 </a>{' '}
                 {t('howTo.android.step3Suffix')}
@@ -160,18 +187,18 @@ export default function HowToModal({ show, onHide, stacked = false }: HowToModal
             <ol className="how-to-steps">
               <li>
                 {t('howTo.ios.step1')}{' '}
-                <a href={IOS_COPY_HTML_SHORTCUT_URL} target="_blank" rel="noopener noreferrer">
+                <a href={IOS_COPY_HTML_SHORTCUT_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('ios_copy_html_shortcut')}>
                   {t('howTo.ios.copyHtmlShortcut')}
                 </a>
               </li>
               <li>{t('howTo.ios.step2')}</li>
               <li>
                 {t('howTo.ios.step3Prefix')}{' '}
-                <a href={REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer">
+                <a href={REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_primary')}>
                   {t('import.registeredCourses')}
                 </a>{' '}
                 {t('howTo.orAlternative')}{' '}
-                <a href={REGISTERED_COURSES_ALT_URL} target="_blank" rel="noopener noreferrer">
+                <a href={REGISTERED_COURSES_ALT_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_alt')}>
                   {t('howTo.alternativeLink')}
                 </a>{' '}
                 {t('howTo.ios.step3Suffix')}

@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Rubik } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './globals.css'
 import './home.css'
+import { AnalyticsScripts } from './AnalyticsScripts'
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   variable: '--font-bricolage',
@@ -39,6 +40,7 @@ export default function RootLayout({
     <html lang="en" className={`${bricolage.variable} ${rubik.variable}`}>
       <body>
         {children}
+        <AnalyticsScripts />
       </body>
     </html>
   )

@@ -20,6 +20,7 @@
     "ci": "npm run audit && npm run lint && npm run typecheck && npm run test && npm run build && npm run test:e2e"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.9",
     "@types/bootstrap": "^5.2.10",
     "@types/three": "^0.176.0",
     "bootstrap": "^5.3.6",
