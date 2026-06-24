@@ -46,6 +46,28 @@ Setup, project structure, components, and technical specs are in **[TECHNICAL.md
 
 Ideas and pull requests are welcome. Fork the repo, open a branch, and send a PR.
 
+### Quality checks
+
+Run the full pipeline locally before opening a PR:
+
+```bash
+npm ci
+npm run ci
+```
+
+Individual commands:
+
+| Command | Purpose |
+|---------|---------|
+| `npm run audit` | Security audit (fails on any vulnerability) |
+| `npm run lint` | ESLint with zero warnings allowed |
+| `npm run typecheck` | TypeScript strict check |
+| `npm run test` | Unit and component tests (Vitest) |
+| `npm run test:e2e` | Smoke E2E tests (Playwright) |
+| `npm run build` | Production build |
+
+CI runs automatically on pull requests and pushes to `main`. Deploy to GitHub Pages runs only after CI succeeds on `main`.
+
 ---
 
 ## 📄 License
