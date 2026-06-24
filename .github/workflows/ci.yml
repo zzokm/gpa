@@ -160,7 +160,7 @@ jobs:
         run: |
           set -euo pipefail
           npm run build 2>&1 | tee build.log
-      - uses: actions/cache/save@v4
+      - uses: actions/cache/save@v6
         if: always()
         with:
           path: .next/cache
