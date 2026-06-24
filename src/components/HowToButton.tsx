@@ -1,9 +1,16 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
+import './HeaderFloatBtn.css'
 
 interface HowToButtonProps {
   onClick: () => void
+}
+
+const headerGlassStyle: CSSProperties = {
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
 }
 
 function HelpIcon() {
@@ -23,16 +30,19 @@ function HelpIcon() {
 
 export default function HowToButton({ onClick }: HowToButtonProps) {
   const { t } = useLocale()
+
   return (
-    <button
-      type="button"
-      className="header-float-btn how-to-btn"
-      onClick={onClick}
-      title={t('howTo.buttonTitle')}
-      aria-label={t('howTo.buttonTitle')}
-    >
-      <HelpIcon />
-      <span className="how-to-btn-label">{t('howTo.buttonLabel')}</span>
-    </button>
+    <div className="header-float-btn how-to-btn" style={headerGlassStyle}>
+      <button
+        type="button"
+        className="header-float-btn-inner"
+        onClick={onClick}
+        title={t('howTo.buttonTitle')}
+        aria-label={t('howTo.buttonTitle')}
+      >
+        <HelpIcon />
+        <span className="how-to-btn-label">{t('howTo.buttonLabel')}</span>
+      </button>
+    </div>
   )
 }

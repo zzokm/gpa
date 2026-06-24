@@ -123,6 +123,13 @@
   overflow: hidden;
 }
 
+/* Subtle elevation on expandable level/term content areas */
+.table-box .level-container > .level-container-inner,
+.table-box .term-group > .table-container.term-container {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .table-box .level-container,
   .table-box .term-group .term-container {
@@ -508,6 +515,7 @@ html[lang="ar"] .reset-button,
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: var(--shadow-xs);
 }
 
 .term-group .course-container .course-table {
@@ -549,6 +557,13 @@ html[lang="ar"] .reset-button,
   width: var(--term-width) !important;
   margin-left: var(--term-indent) !important;
   margin-right: var(--term-indent) !important;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
 }
 
 /* Reset any grid settings that might affect our layout */
@@ -582,7 +597,7 @@ html[lang="ar"] .reset-button,
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
   transition: var(--transition-base);
-  /* No shadow */
+  box-shadow: var(--shadow-xs);
   
   /* Improved alignment of header content */
   display: flex;

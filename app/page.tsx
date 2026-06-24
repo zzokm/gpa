@@ -160,6 +160,9 @@ function HomeContent() {
   return (
     <>
       <DocumentTitleMeta />
+      <ThreeJSBackground />
+      <HowToButton onClick={() => setShowHowToModal(true)} />
+      <LanguageSwitcher />
       <Container className="container">
         {saveNotification.show && !undoBarVisible && (
           <div className={`save-notification ${isError ? 'error' : 'success'}`}>
@@ -194,8 +197,6 @@ function HomeContent() {
               <h1 className="app-title">{t('app.title')}</h1>
               <h5 className="app-subtitle">{t('app.subtitle')}</h5>
             </div>
-            <HowToButton onClick={() => setShowHowToModal(true)} />
-            <LanguageSwitcher />
           </div>
           <FCAIStatusIndicator />
           <CourseForm
@@ -222,7 +223,6 @@ function HomeContent() {
         <HowToModal show={showHowToModal} onHide={() => setShowHowToModal(false)} />
       </Container>
 
-      <ThreeJSBackground />
       <Footer />
     </>
   )

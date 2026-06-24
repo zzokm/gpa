@@ -208,6 +208,19 @@ pids/
 .amplify/
 
 # ===================================
+# Impeccable (design skill — local/runtime + generated context)
+# ===================================
+.impeccable/
+.impeccable-live.json
+.impeccable-live/
+node_modules/.impeccable-live/
+
+# Generated project context (also matched by *.md above)
+PRODUCT.md
+DESIGN.md
+DESIGN.json
+
+# ===================================
 # Project Specific
 # ===================================
 # Temporary component files

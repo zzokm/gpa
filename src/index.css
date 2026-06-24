@@ -113,13 +113,14 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: #ffe2da; /* Fallback until Three.js canvas paints */
 }
 
 body {
   font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'pnum' 1, 'tnum' 0, 'onum' 1, 'lnum' 0, 'dlig' 0;
-  /* Transparent background for Three.js */
-  background: transparent;
+  /* Canvas provides the page background; keep body transparent for backdrop-filter on fixed controls */
+  background-color: transparent;
   color: var(--text-color);
   line-height: 1.6;
   font-size: var(--text-base);
@@ -127,8 +128,6 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Default body background color to match ThreeJS gradient */
-  background-color: #ffe2da; /* Soft orange background that blends with ThreeJS gradient */
   margin: 0;
   padding: 0;
   overflow-x: hidden; /* Prevent horizontal scrolling */
@@ -154,6 +153,8 @@ select {
 
 /* Main Container */
 .container {
+  position: relative;
+  z-index: 1;
   max-width: 800px;
   margin: 0 auto;
   padding: var(--space-xl) var(--space-lg);
@@ -232,53 +233,7 @@ html[lang="ar"] .app-title {
   padding-bottom: 6px;
 }
 
-/* Header floating buttons – shared base for How-to and Language switcher */
-.header-float-btn {
-  position: fixed;
-  top: var(--space-md);
-  z-index: 10000;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
-  min-height: 36px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius-md);
-  color: var(--text-color);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition-base);
-  flex-shrink: 0;
-}
-
-.header-float-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 121, 85, 0.4);
-}
-
-/* How-to button: top-left */
-.how-to-btn {
-  left: var(--space-md);
-}
-
-/* Switcher: use Bricolage when showing English, Rubik when showing Arabic */
-.language-switcher {
-  right: var(--space-md);
-  font-family: var(--font-rubik), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-
-[dir="rtl"] .language-switcher,
-html[lang="ar"] .language-switcher {
-  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-
-.language-switcher-label {
-  font-variant-numeric: tabular-nums;
-}
+/* Header floating buttons – see HeaderFloatBtn.css (imported by HowToButton / LanguageSwitcher) */
 
 /* Save notification â€“ base and responsive */
 .save-notification {
@@ -437,17 +392,6 @@ html[lang="ar"] .language-switcher {
     font-size: var(--text-sm);
     max-width: calc(100vw - 2 * var(--space-md));
   }
-
-  .header-float-btn {
-    padding: var(--space-sm) var(--space-md);
-    font-size: var(--text-sm);
-    min-height: 36px;
-  }
-
-  .header-float-btn svg {
-    width: 18px;
-    height: 18px;
-  }
 }
 
 /* Modern Card Components - Ultra-Enhanced Glassmorphism for Light Background */
@@ -462,6 +406,10 @@ html[lang="ar"] .language-switcher {
   transition: var(--transition-base);
   width: 100%;
   max-width: 100%;
+}
+
+.table-box {
+  box-shadow: var(--shadow-xs);
 }
 
 /* Course Form Styling */

@@ -1,6 +1,13 @@
 'use client'
 
+import type { CSSProperties } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
+import './HeaderFloatBtn.css'
+
+const headerGlassStyle: CSSProperties = {
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+}
 
 function GlobeIcon() {
   return (
@@ -25,15 +32,17 @@ export default function LanguageSwitcher() {
   }
 
   return (
-    <button
-      type="button"
-      className="header-float-btn language-switcher"
-      onClick={handleClick}
-      title={t('lang.switch')}
-      aria-label={t('lang.switch')}
-    >
-      <GlobeIcon />
-      <span className="language-switcher-label">{locale === 'en' ? t('lang.ar') : t('lang.en')}</span>
-    </button>
+    <div className="header-float-btn language-switcher" style={headerGlassStyle}>
+      <button
+        type="button"
+        className="header-float-btn-inner"
+        onClick={handleClick}
+        title={t('lang.switch')}
+        aria-label={t('lang.switch')}
+      >
+        <GlobeIcon />
+        <span className="language-switcher-label">{locale === 'en' ? t('lang.ar') : t('lang.en')}</span>
+      </button>
+    </div>
   )
 }
