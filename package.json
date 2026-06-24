@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:check": "node scripts/check-build.js",
-    "start": "npx serve@latest out",
+    "build:static": "node scripts/build-static.js",
+    "start": "next start",
+    "start:static": "npx serve@latest out",
     "lint": "eslint .",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build:static",
     "deploy": "gh-pages -d out"
   },
   "dependencies": {

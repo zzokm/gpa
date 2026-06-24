@@ -3,8 +3,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import en from './translations/en.json'
 import arEG from './translations/ar-EG.json'
-
-const LOCALE_STORAGE_KEY = 'gpa-calculator-locale'
+import { STORAGE_KEYS } from '../utils/storage-keys'
 
 export type Locale = 'en' | 'ar-EG'
 
@@ -41,7 +40,7 @@ const LocaleContext = createContext<LocaleContextValue | null>(null)
 
 function getStoredLocale(): Locale {
   if (typeof window === 'undefined') return 'en'
-  const stored = localStorage.getItem(LOCALE_STORAGE_KEY)
+  const stored = localStorage.getItem(STORAGE_KEYS.LOCALE)
   if (stored === 'ar-EG' || stored === 'en') return stored
   return 'en'
 }
@@ -64,7 +63,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale)
     if (typeof window !== 'undefined') {
-      localStorage.setItem(LOCALE_STORAGE_KEY, newLocale)
+      localStorage.setItem(STORAGE_KEYS.LOCALE, newLocale)
     }
   }, [])
 

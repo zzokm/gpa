@@ -27,6 +27,30 @@
   font-weight: 600;
 }
 
+.total-hours-info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+  color: var(--text-muted);
+  cursor: help;
+  vertical-align: middle;
+}
+
+[dir="rtl"] .total-hours-info-icon {
+  margin-right: 0;
+  margin-left: 6px;
+}
+
+.total-hours-info-icon:hover {
+  color: var(--primary-color);
+}
+
+.total-hours-info-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* ===== Expand/collapse: same for level and term – grid + max-height + opacity ===== */
 /* Use higher-specificity selectors so these always win over global/universal rules */
 .table-box .level-container,

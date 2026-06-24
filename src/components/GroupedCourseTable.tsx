@@ -9,6 +9,7 @@ import ConfirmationModal from './ConfirmationModal';
 import './CourseTableStyles.css';
 import './GroupedCourseTable.css';
 import './CreditHoursDropdownStyles.css';
+import { STORAGE_KEYS } from '../utils/storage-keys';
 
 interface GroupedCourseTableProps {
   courses: Course[];
@@ -43,7 +44,7 @@ interface ModalData {
 }
 
 // Local storage key for group states
-const GROUP_STATE_KEY = 'gpa-calculator-group-states';
+const GROUP_STATE_KEY = STORAGE_KEYS.GROUP_STATES;
 
 const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({ 
   courses, 
@@ -125,11 +126,18 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
   const importedCourses = courses.filter(course => course.isImported);
   const manualCourses = courses.filter(course => !course.isImported);
 
-  // Total hours completed = sum of hours for courses that have a grade (recalculates when courses/grades change)
-  const totalHoursCompleted = useMemo(
-    () => courses.filter(c => c.grade != null).reduce((sum, c) => sum + c.hours, 0),
-    [courses]
-  );
+  // Credit hours breakdown: total (graded), passed (non-F), failed (F only)
+  const creditHoursBreakdown = useMemo(() => {
+    const graded = courses.filter(c => c.grade != null);
+    const totalCredits = graded.reduce((sum, c) => sum + c.hours, 0);
+    const passedCredits = graded
+      .filter(c => c.grade !== 'F')
+      .reduce((sum, c) => sum + c.hours, 0);
+    const failedCredits = graded
+      .filter(c => c.grade === 'F')
+      .reduce((sum, c) => sum + c.hours, 0);
+    return { totalCredits, passedCredits, failedCredits };
+  }, [courses]);
 
   // Group imported courses by level first, then by term
   const nestedGroupedCourses: NestedGroupedCourses = useMemo(() => {
@@ -274,9 +282,27 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
     );
   }  return (
     <div className="table-box">
-      {/* Total hours completed – top left, recalculates when courses/grades change */}
+      {/* Passed credit hours – top center, with info icon showing full breakdown */}
       <div className="table-total-hours" aria-live="polite">
-        {t('table.totalHoursCompleted')}: <strong>{totalHoursCompleted}</strong> {t('table.hrs')}
+        <span
+          className="total-hours-info-icon"
+          title={t('table.creditHoursTooltip', {
+            total: creditHoursBreakdown.totalCredits,
+            failed: creditHoursBreakdown.failedCredits,
+            passed: creditHoursBreakdown.passedCredits
+          })}
+          aria-label={t('table.creditHoursTooltip', {
+            total: creditHoursBreakdown.totalCredits,
+            failed: creditHoursBreakdown.failedCredits,
+            passed: creditHoursBreakdown.passedCredits
+          })}
+          role="img"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+        </span>
+        {t('table.totalHoursCompleted')}: <strong>{creditHoursBreakdown.passedCredits}</strong> {t('table.hrs')}
       </div>
       {/* Render manually added courses first */}
       {manualCourses.length > 0 && (

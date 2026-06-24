@@ -7,10 +7,11 @@ interface ImportModalProps {
   show: boolean;
   onHide: () => void;
   onImport: (courses: Course[]) => void;
-  currentCourses: Course[]; // Add current courses as a prop
+  currentCourses: Course[];
+  onOpenHowTo?: () => void;
 }
 
-const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, currentCourses }) => {
+const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, currentCourses, onOpenHowTo }) => {
   const { t } = useLocale();
   const [importText, setImportText] = useState('');
   const [mounted, setMounted] = useState(false);
@@ -212,7 +213,19 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, onHide, onImport, curre
         
         <div className="modal-body">
           <p className="modal-description">
-            {t('import.description')} <a href="http://newecom.fci.cu.edu.eg/#/courses-per-students" target="_blank" rel="noopener noreferrer">{t('import.registeredCourses')}</a> {t('import.descriptionSuffix')}
+            {t('import.description')}{' '}
+            <a href="http://newecom.fci.cu.edu.eg/#/courses-per-students" target="_blank" rel="noopener noreferrer">{t('import.registeredCourses')}</a>
+            {' '}{t('howTo.orAlternative')}{' '}
+            <a href="http://193.227.14.58/" target="_blank" rel="noopener noreferrer">{t('howTo.alternativeLink')}</a>
+            {' '}{t('import.descriptionSuffix')}
+            {onOpenHowTo && (
+              <>
+                {' '}
+                <button type="button" className="how-to-link" onClick={onOpenHowTo}>
+                  {t('import.howToLink')}
+                </button>
+              </>
+            )}
           </p>
           
           <div className="textarea-container">

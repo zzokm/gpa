@@ -27,7 +27,7 @@ export default function LanguageSwitcher() {
   return (
     <button
       type="button"
-      className="language-switcher"
+      className="header-float-btn language-switcher"
       onClick={handleClick}
       title={t('lang.switch')}
       aria-label={t('lang.switch')}

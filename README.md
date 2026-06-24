@@ -3,7 +3,7 @@
 **Your GPA, one tap away.**  
 A modern, friendly calculator built for Faculty of Computer and Artificial Intelligence (FCAI) students at Cairo University. Add courses, pick grades, see your GPA update in real time — and get a clear picture of where you stand.
 
-![GPA Calculator Screenshot](https://github.com/zzokm/gpa/blob/main/screenshot.png)
+![GPA Calculator Screenshot](assets/screenshot.png)
 
 ---
 

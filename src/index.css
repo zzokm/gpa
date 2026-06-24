@@ -193,12 +193,20 @@ select {
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);*/
 }
 
+.app-header-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
 .app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
-  margin-bottom: var(--space-md);
+  margin-bottom: 0;
 }
 
 .app-header-titles {
@@ -224,23 +232,22 @@ html[lang="ar"] .app-title {
   padding-bottom: 6px;
 }
 
-/* Switcher: use Bricolage when showing English, Rubik when showing Arabic */
-.language-switcher {
+/* Header floating buttons – shared base for How-to and Language switcher */
+.header-float-btn {
   position: fixed;
   top: var(--space-md);
-  right: var(--space-md);
   z-index: 10000;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
+  min-height: 36px;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius-md);
   color: var(--text-color);
-  font-family: var(--font-rubik), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; /* default: en locale, label is "العربية" */
   font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
@@ -248,14 +255,25 @@ html[lang="ar"] .app-title {
   flex-shrink: 0;
 }
 
-[dir="rtl"] .language-switcher,
-html[lang="ar"] .language-switcher {
-  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; /* ar locale, label is "English" */
-}
-
-.language-switcher:hover {
+.header-float-btn:hover {
   background: rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 121, 85, 0.4);
+}
+
+/* How-to button: top-left */
+.how-to-btn {
+  left: var(--space-md);
+}
+
+/* Switcher: use Bricolage when showing English, Rubik when showing Arabic */
+.language-switcher {
+  right: var(--space-md);
+  font-family: var(--font-rubik), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+[dir="rtl"] .language-switcher,
+html[lang="ar"] .language-switcher {
+  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .language-switcher-label {
@@ -418,6 +436,17 @@ html[lang="ar"] .language-switcher {
     padding: var(--space-sm) var(--space-md);
     font-size: var(--text-sm);
     max-width: calc(100vw - 2 * var(--space-md));
+  }
+
+  .header-float-btn {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-sm);
+    min-height: 36px;
+  }
+
+  .header-float-btn svg {
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -1966,6 +1995,88 @@ body.modal-open {
 
 .modal-content.import-modal .modal-footer .btn-primary {
   border-radius: var(--radius-md);
+}
+
+/* How-to link in Import modal */
+.how-to-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--primary-color);
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.how-to-link:hover {
+  color: var(--primary-hover);
+}
+
+/* How-to modal */
+.how-to-modal-overlay {
+  z-index: 99999999;
+}
+
+.modal-content.how-to-modal {
+  max-width: 640px;
+  width: 100%;
+  background: var(--white);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--border-color);
+}
+
+.how-to-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 var(--space-2xl);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.how-to-tab {
+  padding: var(--space-md) var(--space-lg);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.how-to-tab:hover {
+  color: var(--text-color);
+}
+
+.how-to-tab.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.how-to-body {
+  padding-top: var(--space-lg);
+}
+
+.how-to-steps {
+  margin: 0;
+  padding-left: var(--space-xl);
+  line-height: 1.7;
+}
+
+.how-to-steps li {
+  margin-bottom: var(--space-sm);
+}
+
+.how-to-steps a {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.how-to-steps a:hover {
+  text-decoration: underline;
 }
 
 @keyframes slideUp {
