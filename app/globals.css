@@ -121,10 +121,10 @@ html[lang="ar"] .grade-ltr,
   --z-modal-stacked: 1150;
   --z-toast: 1200;
 
-  /* Glass surface — matches level/term group headers */
-  --glass-bg: rgba(255, 255, 255, 0.3);
-  --glass-border: rgba(255, 255, 255, 0.4);
-  --glass-blur: blur(12px);
+  /* Glass surface — matches GPA sticky docked / floating state */
+  --glass-bg: rgba(255, 255, 255, 0.28);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-blur: blur(12px) saturate(1.15);
 
   /* Modal backdrop — dim + content blur (see body.modal-open .app-root) */
   --modal-backdrop-dim: rgba(15, 23, 42, 0.48);
@@ -132,11 +132,47 @@ html[lang="ar"] .grade-ltr,
   --modal-stack-blur: 14px;
   --modal-stack-dim: rgba(15, 23, 42, 0.4);
 
+  /* Fixed header floats — clearance for page content on mobile */
+  --header-float-size: 44px;
+  --header-float-inset: var(--space-md);
+  --header-clearance: calc(var(--header-float-inset) + var(--header-float-size) + var(--space-sm));
+
   /* Responsive breakpoints â€“ use in media queries: (max-width: var(--bp-sm)) etc. */
   --bp-xs: 360px;   /* Very small phones */
   --bp-sm: 480px;   /* Phones */
   --bp-md: 768px;   /* Tablets / narrow desktop */
   --bp-lg: 1024px;  /* Desktop */
+}
+
+/* Frosted glass — unified GPA sticky docked recipe across shells */
+:is(
+  .top-box,
+  .table-box::before,
+  .table-box .group-header,
+  .table-box .course-container::before,
+  .gpa-sticky-summary,
+  .footer-content,
+  .fcai-status-indicator,
+  .header-float-btn,
+  .undo-bar
+) {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+:is(
+  .top-box,
+  .table-box::before,
+  .table-box .group-header,
+  .table-box .course-container::before,
+  .gpa-sticky-summary,
+  .footer-content,
+  .fcai-status-indicator,
+  .header-float-btn,
+  .undo-bar
+) {
+  border-color: var(--glass-border);
 }
 
 /* Modern CSS Reset */
@@ -176,10 +212,14 @@ body {
 img,
 picture,
 video,
-canvas,
+canvas:not(.three-bg-canvas),
 svg {
   display: block;
   max-width: 100%;
+}
+
+canvas.three-bg-canvas {
+  display: block;
 }
 
 input,
@@ -569,8 +609,10 @@ body {
 }
 
 /* === Modal Shell (shared by all modals — always loaded) === */
-/* Page shell — blurred as one layer when a modal is open (backdrop-filter cannot sample WebGL canvas) */
+/* Page shell — above ambient backdrop; blurred as one layer when a modal is open */
 .app-root {
+  position: relative;
+  z-index: 1;
   transition: filter 0.22s ease;
 }
 
@@ -810,17 +852,17 @@ body.modal-open .app-root {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .modal-overlay {
     padding: var(--space-md);
+    padding-bottom: max(var(--space-md), env(safe-area-inset-bottom, 0px));
     align-items: flex-end;
   }
 
   .modal-content {
     width: 100%;
-    max-height: 92vh;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    max-height: min(92vh, 720px);
+    border-radius: var(--radius-xl);
   }
 
   .modal-header {
@@ -847,7 +889,7 @@ body.modal-open .app-root {
   }
 
   .modal-footer {
-    padding: var(--space-sm) var(--space-lg) var(--space-md);
+    padding: var(--space-sm) var(--space-lg) max(var(--space-md), env(safe-area-inset-bottom, 0px));
   }
 
   .modal-footer .button-group {
@@ -861,6 +903,12 @@ body.modal-open .app-root {
     width: 100%;
     min-width: 0;
     margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: var(--space-md);
   }
 }
 
@@ -902,20 +950,19 @@ body.modal-open .app-root {
     width: 20px !important;
     height: 20px !important;
     min-width: 20px !important;
+    min-height: 20px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
   }
   
   .group-toggle svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 10px !important;
+    height: 10px !important;
   }
   
-  /* Term spacing handled by .table-box .level-container-inner flex gap */
-  .table-box .level-container-inner > .term-group {
-    margin-top: 0 !important;
-    margin-left: var(--term-indent) !important;
-    margin-right: var(--term-indent) !important;
-  }
-  
+  /* Term indent handled in GroupedCourseTable.css — avoid double margin here */
   .term-group .group-header {
     width: 100% !important;
     margin-right: 0 !important;

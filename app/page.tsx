@@ -11,6 +11,7 @@ import ImportModal from '../src/components/ImportModal'
 import HowToModal from '../src/components/HowToModal'
 import HowToButton from '../src/components/HowToButton'
 import FCAIStatusIndicator from '../src/components/FCAIStatusIndicator'
+import AmbientBackdrop from '../src/components/AmbientBackdrop'
 import ThreeJSBackground from '../src/components/ThreeJSBackground'
 import Footer from '../src/components/Footer'
 import { WesternDigits } from '../src/components/LocaleDisplay'
@@ -159,9 +160,11 @@ function HomeContent() {
   const isError = saveNotification.message === t('notify.saveFailed')
 
   return (
-    <div className="app-root">
-      <DocumentTitleMeta />
+    <>
+      <AmbientBackdrop />
       <ThreeJSBackground />
+      <div className="app-root">
+      <DocumentTitleMeta />
       <HowToButton onClick={() => setShowHowToModal(true)} />
       <LanguageSwitcher />
       <Container className="container">
@@ -236,6 +239,7 @@ function HomeContent() {
 
       <Footer />
     </div>
+    </>
   )
 }
 

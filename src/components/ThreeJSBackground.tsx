@@ -1,8 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import * as THREE from 'three';
 
 const ThreeJSBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setPortalTarget(document.body);
+  }, []);
   const sceneRef = useRef<{
     scene?: THREE.Scene;
     camera?: THREE.PerspectiveCamera;
@@ -343,28 +349,11 @@ const ThreeJSBackground: React.FC = () => {
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 0,
-        pointerEvents: 'none',
-        // Ensure the canvas renders immediately, even before images and other resources
-        willChange: 'transform',
-        backfaceVisibility: 'hidden',
-        // Use hardware acceleration to improve performance on mobile
-        transform: 'translateZ(0)',
-        // Ensure smooth transition from CSS background color to ThreeJS
-        transition: 'opacity 0.3s ease-in',
-        opacity: 1,
-        // Background color is set in CSS to #fcede9
-      }}
-    />
+  if (!portalTarget) return null;
+
+  return createPortal(
+    <canvas ref={canvasRef} className="three-bg-canvas" aria-hidden />,
+    portalTarget
   );
 };
 
