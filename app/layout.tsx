@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, Rubik } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './globals.css'
+import './ambient-backdrop.css'
 import './home.css'
 import { AnalyticsScripts } from './AnalyticsScripts'
 const bricolage = Bricolage_Grotesque({
@@ -29,6 +30,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
