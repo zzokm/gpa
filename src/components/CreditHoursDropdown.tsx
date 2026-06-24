@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { DropdownManager } from '../utils/dropdownManager';
 import { CREDIT_HOURS_OPTIONS } from '../utils/creditHours';
 import { WesternDigits } from './LocaleDisplay';
+import { track } from '../analytics';
 
 // Dropdown Menu component that uses portal to render outside the table
 interface DropdownMenuProps {
@@ -231,6 +232,13 @@ const CreditHoursDropdown: React.FC<CreditHoursDropdownProps> = ({
   };
 
   const handleCreditHoursSelect = (hours: number) => {
+    if (hours !== currentHours) {
+      track('credit_hours_change', {
+        from_hours: currentHours,
+        to_hours: hours,
+        context: variant === 'pill' ? 'table' : 'form',
+      });
+    }
     onSelectCreditHours(courseId, hours);
     setIsOpen(false);
     dropdownManager.closeDropdown(dropdownId);

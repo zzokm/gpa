@@ -39,6 +39,12 @@ Click the **How to** button (top left on the [site](https://gpa.zokm.me)) for th
 
 Setup, project structure, components, and technical specs are in **[TECHNICAL.md](TECHNICAL.md)**.
 
+### Analytics
+
+The production site uses **Google Analytics 4** to understand usage and improve the app. Your courses stay in the browser; we do **not** send course names, student IDs, or pasted import HTML. After each **successful HTML import**, one event includes the **overall GPA** (two decimals) computed from that import. Other events cover things like import success/failure, language, and UI actions — without academic identifiers.
+
+Full details: **[docs/PRIVACY.md](docs/PRIVACY.md)**.
+
 ---
 
 ## 🤝 Contributing

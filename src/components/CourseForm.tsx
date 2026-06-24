@@ -7,6 +7,7 @@ import { useLocale } from '../i18n/LocaleContext';
 import GradeDropdown from './GradeDropdown';
 import EnhancedRotatingNumberInput from './RotatingNumberInput';
 import { normalizeCreditHours } from '../utils/creditHours';
+import { suggestionCountBucket, track } from '../analytics';
 
 // Import course data for autocomplete
 import courseData from '../data/Courses.json';
@@ -130,6 +131,8 @@ const CourseForm: React.FC<CourseFormProps> = ({
   const [suggestions, setSuggestions] = useState<CourseSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+  const [usedAutocomplete, setUsedAutocomplete] = useState(false);
+  const suggestionsShownRef = useRef(false);
   // Initialize courses data using lazy initialization
   const [allCourses] = useState<CourseSuggestion[]>(() => getAllCourses());
   const suggestionsRef = useRef<HTMLUListElement>(null);
@@ -320,7 +323,13 @@ const CourseForm: React.FC<CourseFormProps> = ({
       const filteredSuggestions = matchedCourses.map(item => item.course);
       
       setSuggestions(filteredSuggestions);
-      setShowSuggestions(filteredSuggestions.length > 0);
+      const show = filteredSuggestions.length > 0;
+      setShowSuggestions(show);
+      if (show && !suggestionsShownRef.current) {
+        track('autocomplete_show', { suggestion_count_bucket: suggestionCountBucket(filteredSuggestions.length) });
+        suggestionsShownRef.current = true;
+      }
+      if (!show) suggestionsShownRef.current = false;
       setActiveSuggestionIndex(-1);
     } else {
       setSuggestions([]);
@@ -330,6 +339,14 @@ const CourseForm: React.FC<CourseFormProps> = ({
   };
 
   const handleSuggestionClick = (suggestion: CourseSuggestion) => {
+    const query = courseName.trim().toLowerCase();
+    const code = suggestion.code.toLowerCase();
+    const name = suggestion.name.toLowerCase();
+    let matchType: 'exact_code' | 'partial_name' | 'other' = 'other';
+    if (query === code || code.startsWith(query)) matchType = 'exact_code';
+    else if (name.includes(query)) matchType = 'partial_name';
+    track('autocomplete_select', { match_type: matchType });
+    setUsedAutocomplete(true);
     setCourseName(suggestion.name);
     setCourseHours(normalizeCreditHours(suggestion.credit_hours));
     setShowSuggestions(false);
@@ -352,6 +369,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
       handleSuggestionClick(suggestions[activeSuggestionIndex]);
     } else if (e.key === 'Escape') {
       e.preventDefault();
+      if (showSuggestions) track('autocomplete_dismiss');
       setShowSuggestions(false);
       setActiveSuggestionIndex(-1);
     }
@@ -359,6 +377,13 @@ const CourseForm: React.FC<CourseFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    track('course_form_submit', {
+      used_autocomplete: usedAutocomplete,
+      credit_hours: normalizeCreditHours(courseHours),
+      has_grade: courseGrade !== null,
+    });
+    setUsedAutocomplete(false);
 
     onAddCourse({
       name: courseName,
@@ -378,7 +403,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
       {hasCourses && !isExpanded ? (
       <div className="top-box top-box-compact">
         <div className="course-form-compact">
-          <button type="button" className="btn-primary" onClick={() => setIsExpanded(true)}>
+          <button type="button" className="btn-primary" onClick={() => { track('course_form_expand'); setIsExpanded(true); }}>
             {t('form.showAddForm')}
           </button>
           <button type="button" className="btn-secondary" onClick={onShowImport}>
@@ -392,7 +417,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
         <button
           type="button"
           className="course-form-collapse-btn"
-          onClick={() => setIsExpanded(false)}
+          onClick={() => { track('course_form_collapse'); setIsExpanded(false); }}
           aria-expanded="true"
         >
           {t('form.hideAddForm')}

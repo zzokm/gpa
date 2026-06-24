@@ -1,13 +1,15 @@
 'use client'
 
 import './FCAIStatusIndicator.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import { FCAI_WEBSITE_URL } from '@/lib/fcai-urls'
 import { useLocale } from '../i18n/LocaleContext'
+import { track } from '../analytics'
 export default function FCAIStatusIndicator() {
   const { t } = useLocale()
   const [online, setOnline] = useState<boolean | null>(null)
+  const initialTrackedRef = useRef(false)
 
   useEffect(() => {
     const base = process.env.NEXT_PUBLIC_BASE_PATH || ''
@@ -17,10 +19,23 @@ export default function FCAIStatusIndicator() {
     fetch(`${apiBase}/api/fcai-status`, { signal: abort.signal })
       .then((res) => res.json())
       .then((data) => {
-        if (typeof data?.online === 'boolean') setOnline(data.online)
+        if (typeof data?.online === 'boolean') {
+          setOnline(data.online)
+          if (!initialTrackedRef.current) {
+            track('fcai_status_initial', { online: data.online })
+            initialTrackedRef.current = true
+          }
+        }
       })
       .catch((err) => {
-        if (err?.name !== 'AbortError') setOnline(false)
+        if (err?.name !== 'AbortError') {
+          setOnline(false)
+          track('fcai_status_api_error', { endpoint: 'poll' })
+          if (!initialTrackedRef.current) {
+            track('fcai_status_initial', { online: false })
+            initialTrackedRef.current = true
+          }
+        }
       })
 
     const streamUrl = `${apiBase}/api/fcai-status/stream`
@@ -28,12 +43,26 @@ export default function FCAIStatusIndicator() {
     es.onmessage = (e) => {
       try {
         const data = JSON.parse(e.data)
-        if (typeof data?.online === 'boolean') setOnline(data.online)
+        if (typeof data?.online === 'boolean') {
+          setOnline((prev) => {
+            if (prev !== null && prev !== data.online) {
+              track('fcai_status_change', { from: prev, to: data.online })
+            }
+            if (!initialTrackedRef.current) {
+              track('fcai_status_initial', { online: data.online })
+              initialTrackedRef.current = true
+            }
+            return data.online
+          })
+        }
       } catch {
         // ignore
       }
     }
-    es.onerror = () => es.close()
+    es.onerror = () => {
+      track('fcai_status_api_error', { endpoint: 'stream' })
+      es.close()
+    }
     return () => {
       abort.abort()
       es.close()
@@ -58,6 +87,7 @@ export default function FCAIStatusIndicator() {
       aria-live="polite"
       aria-label={`${statusLabel}. ${t('table.fcaiWebsiteOpen')}`}
       title={t('table.fcaiWebsiteOpen')}
+      onClick={() => track('fcai_status_link_click')}
     >
       <span
         className={`fcai-status-dot ${

@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import { DropdownManager } from '../utils/dropdownManager';
 import { useLocale } from '../i18n/LocaleContext';
 import { GradeLabel } from './LocaleDisplay';
+import { track } from '../analytics';
 
 // Define grade options once for use in all components
 const GRADE_OPTIONS: Grade[] = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
@@ -236,6 +237,13 @@ const GradeDropdown: React.FC<GradeDropdownProps> = ({
   };
 
   const handleGradeSelect = (grade: Grade) => {
+    if (currentGrade !== grade) {
+      track('grade_change', {
+        from_grade: currentGrade ?? 'none',
+        to_grade: grade,
+        context: displayMode === 'input' ? 'form' : 'table',
+      });
+    }
     onSelectGrade(courseId, grade);
     setIsOpen(false);
     dropdownManager.closeDropdown(dropdownId);

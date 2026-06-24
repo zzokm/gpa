@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Rubik } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './globals.css'
 import './home.css'
+import { AnalyticsScripts } from './AnalyticsScripts'
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
   variable: '--font-bricolage',
@@ -18,9 +19,6 @@ const rubik = Rubik({
 export const metadata: Metadata = {
   title: 'GPA Calculator - FCAI Cairo University',
   description: 'GPA Calculator for Faculty of Computer and Artificial Intelligence students at Cairo University',
-  icons: {
-    icon: '/favicon.ico',
-  },
 }
 
 export const viewport: Viewport = {
@@ -39,6 +37,7 @@ export default function RootLayout({
     <html lang="en" className={`${bricolage.variable} ${rubik.variable}`}>
       <body>
         {children}
+        <AnalyticsScripts />
       </body>
     </html>
   )
