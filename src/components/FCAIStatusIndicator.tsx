@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { FaExternalLinkAlt } from 'react-icons/fa'
+import { FCAI_WEBSITE_URL } from '@/lib/fcai-urls'
 import { useLocale } from '../i18n/LocaleContext'
 import './FCAIStatusIndicator.css'
 
@@ -15,7 +17,9 @@ export default function FCAIStatusIndicator() {
 
     fetch(`${apiBase}/api/fcai-status`, { signal: abort.signal })
       .then((res) => res.json())
-      .then((data) => setOnline(Boolean(data?.online)))
+      .then((data) => {
+        if (typeof data?.online === 'boolean') setOnline(data.online)
+      })
       .catch((err) => {
         if (err?.name !== 'AbortError') setOnline(false)
       })
@@ -37,17 +41,22 @@ export default function FCAIStatusIndicator() {
     }
   }, [])
 
+  const statusLabel =
+    online === null
+      ? t('table.fcaiStatusChecking')
+      : t('table.fcaiStatusLabel', {
+          status: online ? t('table.fcaiStatusOnline') : t('table.fcaiStatusOffline'),
+        })
+
   return (
-    <div
+    <a
+      href={FCAI_WEBSITE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
       className="fcai-status-indicator"
       aria-live="polite"
-      aria-label={
-        online === null
-          ? t('table.fcaiStatusChecking')
-          : t('table.fcaiStatusLabel', {
-              status: online ? t('table.fcaiStatusOnline') : t('table.fcaiStatusOffline'),
-            })
-      }
+      aria-label={`${statusLabel}. ${t('table.fcaiWebsiteOpen')}`}
+      title={t('table.fcaiWebsiteOpen')}
     >
       <span
         className={`fcai-status-dot ${
@@ -55,6 +64,7 @@ export default function FCAIStatusIndicator() {
         }`}
       />
       <span className="fcai-status-text">{t('table.fcaiWebsite')}</span>
-    </div>
+      <FaExternalLinkAlt className="fcai-status-link-icon" aria-hidden />
+    </a>
   )
 }

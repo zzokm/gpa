@@ -24,6 +24,7 @@
   "table.totalHoursCompleted": "Passed credit hours",
   "table.creditHoursTooltip": "Total credits: {{total}} hrs • Failed: {{failed}} hrs • Passed (displayed): {{passed}} hrs",
   "table.fcaiWebsite": "FCAI Website",
+  "table.fcaiWebsiteOpen": "Open FCAI website in a new tab",
   "table.fcaiStatusChecking": "Checking FCAI website status",
   "table.fcaiStatusLabel": "FCAI Website: {{status}}",
   "table.fcaiStatusOnline": "Online",

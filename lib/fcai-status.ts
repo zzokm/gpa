@@ -3,10 +3,9 @@
  * Runs on the server; clients read cached status and subscribe via SSE for updates.
  */
 
-export const FCAI_URLS = [
-  'http://newecom.fci.cu.edu.eg/',
-  'http://193.227.14.58/',
-]
+import { FCAI_URLS } from './fcai-urls'
+
+export { FCAI_URLS } from './fcai-urls'
 
 const TIMEOUT_MS = 4.5 * 60 * 1000
 const INTERVAL_OFFLINE_MS = 5 * 60 * 1000
@@ -73,10 +72,11 @@ async function runCheck(): Promise<void> {
   checkInProgress = true
   try {
     const now = Date.now()
+    const wasUnchecked = cached.lastCheck === 0
     const online = await evaluateFcaiUrls(FCAI_URLS)
     const changed = cached.online !== online
     cached = { online, lastCheck: now }
-    if (changed) pushToClients()
+    if (changed || wasUnchecked) pushToClients()
     reschedule(online)
   } finally {
     checkInProgress = false
@@ -90,6 +90,14 @@ function reschedule(online: boolean): void {
 
 export function getCached(): CachedResult {
   return { ...cached }
+}
+
+/** Client-facing status: null until the first background check completes. */
+export function getPublicStatus(): { online: boolean | null } {
+  if (cached.lastCheck === 0) {
+    return { online: null }
+  }
+  return { online: cached.online }
 }
 
 export function addSseClient(ctrl: ReadableStreamDefaultController<Uint8Array>): void {
@@ -112,4 +120,9 @@ export function __resetFcaiStatusForTests(): void {
   checkInProgress = false
   cached = { online: false, lastCheck: 0 }
   sseClients.clear()
+}
+
+/** Sets cached status in tests after a simulated check. */
+export function __setCachedForTests(result: CachedResult): void {
+  cached = { ...result }
 }

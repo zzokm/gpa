@@ -4,7 +4,10 @@ test.describe('smoke', () => {
   test('home page loads with title and FCAI indicator', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('heading', { name: 'GPA Calculator' })).toBeVisible()
-    await expect(page.locator('.fcai-status-indicator')).toBeVisible()
+    const fcaiLink = page.locator('.fcai-status-indicator')
+    await expect(fcaiLink).toBeVisible()
+    await expect(fcaiLink).toHaveAttribute('href', 'http://newecom.fci.cu.edu.eg/')
+    await expect(fcaiLink).toHaveAttribute('target', '_blank')
   })
 
   test('how-to modal opens and closes', async ({ page }) => {
