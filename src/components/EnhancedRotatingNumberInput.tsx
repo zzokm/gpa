@@ -1,14 +1,18 @@
 // EnhancedRotatingNumberInput.tsx
-import React, { useEffect, useRef, useState } from 'react';
-import './RotatingNumberInput.css';
-import './MobileCreditHoursOverride.css';
+import React, { useEffect, useRef } from 'react';
 import { useLocale } from '../i18n/LocaleContext';
+import {
+  CREDIT_HOURS_OPTIONS,
+  getNextCreditHoursWrap,
+  getPrevCreditHoursWrap,
+  isValidCreditHours,
+  normalizeCreditHours,
+} from '../utils/creditHours';
 
 interface RotatingNumberInputProps {
   value: number;
   onChange: (value: number) => void;
-  min?: number;
-  max?: number;
+  options?: readonly number[];
   disabled?: boolean;
 }
 
@@ -22,22 +26,20 @@ function formatNumberForLocale(n: number, locale: string): string {
 const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
   value,
   onChange,
-  min = 0,
-  max = 3,
+  options = CREDIT_HOURS_OPTIONS,
   disabled = false
 }) => {
   const { locale } = useLocale();
   const stripRef = useRef<HTMLDivElement>(null);
-  const [numbers, setNumbers] = useState<number[]>([]);
+  const numbers = [...options];
 
-  // Initialize the array of possible numbers
   useEffect(() => {
-    const nums: number[] = [];
-    for (let i = min; i <= max; i++) {
-      nums.push(i);
+    if (!isValidCreditHours(value)) {
+      onChange(normalizeCreditHours(value));
     }
-    setNumbers(nums);
-  }, [min, max]);  // Update display to show the current value with perfect centering
+  }, [value, onChange]);
+
+  // Update display to show the current value with perfect centering
   const updateDisplay = () => {
     if (!stripRef.current) return;
     
@@ -185,7 +187,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
       window.clearTimeout(finalUpdateTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, numbers, min, max]); // updateDisplay is stable and dependencies are covered  // Enhanced function to create a seamless wrap-around animation effect with better class handling
+  }, [value, numbers]); // updateDisplay is stable and dependencies are covered  // Enhanced function to create a seamless wrap-around animation effect with better class handling
   const animateWrapAround = (direction: 'left' | 'right') => {
     if (!stripRef.current) return;
     
@@ -210,7 +212,7 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
     const itemWidth = getResponsiveWidth();
     
     // Calculate the total range width of all numbers
-    const totalNumbersWidth = (max - min + 1) * itemWidth;
+    const totalNumbersWidth = numbers.length * itemWidth;
     
     // Determine the precise animation distance
     const animationOffset = direction === 'left' 
@@ -251,31 +253,37 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
 
   const handlePrev = () => {
     if (disabled) return;
-    
-    let newValue = value - 1;
-    
-    // Implement wrap-around logic
-    if (newValue < min) {
-      newValue = max; // Cycle to maximum value when going below minimum
-      animateWrapAround('left'); // Apply special animation for wrap-around
+
+    const idx = numbers.indexOf(value);
+    const wrapped = idx <= 0;
+    const newValue = getPrevCreditHoursWrap(value);
+    if (wrapped) {
+      animateWrapAround('left');
     }
-    
     onChange(newValue);
   };
 
   const handleNext = () => {
     if (disabled) return;
-    
-    let newValue = value + 1;
-    
-    // Implement wrap-around logic
-    if (newValue > max) {
-      newValue = min; // Cycle to minimum value when exceeding maximum
-      animateWrapAround('right'); // Apply special animation for wrap-around
+
+    const idx = numbers.indexOf(value);
+    const wrapped = idx === -1 || idx >= numbers.length - 1;
+    const newValue = getNextCreditHoursWrap(value);
+    if (wrapped) {
+      animateWrapAround('right');
     }
-    
     onChange(newValue);
   };
+
+  const currentIdx = numbers.indexOf(value);
+  const prevValue =
+    currentIdx >= 0
+      ? numbers[(currentIdx - 1 + numbers.length) % numbers.length]
+      : undefined;
+  const nextValue =
+    currentIdx >= 0
+      ? numbers[(currentIdx + 1) % numbers.length]
+      : undefined;
 
   return (
     <div className="credit-hours-input">
@@ -286,9 +294,9 @@ const EnhancedRotatingNumberInput: React.FC<RotatingNumberInputProps> = ({
             {numbers.map((num) => (
               <div 
                 key={num} 
-                className={`number-item ${num === value ? 'active' : 
-                  num === value - 1 || (value === min && num === max) ? 'prev' : 
-                  num === value + 1 || (value === max && num === min) ? 'next' : ''}`}
+                className={`number-item ${num === value ? 'active' :
+                  num === prevValue ? 'prev' :
+                  num === nextValue ? 'next' : ''}`}
                 data-value={num}
                 aria-selected={num === value}
               >

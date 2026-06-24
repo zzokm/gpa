@@ -5,6 +5,7 @@ import { useLocale } from '../i18n/LocaleContext';
 
 import GradeDropdown from './GradeDropdown';
 import EnhancedRotatingNumberInput from './RotatingNumberInput';
+import { normalizeCreditHours } from '../utils/creditHours';
 
 // Import course data for autocomplete
 import courseData from '../data/Courses.json';
@@ -128,22 +129,17 @@ const CourseForm: React.FC<CourseFormProps> = ({
   hasCourses = false,
 }) => {
   const { t } = useLocale();
-  const [isExpanded, setIsExpanded] = useState(!hasCourses);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [courseName, setCourseName] = useState('');
   const [courseHours, setCourseHours] = useState(2);
   const [courseGrade, setCourseGrade] = useState<Grade>('A+');
   const [suggestions, setSuggestions] = useState<CourseSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   // Initialize courses data using lazy initialization
   const [allCourses] = useState<CourseSuggestion[]>(() => getAllCourses());
-  const suggestionsRef = useRef<HTMLDivElement>(null);
+  const suggestionsRef = useRef<HTMLUListElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!hasCourses) {
-      setIsExpanded(true);
-    }
-  }, [hasCourses]);
 
   // Close suggestions when clicking outside
   useEffect(() => {
@@ -331,16 +327,40 @@ const CourseForm: React.FC<CourseFormProps> = ({
       
       setSuggestions(filteredSuggestions);
       setShowSuggestions(filteredSuggestions.length > 0);
+      setActiveSuggestionIndex(-1);
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
+      setActiveSuggestionIndex(-1);
     }
   };
 
   const handleSuggestionClick = (suggestion: CourseSuggestion) => {
     setCourseName(suggestion.name);
-    setCourseHours(suggestion.credit_hours);
+    setCourseHours(normalizeCreditHours(suggestion.credit_hours));
     setShowSuggestions(false);
+    setActiveSuggestionIndex(-1);
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || suggestions.length === 0) {
+      if (e.key === 'Escape') setShowSuggestions(false);
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveSuggestionIndex((i) => Math.min(i + 1, suggestions.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveSuggestionIndex((i) => Math.max(i - 1, 0));
+    } else if (e.key === 'Enter' && activeSuggestionIndex >= 0) {
+      e.preventDefault();
+      handleSuggestionClick(suggestions[activeSuggestionIndex]);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setShowSuggestions(false);
+      setActiveSuggestionIndex(-1);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -348,7 +368,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
 
     onAddCourse({
       name: courseName,
-      hours: courseHours,
+      hours: normalizeCreditHours(courseHours),
       grade: courseGrade
     });
 
@@ -356,13 +376,12 @@ const CourseForm: React.FC<CourseFormProps> = ({
     setCourseName('');
     setCourseHours(2);
     setCourseGrade('A+');
-    if (hasCourses) {
-      setIsExpanded(false);
-    }
   };
 
-  if (hasCourses && !isExpanded) {
-    return (
+  return (
+    <>
+      <CourseFormStyles />
+      {hasCourses && !isExpanded ? (
       <div className="top-box top-box-compact">
         <div className="course-form-compact">
           <button type="button" className="btn-primary" onClick={() => setIsExpanded(true)}>
@@ -373,10 +392,7 @@ const CourseForm: React.FC<CourseFormProps> = ({
           </button>
         </div>
       </div>
-    );
-  }
-
-  return (
+      ) : (
     <div className="top-box">
       {hasCourses && (
         <button
@@ -388,53 +404,72 @@ const CourseForm: React.FC<CourseFormProps> = ({
           {t('form.hideAddForm')}
         </button>
       )}
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} className="course-form" aria-label={t('form.addCourse')}>
         <div className="form-row">
           <label className="form-label" htmlFor="courseName">{t('form.courseName')}</label>
-          <div className="form-grade-container">
+          <div className="form-control-wrap form-control-wrap--autocomplete">
             <input
               ref={inputRef}
               type="text"
               id="courseName"
-              className="form-input"
+              className="form-input form-input--text"
               value={courseName}
               onChange={handleInputChange}
+              onKeyDown={handleInputKeyDown}
               placeholder={t('form.placeholder')}
-              onFocus={() => courseName.length >= 2 && setShowSuggestions(true)}
+              onFocus={() => courseName.length >= 2 && suggestions.length > 0 && setShowSuggestions(true)}
+              autoComplete="off"
+              aria-autocomplete="list"
+              aria-controls="course-suggestions"
+              aria-expanded={showSuggestions}
+              role="combobox"
             />
             {showSuggestions && suggestions.length > 0 && (
-              <div 
+              <ul
                 ref={suggestionsRef}
+                id="course-suggestions"
                 className="course-form-suggestions"
+                role="listbox"
+                aria-label={t('form.courseName')}
               >
                 {suggestions.map((suggestion, index) => (
-                  <div
-                    key={index}
-                    className="course-form-suggestion-item"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                  >
-                    <strong>{suggestion.code}</strong> - {suggestion.name}
-                  </div>
+                  <li key={suggestion.code} role="presentation">
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={index === activeSuggestionIndex}
+                      className={`course-form-suggestion-item${index === activeSuggestionIndex ? ' is-active' : ''}`}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      <span className="course-form-suggestion-code">{suggestion.code}</span>
+                      <span className="course-form-suggestion-name">{suggestion.name}</span>
+                    </button>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
           </div>
         </div>
-        
+
         <div className="form-row">
-          <label className="form-label" htmlFor="courseHours">{t('form.creditHours')}</label>
-          <EnhancedRotatingNumberInput
-            value={courseHours}
-            onChange={(value: number) => setCourseHours(value)}
-            min={0}
-            max={3}
-            disabled={false}
-          />
+          <label className="form-label" id="courseHours-label" htmlFor="courseHours-input">
+            {t('form.creditHours')}
+          </label>
+          <div className="form-control-wrap" id="courseHours-input" aria-labelledby="courseHours-label">
+            <EnhancedRotatingNumberInput
+              value={courseHours}
+              onChange={(value: number) => setCourseHours(value)}
+              disabled={false}
+            />
+          </div>
         </div>
 
         <div className="form-row">
-          <label className="form-label" htmlFor="courseGrade">{t('form.grade')}</label>
-          <div className="form-grade-container">
+          <label className="form-label" id="courseGrade-label" htmlFor="courseGrade-trigger">
+            {t('form.grade')}
+          </label>
+          <div className="form-control-wrap form-control-wrap--grade" aria-labelledby="courseGrade-label">
             <GradeDropdown
               courseId="form-grade"
               courseName={t('form.formGrade')}
@@ -445,12 +480,12 @@ const CourseForm: React.FC<CourseFormProps> = ({
           </div>
         </div>
 
-        <div className="button-group">
+        <div className="course-form-actions">
           <button type="submit" className="btn-primary">
             {t('form.addCourse')}
           </button>
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="btn-secondary"
             onClick={onShowImport}
           >
@@ -459,7 +494,357 @@ const CourseForm: React.FC<CourseFormProps> = ({
         </div>
       </Form>
     </div>
+      )}
+    </>
   );
 };
+
+function CourseFormStyles() {
+  return (
+    <style jsx global>{`/* Course form — shared surface + control rhythm */
+.top-box {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-xl);
+  border: 1px solid var(--glass-border);
+  transition: var(--transition-base);
+  width: 100%;
+  max-width: 100%;
+  box-shadow: var(--shadow-xs);
+}
+
+.top-box-compact {
+  padding: var(--space-md) var(--space-lg);
+}
+
+.course-form-compact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.course-form-compact .btn-primary,
+.course-form-compact .btn-secondary {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  height: 44px;
+  padding: 0 var(--space-md);
+  box-sizing: border-box;
+  font-size: var(--text-base);
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.course-form-compact .btn-primary {
+  border: 2px solid transparent;
+}
+
+.course-form-compact .btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 2px solid rgba(255, 121, 85, 0.6);
+  color: var(--primary-600);
+}
+
+.course-form-compact .btn-secondary:hover {
+  background: var(--primary-500);
+  border-color: var(--primary-500);
+  color: var(--white);
+}
+
+.course-form-collapse-btn {
+  display: block;
+  margin-bottom: var(--space-md);
+  margin-inline-start: auto;
+  padding: var(--space-xs) var(--space-sm);
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.course-form-collapse-btn:hover {
+  color: var(--primary-600);
+}
+
+.course-form-collapse-btn:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Form layout */
+.course-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 9.5rem) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-md) var(--space-lg);
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: var(--text-sm);
+  text-align: start;
+  line-height: 1.35;
+}
+
+.form-control-wrap {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+}
+
+.form-control-wrap--grade .grade-dropdown-input-mode {
+  width: 100%;
+}
+
+/* Shared control shell — matches level/term glass density */
+.course-form .form-input,
+.course-form .credit-hours-input,
+.course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+  width: 100%;
+  min-width: 0;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 0 var(--space-lg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 550;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--text-color);
+  transition:
+    border-color 0.2s var(--ease-out-quart),
+    box-shadow 0.2s var(--ease-out-quart),
+    background-color 0.2s var(--ease-out-quart);
+  outline: none;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-xs);
+}
+
+.course-form .form-input--text:placeholder-shown {
+  text-align: center;
+}
+
+.course-form .form-input--text:not(:placeholder-shown) {
+  text-align: start;
+}
+
+.course-form .form-input:focus,
+.course-form .form-input:focus-visible,
+.course-form .credit-hours-input:focus-within,
+.course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger:hover,
+.course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger:focus,
+.course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger:focus-visible {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(255, 121, 85, 0.2);
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.course-form .form-input::placeholder {
+  color: var(--text-secondary);
+  font-weight: 400;
+  opacity: 1;
+}
+
+/* Autocomplete */
+.course-form-suggestions {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  inset-inline: 0;
+  margin: 0;
+  padding: var(--space-xs);
+  list-style: none;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  max-height: 14rem;
+  overflow-y: auto;
+  z-index: var(--z-dropdown);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.course-form-suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: inherit;
+  font-weight: 500;
+  color: var(--text-color);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease-out-quart);
+}
+
+.course-form-suggestion-item:hover,
+.course-form-suggestion-item.is-active {
+  background: rgba(255, 121, 85, 0.12);
+  color: var(--primary-700);
+}
+
+.course-form-suggestion-item:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: -2px;
+}
+
+.course-form-suggestion-code {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary-600);
+}
+
+.course-form-suggestion-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Grade trigger in form */
+.course-form .grade-dropdown-input-text {
+  flex: 1;
+  text-align: center;
+  font-size: var(--text-lg);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin: 0;
+  cursor: pointer;
+}
+
+.course-form .grade-dropdown-input-mode .grade-dropdown-arrow {
+  flex-shrink: 0;
+  margin-inline-start: var(--space-sm);
+  width: 14px;
+  height: 14px;
+  color: var(--text-secondary);
+}
+
+/* Actions */
+.course-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  justify-content: stretch;
+  margin-top: var(--space-xs);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--glass-border);
+}
+
+.course-form-actions .btn-primary,
+.course-form-actions .btn-secondary {
+  flex: 1 1 12rem;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.course-form-actions .btn-primary {
+  border: 2px solid transparent;
+}
+
+.course-form-actions .btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 2px solid rgba(255, 121, 85, 0.6);
+  color: var(--primary-600);
+}
+
+.course-form-actions .btn-secondary:hover {
+  background: var(--primary-500);
+  border-color: var(--primary-500);
+  color: var(--white);
+}
+
+[dir="rtl"] .form-label {
+  text-align: start;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-form .form-input,
+  .course-form .credit-hours-input,
+  .course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+    transition: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-box {
+    padding: var(--space-lg);
+    border-radius: var(--radius-xl);
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  .form-label {
+    font-size: var(--text-base);
+  }
+
+  .course-form .form-input,
+  .course-form .credit-hours-input,
+  .course-form .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    padding: 0 var(--space-md);
+  }
+
+  .course-form-compact {
+    grid-template-columns: 1fr;
+  }
+
+  .course-form-actions {
+    flex-direction: column;
+  }
+
+  .course-form-actions .btn-primary,
+  .course-form-actions .btn-secondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .form-label {
+    min-width: 0;
+  }
+}`}</style>
+  );
+}
 
 export default CourseForm;
