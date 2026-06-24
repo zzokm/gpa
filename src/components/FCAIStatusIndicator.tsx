@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import { FCAI_WEBSITE_URL } from '@/lib/fcai-urls'
 import { useLocale } from '../i18n/LocaleContext'
-import './FCAIStatusIndicator.css'
-
 export default function FCAIStatusIndicator() {
   const { t } = useLocale()
   const [online, setOnline] = useState<boolean | null>(null)
@@ -49,6 +47,60 @@ export default function FCAIStatusIndicator() {
         })
 
   return (
+    <>
+      <style jsx global>{`.fcai-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 2px 10px;
+  margin: 0;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 9999px;
+  box-shadow: var(--shadow-xs);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.fcai-status-indicator:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.fcai-status-link-icon {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.fcai-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fcai-status-dot.fcai-status-online {
+  background: #22c55e;
+}
+
+.fcai-status-dot.fcai-status-offline {
+  background: #ef4444;
+}
+
+.fcai-status-dot.fcai-status-unknown {
+  background: #eab308;
+}`}</style>
     <a
       href={FCAI_WEBSITE_URL}
       target="_blank"
@@ -66,5 +118,6 @@ export default function FCAIStatusIndicator() {
       <span className="fcai-status-text">{t('table.fcaiWebsite')}</span>
       <FaExternalLinkAlt className="fcai-status-link-icon" aria-hidden />
     </a>
+    </>
   )
 }
