@@ -359,41 +359,34 @@ html[lang="ar"] .reset-button,
 }
 
 /* Responsive styles for reset button */
+.reset-button {
+  min-height: 44px;
+}
+
 @media (max-width: 768px) {
   .reset-button {
-    font-size: 0.8rem;
-    padding: 0.5rem 1rem;
-    gap: 6px;
+    font-size: var(--text-sm);
+    padding: var(--space-sm) var(--space-md);
+    gap: var(--space-xs);
+    min-height: 44px;
   }
   
   .reset-button svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
 }
 
 @media (max-width: 480px) {
   .reset-button {
-    font-size: 0.75rem;
-    padding: 0.45rem 0.9rem;
-    gap: 5px;
+    font-size: var(--text-sm);
+    padding: var(--space-sm) var(--space-md);
+    min-height: 44px;
   }
   
   .reset-button svg {
-    width: 13px;
-    height: 13px;
-  }
-}
-
-@media (max-width: 380px) {
-  .reset-button {
-    font-size: 0.7rem;
-    padding: 0.35rem 0.7rem;
-  }
-  
-  .reset-button svg {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
   }
 }
 
@@ -771,14 +764,25 @@ html[lang="ar"] .reset-button,
 /* ===== Responsive Adjustments ===== */
 @media (max-width: 768px) {
   :root {
-    --term-width: 95%;
-    --term-indent: 2.5%;
+    --term-width: 100%;
+    --term-indent: 0px;
   }
   
   /* Adjust table padding for smaller screens */
   .table-box {
     padding: var(--space-md);
-    padding-bottom: calc(var(--space-md) + var(--term-indent));
+    padding-bottom: var(--space-md);
+  }
+
+  .table-box .level-container-inner {
+    padding-inline-start: var(--space-sm);
+    box-sizing: border-box;
+  }
+
+  .level-container-inner > .term-group {
+    width: 100% !important;
+    margin-inline: 0 !important;
+    padding-inline: 0;
   }
 
   .level-group:first-child {
@@ -809,16 +813,16 @@ html[lang="ar"] .reset-button,
   }
   
   .group-toggle {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
   .group-toggle svg {
-    width: 14px;
-    height: 14px;
+    width: 10px;
+    height: 10px;
   }
   
   /* Ensure group titles have proper centering */
@@ -829,23 +833,51 @@ html[lang="ar"] .reset-button,
   }
 }
 
+@media (max-width: 640px) {
+  :root {
+    --term-width: 100%;
+    --term-indent: 0px;
+  }
+
+  .table-box .level-container-inner {
+    padding-inline-start: var(--space-sm);
+    box-sizing: border-box;
+  }
+
+  .level-container-inner > .term-group {
+    width: 100% !important;
+    margin-inline: 0 !important;
+    padding-inline: 0;
+  }
+
+  .table-box .manual-courses-group > .manual-container > .manual-container-inner > .course-container,
+  .table-box .course-group.level-group > .table-container > .course-container {
+    width: 100% !important;
+    margin-inline: 0 !important;
+  }
+
+  .table-box table.course-table {
+    max-width: 100% !important;
+  }
+}
+
 @media (max-width: 600px) {
   :root {
-    --term-width: 96%;
-    --term-indent: 2%;
+    --term-width: 100%;
+    --term-indent: 0px;
   }
 }
 
 @media (max-width: 480px) {
   :root {
-    --term-width: 97%;
-    --term-indent: 1.5%;
+    --term-width: 100%;
+    --term-indent: 0px;
   }
   
   /* Adjust table padding for mobile screens */
   .table-box {
     padding: var(--space-md);
-    padding-bottom: calc(var(--space-md) + var(--term-indent));
+    padding-bottom: var(--space-md);
   }
   .term-group {
     margin-bottom: 0;
@@ -890,8 +922,8 @@ html[lang="ar"] .reset-button,
 
 @media (max-width: 400px) {
   :root {
-    --term-width: 98%;
-    --term-indent: 1%;
+    --term-width: 100%;
+    --term-indent: 0px;
   }
   
   /* Maintain compact headers on small screens */
@@ -1144,26 +1176,35 @@ html[lang="ar"] .reset-button,
 
 @media (max-width: 768px) {
   .table-box {
-    --clist-section-gap: 7px;
-    --clist-block-gap: 10px;
-    --clist-header-min-h: 46px;
+    --clist-section-gap: 8px;
+    --clist-block-gap: 11px;
+    --clist-header-min-h: 50px;
     --clist-pill-w: 50px;
     --clist-controls-gap: 8px;
     --clist-name-px: 14px;
     --clist-row-py: 9px;
   }
+
+  .table-box .group-header {
+    padding-block: var(--space-md);
+  }
 }
 
 @media (max-width: 480px) {
   .table-box {
-    --clist-section-gap: 6px;
-    --clist-block-gap: 9px;
-    --clist-header-min-h: 44px;
-    --clist-pill-w: 48px;
-    --clist-controls-gap: 7px;
+    --clist-section-gap: 7px;
+    --clist-block-gap: 10px;
+    --clist-header-min-h: 50px;
+    --clist-pill-h: 36px;
+    --clist-pill-w: 52px;
+    --clist-controls-gap: 8px;
     --clist-name-px: 12px;
     --clist-row-py: 8px;
-    --clist-action: 32px;
+    --clist-action: 44px;
+  }
+
+  .table-box .group-header {
+    padding-block: var(--space-md);
   }
 }
 
@@ -1530,32 +1571,21 @@ tr.dropdown-open {
   }
 }
 
-/* Enhanced Mobile Glassmorphism */
+/* Enhanced Mobile Glassmorphism — same frosted recipe as GPA sticky */
 @media (max-width: 480px) {
   .top-box,
-  .gpa-display {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1.5px solid rgba(255, 255, 255, 0.6);
-  }
-
-  .table-box::before {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1.5px solid rgba(255, 255, 255, 0.6);
-  }    .form-input,
+  .gpa-display,
+  .table-box::before,
+  .form-input,
   .form-select,
   .credit-hours-input,
   .grade-dropdown-input-mode .grade-dropdown-trigger.form-input-style-trigger {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
-    width: 100%;
+    border-color: var(--glass-border);
   }
-    
+
   .credit-arrow {
     width: 40px;
     min-width: 40px; /* Ensure fixed width on mobile */
