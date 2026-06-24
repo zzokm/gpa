@@ -73,7 +73,7 @@ async function runCheck(): Promise<void> {
   try {
     const now = Date.now()
     const wasUnchecked = cached.lastCheck === 0
-    const online = await evaluateFcaiUrls(FCAI_URLS)
+    const online = await evaluateFcaiUrls([...FCAI_URLS])
     const changed = cached.online !== online
     cached = { online, lastCheck: now }
     if (changed || wasUnchecked) pushToClients()

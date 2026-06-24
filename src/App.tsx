@@ -8,6 +8,7 @@ import ThreeJSBackground from './components/ThreeJSBackground';
 import Footer from './components/Footer';
 import { Course, Grade } from './types/Course';
 import { calculateGPA } from './utils/gradeUtils';
+import { normalizeCreditHours } from './utils/creditHours';
 
 // Local Storage key for saving courses
 const STORAGE_KEY = 'gpa-calculator-courses';
@@ -68,9 +69,10 @@ const App: React.FC = () => {
   
   // New function to update credit hours
   const updateCreditHours = useCallback((courseId: string, hours: number) => {
+    const normalized = normalizeCreditHours(hours);
     setCourses(prev => prev.map(course => 
       course.id === courseId 
-        ? { ...course, hours } 
+        ? { ...course, hours: normalized } 
         : course
     ));
     
