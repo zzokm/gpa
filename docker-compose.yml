@@ -8,8 +8,20 @@ services:
     env_file:
       - path: .env
         required: false
+    # Traefik reaches the container on internal port 3000. Dokploy's published PORT must not
+    # become the app listen port or the domain (configured for 3000) returns 502.
+    expose:
+      - "3000"
     ports:
-      - "${PORT:-3000}:3000"
+      - "${HOST_PORT:-3000}:3000"
     environment:
-      - NODE_ENV=production
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
     restart: unless-stopped
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
