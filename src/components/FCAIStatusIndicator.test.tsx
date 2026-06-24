@@ -69,7 +69,7 @@ describe('FCAIStatusIndicator', () => {
     })
 
     const link = screen.getByRole('link', { name: /online/i })
-    expect(link).toHaveAttribute('href', 'http://newecom.fci.cu.edu.eg/')
+    expect(link).toHaveAttribute('href', 'http://193.227.14.58/')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener noreferrer')
   })
