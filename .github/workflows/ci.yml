@@ -32,41 +32,15 @@ jobs:
         if: always()
         shell: bash
         run: |
-          {
-            echo "## Audit results"
-            echo ""
-            echo "- Outcome: **${{ steps.audit_run.outcome }}**"
-            echo ""
-            if [ -f audit.json ]; then
-              node - <<'NODE'
-              const fs = require('fs');
-              const audit = JSON.parse(fs.readFileSync('audit.json','utf8'));
-              const meta = audit.metadata || {};
-              const vulns = (meta.vulnerabilities) || {};
-              const total = Object.values(vulns).reduce((a,b)=>a+(b||0),0);
-              console.log(`- Vulnerabilities: **${total}** (low ${vulns.low||0}, moderate ${vulns.moderate||0}, high ${vulns.high||0}, critical ${vulns.critical||0})`);
-              if (audit.vulnerabilities && Object.keys(audit.vulnerabilities).length) {
-                console.log('');
-                console.log('### Vulnerable packages');
-                const entries = Object.entries(audit.vulnerabilities)
-                  .map(([name, v]) => ({
-                    name,
-                    severity: v.severity,
-                    via: Array.isArray(v.via) ? v.via.length : 0,
-                    range: v.range || '',
-                    fix: v.fixAvailable ? (typeof v.fixAvailable === 'boolean' ? 'available' : (v.fixAvailable.name ? `${v.fixAvailable.name}@${v.fixAvailable.version}` : 'available')) : 'n/a',
-                  }))
-                  .sort((a,b) => (a.severity < b.severity ? 1 : -1));
-                for (const e of entries.slice(0, 20)) {
-                  console.log(`- \`${e.name}\` (**${e.severity}**) range: \`${e.range}\` fix: **${e.fix}**`);
-                }
-                if (entries.length > 20) console.log(`- …and ${entries.length - 20} more`);
-              }
-              NODE
-            else
-              echo "- audit.json: **missing**"
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo "## Audit results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Outcome: **${{ steps.audit_run.outcome }}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f audit.json ]; then
+            node -e "const fs=require('fs');const audit=JSON.parse(fs.readFileSync('audit.json','utf8'));const meta=audit.metadata||{};const v=(meta.vulnerabilities)||{};const total=(v.low||0)+(v.moderate||0)+(v.high||0)+(v.critical||0);console.log('- Vulnerabilities: **'+total+'** (low '+(v.low||0)+', moderate '+(v.moderate||0)+', high '+(v.high||0)+', critical '+(v.critical||0)+')');" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- audit.json: **missing**" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   lint:
     name: lint
@@ -89,40 +63,15 @@ jobs:
         if: always()
         shell: bash
         run: |
-          {
-            echo "## Lint results"
-            echo ""
-            echo "- Outcome: **${{ steps.lint_run.outcome }}**"
-            if [ -f eslint.json ]; then
-              node - <<'NODE'
-              const fs = require('fs');
-              const results = JSON.parse(fs.readFileSync('eslint.json','utf8'));
-              let errors = 0, warnings = 0;
-              for (const r of results) { errors += r.errorCount || 0; warnings += r.warningCount || 0; }
-              console.log(`- Total: **${errors}** errors, **${warnings}** warnings`);
-              const filesWithIssues = results.filter(r => (r.errorCount||0) + (r.warningCount||0) > 0);
-              if (filesWithIssues.length) {
-                console.log('');
-                console.log('### Files with issues (first 20)');
-                for (const f of filesWithIssues.slice(0, 20)) {
-                  console.log(`- \`${f.filePath}\` (${f.errorCount} errors, ${f.warningCount} warnings)`);
-                }
-                console.log('');
-                console.log('### Sample messages (first 30)');
-                let printed = 0;
-                for (const f of filesWithIssues) {
-                  for (const m of (f.messages || [])) {
-                    console.log(`- \`${f.filePath}:${m.line}:${m.column}\` **${m.severity === 2 ? 'error' : 'warn'}** \`${m.ruleId}\` — ${m.message}`);
-                    printed++;
-                    if (printed >= 30) return;
-                  }
-                }
-              }
-              NODE
-            else
-              echo "- eslint.json: **missing**"
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo "## Lint results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Outcome: **${{ steps.lint_run.outcome }}**" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f eslint.json ]; then
+            node -e "const fs=require('fs');const results=JSON.parse(fs.readFileSync('eslint.json','utf8'));let e=0,w=0;for(const r of results){e+=r.errorCount||0;w+=r.warningCount||0;}console.log('- Total: **'+e+'** errors, **'+w+'** warnings');" >> "$GITHUB_STEP_SUMMARY"
+            node -e "const fs=require('fs');const results=JSON.parse(fs.readFileSync('eslint.json','utf8'));const bad=results.filter(r=>((r.errorCount||0)+(r.warningCount||0))>0);if(!bad.length) process.exit(0);console.log('');console.log('### Files with issues (first 20)');for(const f of bad.slice(0,20)){console.log('- `'+f.filePath+'` ('+(f.errorCount||0)+' errors, '+(f.warningCount||0)+' warnings)');}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- eslint.json: **missing**" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   typecheck:
     name: typecheck
@@ -145,28 +94,15 @@ jobs:
         if: always()
         shell: bash
         run: |
-          {
-            echo "## Typecheck results"
-            echo ""
-            echo "- Outcome: **${{ steps.typecheck_run.outcome }}**"
-            echo ""
-            if [ -f tsc.log ]; then
-              node - <<'NODE'
-              const fs = require('fs');
-              const log = fs.readFileSync('tsc.log','utf8');
-              const lines = log.split(/\r?\n/);
-              const errLines = lines.filter(l => /\berror TS\d+:\b/.test(l));
-              console.log(`- TypeScript errors: **${errLines.length}**`);
-              if (errLines.length) {
-                console.log('');
-                console.log('### Error excerpt (first 40 lines matching `error TS`)');
-                for (const l of errLines.slice(0, 40)) console.log(`- ${l}`);
-              }
-              NODE
-            else
-              echo "- tsc.log: **missing**"
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo "## Typecheck results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Outcome: **${{ steps.typecheck_run.outcome }}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f tsc.log ]; then
+            node -e "const fs=require('fs');const log=fs.readFileSync('tsc.log','utf8');const errs=log.split(/\\r?\\n/).filter(l=>/\\berror TS\\d+:\\b/.test(l));console.log('- TypeScript errors: **'+errs.length+'**');if(errs.length){console.log('');console.log('### Error excerpt (first 40)');for(const l of errs.slice(0,40)) console.log('- '+l);}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- tsc.log: **missing**" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   unit:
     name: unit
@@ -195,26 +131,14 @@ jobs:
         if: always()
         shell: bash
         run: |
-          {
-            echo "## Unit test results"
-            echo ""
-            echo "- Outcome: **${{ steps.unit_run.outcome }}**"
-            if [ -f vitest.log ]; then
-              node - <<'NODE'
-              const fs = require('fs');
-              const log = fs.readFileSync('vitest.log','utf8');
-              const m = log.match(/Test Files\\s+(.+)\\n\\s*Tests\\s+(.+)\\n/s);
-              if (m) {
-                console.log(`- ${m[1].trim()}`);
-                console.log(`- ${m[2].trim()}`);
-              } else {
-                console.log('- Could not parse Vitest summary from vitest.log');
-              }
-              NODE
-            fi
-            echo ""
-            echo "- Coverage artifact: **coverage** (retention 7 days)"
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo "## Unit test results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Outcome: **${{ steps.unit_run.outcome }}**" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f vitest.log ]; then
+            node -e "const fs=require('fs');const log=fs.readFileSync('vitest.log','utf8');const m=log.match(/Test Files\\s+(.+)\\n\\s*Tests\\s+(.+)\\n/s);if(m){console.log('- '+m[1].trim());console.log('- '+m[2].trim());}else{console.log('- Could not parse Vitest summary from vitest.log');}" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Coverage artifact: **coverage** (retention 7 days)" >> "$GITHUB_STEP_SUMMARY"
 
   build:
     name: build
@@ -243,28 +167,14 @@ jobs:
         if: always()
         shell: bash
         run: |
-          {
-            echo "## Build results"
-            echo ""
-            echo "- Outcome: **${{ steps.build_run.outcome }}**"
-            if [ -f build.log ]; then
-              node - <<'NODE'
-              const fs = require('fs');
-              const log = fs.readFileSync('build.log','utf8');
-              const nextLine = log.split(/\r?\n/).find(l => l.includes('Next.js'));
-              if (nextLine) console.log(`- ${nextLine.trim()}`);
-              const routesStart = log.indexOf('Route (app)');
-              if (routesStart >= 0) {
-                console.log('');
-                console.log('### Routes (excerpt)');
-                const excerpt = log.slice(routesStart).split(/\r?\n/).slice(0, 15);
-                for (const l of excerpt) console.log(`- ${l}`);
-              }
-              NODE
-            fi
-            echo ""
-            echo "- Cache saved: \`.next/cache\` (key: \`next-cache-${{ github.sha }}\`)"
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo "## Build results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Outcome: **${{ steps.build_run.outcome }}**" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f build.log ]; then
+            node -e "const fs=require('fs');const log=fs.readFileSync('build.log','utf8');const nextLine=log.split(/\\r?\\n/).find(l=>l.includes('Next.js'));if(nextLine) console.log('- '+nextLine.trim());const i=log.indexOf('Route (app)');if(i>=0){console.log('');console.log('### Routes (excerpt)');const ex=log.slice(i).split(/\\r?\\n/).slice(0,15);for(const l of ex) console.log('- '+l);}" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Cache saved: \`.next/cache\` (key: \`next-cache-${{ github.sha }}\`)" >> "$GITHUB_STEP_SUMMARY"
 
   e2e:
     name: e2e
@@ -293,51 +203,12 @@ jobs:
         if: always()
         shell: bash
         run: |
-          {
-            echo "## E2E smoke results"
-            echo ""
-            echo "- Outcome: **${{ steps.e2e_run.outcome }}**"
-            echo "- Browser: Chromium"
-            if [ -f playwright.json ]; then
-              node - <<'NODE'
-              const fs = require('fs');
-              const json = JSON.parse(fs.readFileSync('playwright.json','utf8'));
-              const stats = json.stats || {};
-              const expected = stats.expected || 0;
-              const unexpected = stats.unexpected || 0;
-              const flaky = stats.flaky || 0;
-              const skipped = stats.skipped || 0;
-              console.log(`- Tests: **${expected}** passed, **${unexpected}** failed, **${flaky}** flaky, **${skipped}** skipped`);
-              const failures = [];
-              const walk = (suite) => {
-                for (const s of (suite.suites || [])) walk(s);
-                for (const spec of (suite.specs || [])) {
-                  for (const t of (spec.tests || [])) {
-                    for (const r of (t.results || [])) {
-                      if (r.status === 'failed') {
-                        failures.push({
-                          title: [spec.title, t.title].filter(Boolean).join(' — '),
-                          error: (r.error && (r.error.message || r.error.stack)) || 'Unknown error',
-                        });
-                      }
-                    }
-                  }
-                }
-              };
-              walk(json);
-              if (failures.length) {
-                console.log('');
-                console.log('### Failures (up to 10)');
-                for (const f of failures.slice(0, 10)) {
-                  console.log(`- **${f.title}**`);
-                  const msg = String(f.error).split('\\n').slice(0, 8).join('\\n');
-                  console.log('```');
-                  console.log(msg);
-                  console.log('```');
-                }
-              }
-              NODE
-            else
-              echo "- playwright.json: **missing**"
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo "## E2E smoke results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Outcome: **${{ steps.e2e_run.outcome }}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Browser: Chromium" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f playwright.json ]; then
+            node -e "const fs=require('fs');const json=JSON.parse(fs.readFileSync('playwright.json','utf8'));const s=json.stats||{};const expected=s.expected||0;const unexpected=s.unexpected||0;const flaky=s.flaky||0;const skipped=s.skipped||0;console.log('- Tests: **'+expected+'** passed, **'+unexpected+'** failed, **'+flaky+'** flaky, **'+skipped+'** skipped');" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo \"- playwright.json: **missing**\" >> \"$GITHUB_STEP_SUMMARY\"
+          fi
