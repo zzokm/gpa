@@ -139,6 +139,7 @@ README.md
 !LICENSE.md
 !data/**/*.md
 !data/**/*.pdf
+!docs/PRIVACY.md
 data/google-analytics-integration.md
 data/ga4-admin-events.md
 
