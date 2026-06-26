@@ -140,6 +140,7 @@ README.md
 !data/**/*.md
 !data/**/*.pdf
 !docs/PRIVACY.md
+!docs/COURSE_MAP_ARCHITECTURE_PLAN.md
 data/google-analytics-integration.md
 data/ga4-admin-events.md
 
