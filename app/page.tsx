@@ -19,6 +19,13 @@ import { DocumentTitleMeta } from '../src/components/DocumentTitleMeta'
 import { Course, Grade } from '../src/types/Course'
 import { migrateStorageIfNeeded, STORAGE_KEYS } from '../src/utils/storage-keys'
 import { normalizeCreditHours } from '../src/utils/creditHours'
+import { getNormalizedCatalog } from '../src/course-map/catalog/normalizeCatalog'
+import {
+  buildTranscriptSnapshot,
+} from '../src/course-map/transcript/buildTranscriptSnapshot'
+import { saveTranscriptToStorage, migrateTranscriptIfNeeded } from '../src/course-map/transcript/transcriptStorage'
+import { parseFcaiHtml } from '../src/course-map/transcript/parseFcaiHtml'
+import HamburgerMenu from '../src/components/CourseMap/HamburgerMenu'
 import {
   courseCountBucket,
   syncUserPropertiesFromCourses,
@@ -65,6 +72,7 @@ function HomeContent() {
       track('storage_load_failed', { error_type: error })
     }
     setCourses(loaded)
+    migrateTranscriptIfNeeded(loaded)
     setHasLoadedFromStorage(true)
   }, [])
 
@@ -192,9 +200,17 @@ function HomeContent() {
     })
   }, [])
 
-  const importCourses = useCallback((importedCourses: Course[]) => {
+  const importCourses = useCallback((importedCourses: Course[], rawHtml: string) => {
     const replacedExisting = courses.length > 0
     trackImportSuccess(importedCourses, { replacedExisting, locale })
+
+    const catalog = getNormalizedCatalog()
+    const parseResult = parseFcaiHtml(rawHtml)
+    if (parseResult.ok) {
+      const transcript = buildTranscriptSnapshot(parseResult.courses, rawHtml, catalog)
+      saveTranscriptToStorage(transcript)
+    }
+
     const coursesWithIds = importedCourses.map((course) => ({
       ...course,
       id: Date.now().toString() + Math.random().toString()
@@ -257,6 +273,7 @@ function HomeContent() {
       <ThreeJSBackground />
       <div className="app-root">
       <DocumentTitleMeta />
+      <HamburgerMenu activeRoute="calculator" />
       <HowToButton onClick={() => openHowToModal('fab')} />
       <LanguageSwitcher />
       <Container className="container">

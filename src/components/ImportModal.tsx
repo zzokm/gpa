@@ -1,18 +1,18 @@
 import './ImportModal.css'
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Course, Grade, Term, Level } from '../types/Course';
+import { Course } from '../types/Course';
 import { useLocale } from '../i18n/LocaleContext';
 import { useModalBehavior } from '../hooks/useModalBehavior';
-import { normalizeCreditHours } from '../utils/creditHours';
 import { FCAI_REGISTERED_COURSES_URL } from '../../lib/fcai-urls';
 import { importErrorKeyToParam, track, trackTextLengthSuccess } from '../analytics';
+import { parseFcaiHtml } from '../course-map/transcript/parseFcaiHtml';
 
 interface ImportModalProps {
   show: boolean;
   entryPoint?: 'course_form' | 'other';
   onHide: () => void;
-  onImport: (courses: Course[]) => void;
+  onImport: (courses: Course[], rawHtml: string) => void;
   currentCourses: Course[];
   onOpenHowTo?: () => void;
 }
@@ -93,96 +93,29 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, entryPoint = 'other', o
       return;
     }
 
-    const dummy = document.createElement('div');
-    dummy.innerHTML = pastedHTML;
-
-    const tableRows = dummy.querySelectorAll('table.table.table-striped.col-md-12 tr');
-    if (tableRows.length === 0) {
-      setImportError('import.invalidHtml');
-      track('import_failed', { error_key: importErrorKeyToParam('import.invalidHtml') });
+    const parseResult = parseFcaiHtml(pastedHTML);
+    if (!parseResult.ok) {
+      if (parseResult.reason === 'invalid_html') {
+        setImportError('import.invalidHtml');
+        track('import_failed', { error_key: importErrorKeyToParam('import.invalidHtml') });
+      } else {
+        setImportError('import.noValidCourses');
+        track('import_failed', { error_key: importErrorKeyToParam('import.noValidCourses') });
+      }
       return;
     }
 
-    const importedCourses: Course[] = [];
-    tableRows.forEach((row: Element) => {
-      const data = row.getElementsByTagName('td');
-      if (data.length === 0) return;
-
-      const courseName = data[1] ? data[1].innerText.trim() : '';
-      const courseHours = data[3] ? data[3].innerText.trim() : '';
-      let courseGrade: Grade | null = null;
-      let courseTerm: Term | undefined = undefined;
-      let courseLevel: Level | undefined = undefined;
-
-      if (data[6]) {
-        const gradeElement = data[6].querySelector('p');
-        const gradeText = gradeElement ? gradeElement.innerText.trim() : '';
-        if (gradeText && gradeText !== '' && gradeText !== '-' && gradeText !== 'N/A' && gradeText.trim() !== '') {
-          const validGrades: Grade[] = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
-          if (validGrades.includes(gradeText as Grade)) {
-            courseGrade = gradeText as Grade;
-          }
-        }
-      }
-
-      if (data[10]) {
-        const levelElement = data[10].querySelector('div span') as HTMLElement;
-        const levelText = levelElement ? levelElement.innerText.trim() : '';
-        if (levelText) {
-          const levelMap: Record<string, Level> = {
-            '1': 'First Level',
-            '2': 'Second Level',
-            '3': 'Third Level',
-            '4': 'Fourth Level',
-            'First': 'First Level',
-            'Second': 'Second Level',
-            'Third': 'Third Level',
-            'Fourth': 'Fourth Level',
-            'first': 'First Level',
-            'second': 'Second Level',
-            'third': 'Third Level',
-            'fourth': 'Fourth Level',
-          };
-          courseLevel = levelMap[levelText] || levelMap[levelText.replace(/ Level/i, '')];
-        }
-      }
-
-      if (data[11]) {
-        const termElement = data[11].querySelector('div span') as HTMLElement;
-        const termText = termElement ? termElement.innerText.trim() : '';
-        if (termText) {
-          const termMap: Record<string, Term> = {
-            '1': 'First Term',
-            '2': 'Second Term',
-            Summer: 'Summer Term',
-            summer: 'Summer Term',
-            First: 'First Term',
-            Second: 'Second Term',
-            first: 'First Term',
-            second: 'Second Term',
-          };
-          courseTerm = termMap[termText] || termMap[termText.replace(/ Term/i, '')] || termText;
-        }
-      }
-
-      if (courseName && courseHours) {
-        const hours = parseInt(courseHours, 10);
-        if (!isNaN(hours)) {
-          importedCourses.push({
-            name: courseName,
-            hours: normalizeCreditHours(hours),
-            grade: courseGrade,
-            term: courseTerm,
-            level: courseLevel,
-            isImported: true,
-          });
-        }
-      }
-    });
-
+    const importedCourses: Course[] = parseResult.courses.map((row) => ({
+      name: row.name,
+      hours: row.hours,
+      grade: row.grade,
+      term: row.term,
+      level: row.level,
+      isImported: true,
+    }));
     if (importedCourses.length > 0) {
       const finalCourses = processCourses(importedCourses);
-      onImport(finalCourses);
+      onImport(finalCourses, pastedHTML);
       setImportText('');
       setImportError(null);
     } else {
