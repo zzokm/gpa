@@ -20,9 +20,11 @@
     "ci": "npm run audit && npm run lint && npm run typecheck && npm run test && npm run build && npm run test:e2e"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^3.0.0",
     "@next/third-parties": "^16.2.9",
     "@types/bootstrap": "^5.2.10",
     "@types/three": "^0.184.1",
+    "@xyflow/react": "^12.11.1",
     "bootstrap": "^5.3.6",
     "motion": "^12.41.0",
     "next": "^16.1.4",
@@ -30,7 +32,8 @@
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.3",
     "react-icons": "^5.5.0",
-    "three": "^0.184.0"
+    "three": "^0.184.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
@@ -39,6 +42,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/dagre": "^0.7.54",
     "@types/node": "^26.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
