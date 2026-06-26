@@ -1,0 +1,50 @@
+.course-map-page {
+  --course-map-chrome-top: calc(
+    max(var(--space-md), env(safe-area-inset-top, 0px)) + var(--header-float-size) + var(--space-sm)
+  );
+  --course-map-chrome-bottom: calc(
+    max(var(--space-md), env(safe-area-inset-bottom, 0px)) + 56px
+  );
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.course-map-loading,
+.course-map-empty {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.course-map-empty p,
+.course-map-loading {
+  padding: var(--space-md) var(--space-lg);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--gray-600);
+  font-size: var(--text-sm);
+}
+
+.course-map-banner {
+  position: fixed;
+  top: calc(var(--course-map-chrome-top) + var(--space-xs));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-canvas-controls);
+  padding: var(--space-xs) var(--space-md);
+  background: rgba(255, 121, 85, 0.12);
+  border: 1px solid rgba(255, 121, 85, 0.25);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  color: var(--primary-800);
+  max-width: calc(100vw - var(--space-xl));
+  text-align: center;
+}

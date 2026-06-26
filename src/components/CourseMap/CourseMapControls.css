@@ -1,0 +1,149 @@
+/* Blurred controls pill — top center; hamburger/lang sit on either side via header-float.css */
+.course-map-controls-shell {
+  position: fixed;
+  top: max(var(--space-md), env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-canvas-controls);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  width: max-content;
+  max-width: calc(
+    100vw - 2 * (var(--space-md) + var(--header-float-size) + var(--space-sm))
+  );
+  box-sizing: border-box;
+}
+
+.course-map-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm) var(--space-md);
+  width: max-content;
+  max-width: 100%;
+}
+
+.course-map-controls-label {
+  font-size: var(--text-xs);
+  color: var(--gray-600);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.course-map-controls-major,
+.course-map-controls-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.course-map-controls-select {
+  appearance: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-lg) var(--space-xs) var(--space-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-color);
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23475569'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 6px center;
+  cursor: pointer;
+  min-height: 36px;
+}
+
+.course-map-controls-select:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.course-map-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--gray-300);
+  cursor: pointer;
+  padding: 0;
+  transition: background 200ms var(--ease-out);
+}
+
+.course-map-switch--on {
+  background: var(--primary-500);
+}
+
+.course-map-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: var(--shadow-xs);
+  transition: transform 200ms var(--ease-out-quart);
+}
+
+.course-map-switch--on .course-map-switch-thumb {
+  transform: translateX(20px);
+}
+
+.course-map-controls-zoom {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.course-map-zoom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-color);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms var(--ease-out), border-color 150ms var(--ease-out);
+}
+
+.course-map-zoom-btn:hover {
+  background: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 121, 85, 0.4);
+}
+
+.course-map-zoom-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.course-map-zoom-level {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--gray-600);
+  min-width: 44px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  .course-map-controls-shell {
+    max-width: calc(100vw - var(--space-lg));
+  }
+
+  .course-map-controls-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+}

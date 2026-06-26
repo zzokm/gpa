@@ -114,6 +114,9 @@ html[lang="ar"] .grade-ltr,
   /* Z-index scale */
   --z-sticky: 200;
   --z-header-float: 250;
+  --z-canvas-controls: 260;
+  --z-canvas-legend: 270;
+  --z-side-panel: 280;
   --z-dropdown: 300;
   --z-modal-backdrop: 1000;
   --z-modal: 1100;

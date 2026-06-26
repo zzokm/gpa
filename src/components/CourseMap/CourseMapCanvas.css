@@ -1,0 +1,54 @@
+.course-map-canvas-wrap {
+  position: fixed;
+  top: var(--course-map-chrome-top, 0);
+  bottom: var(--course-map-chrome-bottom, 0);
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.course-map-canvas-wrap--panel-open .react-flow {
+  margin-right: 380px;
+}
+
+[dir='rtl'] .course-map-canvas-wrap--panel-open .react-flow {
+  margin-right: 0;
+  margin-left: 380px;
+}
+
+.course-map-canvas-wrap .react-flow {
+  background: transparent;
+}
+
+.course-map-canvas-wrap .react-flow__panel.react-flow__attribution {
+  display: none;
+}
+
+/* Keep edges visible between node rows */
+.course-map-canvas-wrap .react-flow__edges {
+  z-index: 2;
+}
+
+.course-map-canvas-wrap .react-flow__nodes {
+  z-index: 3;
+}
+
+.course-map-canvas-wrap .course-map-edge-path {
+  pointer-events: stroke;
+}
+
+.course-map-canvas-wrap .course-map-edge-arrow {
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .course-map-canvas-wrap--panel-open {
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: min(400px, 70vh);
+  }
+
+  [dir='rtl'] .course-map-canvas-wrap--panel-open {
+    padding-bottom: min(400px, 70vh);
+  }
+}

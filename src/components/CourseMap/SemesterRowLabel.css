@@ -1,0 +1,15 @@
+.semester-row-label {
+  width: 148px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  user-select: none;
+}
+
+[dir='rtl'] .semester-row-label {
+  text-align: right;
+}

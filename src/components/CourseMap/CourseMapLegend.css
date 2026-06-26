@@ -1,0 +1,81 @@
+.course-map-legend {
+  position: fixed;
+  bottom: max(var(--space-md), env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-canvas-legend);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  font-size: var(--text-xs);
+  color: var(--gray-600);
+  max-width: calc(100vw - var(--space-lg));
+}
+
+.course-map-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.course-map-legend-icon--completed {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.course-map-legend-icon--available {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--primary-500);
+  border-radius: 50%;
+}
+
+.course-map-legend-icon--locked {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.course-map-legend-icon--pending {
+  color: oklch(0.55 0.14 250);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.course-map-legend-divider {
+  width: 1px;
+  height: 14px;
+  background: var(--gray-300);
+}
+
+.course-map-legend-line {
+  display: inline-block;
+  width: 22px;
+  height: 0;
+  border-top-width: 2.5px;
+  border-top-style: solid;
+}
+
+.course-map-legend-line--ok {
+  border-top-color: var(--primary-500);
+}
+
+.course-map-legend-line--no {
+  border-top-color: var(--gray-400);
+  border-top-style: dashed;
+}
+
+@media (max-width: 480px) {
+  .course-map-legend {
+    max-width: calc(100vw - var(--space-lg));
+    border-radius: var(--radius-full);
+  }
+}
