@@ -1,0 +1,91 @@
+/* Shared glass shell for fixed header controls (hamburger, language, how-to) */
+.header-float-btn {
+  position: fixed;
+  top: max(var(--space-md), env(safe-area-inset-top, 0px));
+  z-index: var(--z-header-float);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 44px;
+  min-height: 44px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  transition: var(--transition-base);
+}
+
+.header-float-btn:hover {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 121, 85, 0.4);
+}
+
+.header-float-btn-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  min-width: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.header-float-btn-inner:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.hamburger-btn {
+  left: var(--space-md);
+}
+
+[dir='rtl'] .hamburger-btn {
+  left: auto;
+  right: var(--space-md);
+}
+
+.language-switcher {
+  right: var(--space-md);
+  font-family: var(--font-rubik), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+[dir='rtl'] .language-switcher,
+html[lang='ar'] .language-switcher {
+  font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.language-switcher-label {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 400px) {
+  .language-switcher-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .header-float-btn-inner {
+    padding: var(--space-sm);
+  }
+}
