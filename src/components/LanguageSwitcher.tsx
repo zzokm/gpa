@@ -1,5 +1,6 @@
 'use client'
 
+import './header-float.css'
 import type { CSSProperties } from 'react'
 import { useLocale } from '../i18n/LocaleContext'
 import { track } from '../analytics'
