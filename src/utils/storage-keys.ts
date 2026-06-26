@@ -6,6 +6,9 @@ export const STORAGE_KEYS = {
   COURSES: 'gpa-persist-v1-courses',
   GROUP_STATES: 'gpa-persist-v1-group-states',
   LOCALE: 'gpa-persist-v1-locale',
+  ORIGINAL_IMPORTED_TRANSCRIPT: 'gpa-persist-v1-original-imported-transcript',
+  COURSE_MAP_SELECTED_MAJOR: 'gpa-persist-v1-course-map-selected-major',
+  COURSE_MAP_SHOW_COMPLETED: 'gpa-persist-v1-course-map-show-completed',
 } as const
 
 const LEGACY_KEYS = {
