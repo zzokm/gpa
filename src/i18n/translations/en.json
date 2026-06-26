@@ -118,5 +118,18 @@
   "howTo.ios.step3Suffix": "",
   "howTo.ios.step4": "Tap Share, scroll down to Copy HTML and tap it",
   "howTo.ios.step5": "Tap Allow",
-  "import.howToLink": "How to copy HTML?"
+  "import.howToLink": "How to copy HTML?",
+  "nav.openMenu": "Open navigation menu",
+  "nav.siteNavigation": "Site navigation",
+  "nav.calculator": "Calculator",
+  "nav.aiAdvisor": "AI Advisor",
+  "nav.courseLookup": "Course Lookup",
+  "advisor.pageTitle": "AI Advisor - FCAI GPA Calculator",
+  "advisor.pageDescription": "AI-powered course planning and degree guidance for FCAI students",
+  "advisor.heading": "AI Advisor",
+  "advisor.comingSoon": "Personalized course recommendations and degree guidance are coming soon.",
+  "lookup.pageTitle": "Course Lookup - FCAI GPA Calculator",
+  "lookup.pageDescription": "Search FCAI courses, prerequisites, and credit requirements",
+  "lookup.heading": "Course Lookup",
+  "lookup.comingSoon": "Search courses by code or name and explore prerequisites — coming soon."
 }

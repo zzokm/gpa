@@ -118,5 +118,18 @@
   "howTo.ios.step3Suffix": "",
   "howTo.ios.step4": "اضغط Share، انزل على Copy HTML واضغطه",
   "howTo.ios.step5": "اضغط Allow",
-  "import.howToLink": "كيف أنسخ الـ HTML؟"
+  "import.howToLink": "كيف أنسخ الـ HTML؟",
+  "nav.openMenu": "فتح قائمة التنقل",
+  "nav.siteNavigation": "تنقل الموقع",
+  "nav.calculator": "الحاسبة",
+  "nav.aiAdvisor": "المستشار الذكي",
+  "nav.courseLookup": "بحث المواد",
+  "advisor.pageTitle": "المستشار الذكي - حاسبة المعدل FCAI",
+  "advisor.pageDescription": "تخطيط المواد والإرشاد الأكاديمي بالذكاء الاصطناعي لطلاب الكلية",
+  "advisor.heading": "المستشار الذكي",
+  "advisor.comingSoon": "توصيات المواد والإرشاد الأكاديمي الشخصي قريبًا.",
+  "lookup.pageTitle": "بحث المواد - حاسبة المعدل FCAI",
+  "lookup.pageDescription": "ابحث في مواد الكلية والمتطلبات والساعات المعتمدة",
+  "lookup.heading": "بحث المواد",
+  "lookup.comingSoon": "البحث بالكود أو الاسم واستكشاف المتطلبات — قريبًا."
 }

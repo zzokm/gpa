@@ -10,6 +10,7 @@ import GPAStickySummary from '../src/components/GPAStickySummary'
 import ImportModal from '../src/components/ImportModal'
 import HowToModal from '../src/components/HowToModal'
 import HowToButton from '../src/components/HowToButton'
+import HamburgerMenu from '../src/components/HamburgerMenu'
 import FCAIStatusIndicator from '../src/components/FCAIStatusIndicator'
 import AmbientBackdrop from '../src/components/AmbientBackdrop'
 import ThreeJSBackground from '../src/components/ThreeJSBackground'
@@ -257,6 +258,7 @@ function HomeContent() {
       <ThreeJSBackground />
       <div className="app-root">
       <DocumentTitleMeta />
+      <HamburgerMenu activeRoute="calculator" />
       <HowToButton onClick={() => openHowToModal('fab')} />
       <LanguageSwitcher />
       <Container className="container">
