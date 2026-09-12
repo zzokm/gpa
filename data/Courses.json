@@ -367,7 +367,7 @@
       "title": "Computer Science",
       "major_requirements": {
         "title": "Major Requirements",
-        "total_credit_hours": 63,
+        "total_credit_hours": 66,
         "applied_sciences_mandatory": {
           "title": "Applied Sciences (Mandatory)",
           "credit_hours": 39,
@@ -748,7 +748,7 @@
       "title": "Information Technology",
       "major_requirements": {
         "title": "Major Requirements",
-        "total_credit_hours": 63,
+        "total_credit_hours": 66,
         "applied_sciences_mandatory": {
           "title": "Applied Sciences (Mandatory)",
           "credit_hours": 39,
@@ -1181,7 +1181,7 @@
       "title": "Information Systems",
       "major_requirements": {
         "title": "Major Requirements",
-        "total_credit_hours": 63,
+        "total_credit_hours": 66,
         "applied_sciences_mandatory": {
           "title": "Applied Sciences (Mandatory)",
           "credit_hours": 39,
@@ -1594,7 +1594,7 @@
       "title": "Decision Support and Operations Research",
       "major_requirements": {
         "title": "Major Requirements",
-        "total_credit_hours": 63,
+        "total_credit_hours": 66,
         "applied_sciences_mandatory": {
           "title": "Applied Sciences (Mandatory)",
           "credit_hours": 39,
@@ -1901,41 +1901,43 @@
       "title": "Artificial Intelligence",
       "major_requirements": {
         "title": "Major Requirements",
-        "total_credit_hours": 71,
+        "total_credit_hours": 66,
         "mandatory": {
           "title": "Mandatory",
-          "credit_hours": 36,
+          "credit_hours": 39,
           "courses": [
+            {
+              "code": "AI311",
+              "name": "Introduction to Logic",
+              "credit_hours": 3,
+              "prerequisites": ["MA112", "ST222"],
+              "type": "Mandatory",
+              "description": "Basic Concepts for logic – Language: meaning and definition – Informal fallacies – Analogy and Legal and moral Reasoning – Causality and Mill's methods – Probability and Statistical Reasoning – Hypothetical reasoning – Categorical Propositions – Categorical syllogisms – Propositional logic – Natural deduction in propositional logic – Predicate logic – Löwenheim – Skolem Theorem – Tarski semantics – Skolem-Herbrand-Gödel Theorem – Sequent calculus – Gentzen's Theorem – Church's Theorem – Gödel's Incompleteness Theorem.",
+              "id": 583
+            },
             {
               "code": "AI312",
               "name": "Reasoning and Knowledge Representation",
               "credit_hours": 3,
-              "prerequisites": [
-                "AI311"
-              ],
+              "prerequisites": ["AI311"],
               "type": "Mandatory",
-              "description": "Introduction – Object-oriented representation – Structured descriptions – Ontologies and representation of Domain Knowledge – Knowledge Representation in Social Context – Logic Programs – Abductive Reasoning – Qualitative Reasoning – Constraint Satisfaction – Representation of Actions – Reasoning with Actions – Practical Planning – Abstraction – Reformulation and Approximation. ",
+              "description": "Introduction – Object-oriented representation – Structured descriptions – Ontologies and representation of Domain Knowledge – Knowledge Representation in Social Context – Logic Programs – Abductive Reasoning – Qualitative Reasoning – Constraint Satisfaction – Representation of Actions – Reasoning with Actions – Practical Planning – Abstraction – Reformulation and Approximation.",
               "id": 584
             },
             {
               "code": "AI313",
               "name": "Autonomous Multiagent Systems",
               "credit_hours": 3,
-              "prerequisites": [
-                "AI311"
-              ],
+              "prerequisites": ["AI311"],
               "type": "Mandatory",
-              "description": "Grammars and the Chomsky Hierarchy – Regular languages – Finite state automata (FSA) – probabilistic FSAs – Context-free languages and Push-down automata – Ambiguity and solutions to the problem – Deterministic parsers – Chart parsers – Probabilistic context-free grammars – Modelling semantics – Context-sensitive language.",
+              "description": "Intelligent Agents: Introduction – Search based Planning – Scaling Planning for Complex Tasks – Acting in Uncertain Environments – Algorithmic – game-theoretic and logical foundations of multi-agent systems – Multi-Agent architectures – Inter-agent communication – Cooperative distributed problem solving – Collaborative plans and social systems – Multiagent learning – Distributed rational decision making – Applications in multi-robot control systems.",
               "id": 585
             },
             {
               "code": "AI321",
               "name": "Theoretical Foundations Of Machine Learning",
               "credit_hours": 3,
-              "prerequisites": [
-                "MA214",
-                "ST222"
-              ],
+              "prerequisites": ["MA214", "ST222"],
               "type": "Mandatory",
               "description": "Probability tools – concentration inequalities – PAC model – Rademacher complexity – Growth function – VC-dimension – Perceptron – Winnow – Kernel methods – Boosting – Decision trees – Density estimation – maximum entropy model",
               "id": 586
@@ -1944,31 +1946,34 @@
               "code": "AI322",
               "name": "Supervised Learning",
               "credit_hours": 3,
-              "prerequisites": [
-                "AI321"
-              ],
+              "prerequisites": ["AI321"],
               "type": "Mandatory",
               "description": "Introduction to Data and Models – Generative and Discriminative models – Bayesian Decision Theory – Evaluation of Performance – Training of parametric models: ML – MAP estimators – EM estimation of parametric models with latent variables.",
               "id": 587
             },
             {
+              "code": "AI331",
+              "name": "Theories Of Mind",
+              "credit_hours": 3,
+              "prerequisites": ["MA112"],
+              "type": "Mandatory",
+              "description": "Introduction – Dualism – Cognitive Architectures – Layers of Mental Activities – Common Sense – Mind as Behavior: Behaviorism – Mind as the Brain: Mind-Brain Identity Theory – Mind as Computer: Machine Functionalism and Classical AI.",
+              "id": 588
+            },
+            {
               "code": "AI332",
               "name": "Computational Cognitive Science",
               "credit_hours": 3,
-              "prerequisites": [
-                "AI311"
-              ],
+              "prerequisites": ["AI311"],
               "type": "Mandatory",
-              "description": "Introduction – Foundations of Inductive Learning – Concept Learning and Categorization – Controlling Complexity and Occam's Razor – Reasoning about Natural Kinds ",
+              "description": "Introduction – Foundations of Inductive Learning – Concept Learning and Categorization – Controlling Complexity and Occam's Razor – Reasoning about Natural Kinds",
               "id": 589
             },
             {
               "code": "AI414",
               "name": "Processing of Formal and Natural Languages",
               "credit_hours": 3,
-              "prerequisites": [
-                "AI311"
-              ],
+              "prerequisites": ["AI311"],
               "type": "Mandatory",
               "description": "Grammars and the Chomsky Hierarchy – Regular languages – Finite state automata (FSA) – probabilistic FSAs – Context-free languages and Push-down automata – Ambiguity and solutions to the problem – Deterministic parsers – Chart parsers – Probabilistic context-free grammars – Modelling semantics – Context-sensitive language.",
               "id": 590
@@ -1977,9 +1982,7 @@
               "code": "AI423",
               "name": "Unsupervised Learning",
               "credit_hours": 3,
-              "prerequisites": [
-                "AI321"
-              ],
+              "prerequisites": ["AI321"],
               "type": "Mandatory",
               "description": "Overview of clustering – Metrics spaces and coverings – Clustering in metric spaces – k-center problem – k-means problem – Hierarchical clustering – Clustering graph data and planted partition models – Linear and Non-Linear Dimensionality reduction.",
               "id": 591
@@ -1988,9 +1991,7 @@
               "code": "AI424",
               "name": "Reinforcement Learning",
               "credit_hours": 3,
-              "prerequisites": [
-                "AI322"
-              ],
+              "prerequisites": ["AI322"],
               "type": "Mandatory",
               "description": "Overview of reinforcement learning – Bandit problems and online learning – Markov decision processes – Returns and value functions – Solution methods: dynamic programming – Monte Carlo learning – Temporal difference learning",
               "id": 592
@@ -1999,79 +2000,49 @@
               "code": "AI441",
               "name": "Intelligent Autonomous Robotics",
               "credit_hours": 3,
-              "prerequisites": [
-                "AI322"
-              ],
+              "prerequisites": ["AI322"],
               "type": "Mandatory",
               "description": "History of robotics – Actuators – Locomotion – Manipulation – Sensors and sensing for robotics – Sensor based and odometry Navigation – Workspace decomposition and search algorithms on graphs – Configuration Space and configuration-space obstacles",
               "id": 593
             },
             {
+              "code": "CS331",
+              "name": "Computer Organization and Architecture",
+              "credit_hours": 3,
+              "prerequisites": ["IT212", "CS214"],
+              "type": "Mandatory",
+              "description": "Computer organization fundamentals – Modern processor memory and peripherals design and organization – Modern computer design principles and levels of abstraction – Instruction set architecture design and implementation – Computer hardware-software interface – Computer performance-based design – Computer processor design data path and control – Instruction pipelining – Parallel computer paradigms – instruction set architectures and design – Architecture-oriented programming – Power and energy aware computing – Tools and simulation for computer design and performance enhancement."
+            },
+            {
+              "code": "IT341",
+              "name": "Signals and Systems",
+              "credit_hours": 3,
+              "prerequisites": ["MA214"],
+              "type": "Mandatory",
+              "description": "Signals Applications – Signals Definitions and Classifications – Signals' Power and Energy – Basic Signals – Systems and Systems' Properties – Linear and Time-Invariant (LTI) Systems – Fourier series – Fourier transform for continuous and discrete time signals – Sampling theorem – Laplace transform – Z-Transform – Transfer function – State space representation – Filters design and applications."
+            }
+          ]
+        },
+
+        "graduation_project": {
+          "title": "Graduation Project",
+          "credit_hours": 6,
+          "courses": [
+            {
               "code": "AI498",
               "name": "Graduation Project",
-              "credit_hours": 3,
+              "credit_hours": 6,
               "prerequisites": [],
               "type": "Mandatory",
               "description": "This course will continue for two semesters. In the first semester; a group of students will select one of the projects proposed by the department and analyze the underlying problem. In the second semester; the design and implementation of the project will be conducted. \n",
               "id": 603
-            },
-            {
-              "code": "MA000",
-              "name": "Math-0",
-              "credit_hours": 0,
-              "prerequisites": [],
-              "type": "Mandatory",
-              "id": 634
-            },
-            {
-              "code": "AI314",
-              "name": "Autonomous Multiagent Systems",
-              "credit_hours": 3,
-              "prerequisites": [
-                "AI311"
-              ],
-              "type": "Mandatory",
-              "description": "Intelligent Agents: Introduction – Search based Planning – Scaling Planning for Complex Tasks – Acting in Uncertain Environments – Algorithmic – game- theoretic and logical foundations of multi-agent systems – Mathematical tools: Adjacency graph and matrix; Laplacian; Connectivity and Consensus; Passivity and Lyapunov stability; Interconnection of mechanical systems – Multi-Agent architectures – Inter-agent communication – Cooperative distributed problem solving – Collaborative plans and social systems – Multiagent learning – Distributed Kalman filtering for sensor networks – Distributed rational decision making – Mutual localization with anonymous measurements; Target localization and encircling – Cooperative exploration of unknown environments – Applications in multi-robot control systems."
-            },
-            {
-              "code": "AI323",
-              "name": "Unsupervised Learning",
-              "credit_hours": 3,
-              "prerequisites": [
-                "AI321"
-              ],
-              "type": "Mandatory",
-              "description": "Overview of clustering – Metrics spaces and coverings – Clustering in metric spaces – k-center problem – k-means problem – Hierarchical clustering – Clustering graph data and planted partition models – Linear and Non-Linear Dimensionality reduction – Embeddings in metric spaces – Blind Source Separation(BSS) – Randomized maps – Manifold learning – Spectral methods – Density estimation minimax results – Assumed structure – Gaussian mixture models – Latent dirichelet allocation (LDA) – Tensor methods to learn latent models – Structure discovery – Horseshoe effect – Topological data analysis – Fast near neighbor search – Locality sensitive hashing."
             }
           ]
         },
         "electives": {
           "title": "Electives",
-          "credit_hours": 33,
+          "credit_hours": 18,
           "courses": [
-            {
-              "code": "AI311",
-              "name": "Introduction to Logic",
-              "credit_hours": 3,
-              "prerequisites": [
-                "MA112",
-                "ST222"
-              ],
-              "type": "Elective",
-              "description": "Basic Concepts for logic – Language: meaning and definition – Informal fallacies – Analogy and Legal and moral Reasoning – Causality and Mill's methods – Probability and Statistical Reasoning – Hypothetical reasoning – Categorical Propositions – Categorical syllogisms – Propositional logic – Natural deduction in propositional logic – Predicate logic – Löwenheim – Skolem Theorem – Tarski semantics – Skolem-Herbrand-Gödel Theorem – Sequent calculus – Gentzen's Theorem – Church's Theorem – Gödel's Incompleteness Theorem.",
-              "id": 583
-            },
-            {
-              "code": "AI331",
-              "name": "Theories Of Mind",
-              "credit_hours": 3,
-              "prerequisites": [
-                "MA112"
-              ],
-              "type": "Elective",
-              "description": "Introduction – Dualism – Cognitive Architectures – Layers of Mental Activities – Common Sense – Mind as Behavior: Behaviorism – Mind as the Brain: MindBrain Identity Theory – Mind as Computer: Machine Functionalism and Classical AI.",
-              "id": 588
-            },
             {
               "code": "AI442",
               "name": "Generative Adversarial Networks",
@@ -2167,12 +2138,12 @@
         },
         "field_training": {
           "title": "Field Training",
-          "credit_hours": 2,
+          "credit_hours": 3,
           "courses": [
             {
               "code": "TR305",
               "name": "Field Training",
-              "credit_hours": 2,
+              "credit_hours": 3,
               "prerequisites": [
                 "Passing 60 Credit Hours"
               ],
