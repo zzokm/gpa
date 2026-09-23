@@ -153,8 +153,7 @@ html[lang="ar"] .grade-ltr,
   .gpa-sticky-summary,
   .footer-content,
   .fcai-status-indicator,
-  .header-float-btn,
-  .undo-bar
+  .header-float-btn
 ) {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -169,8 +168,7 @@ html[lang="ar"] .grade-ltr,
   .gpa-sticky-summary,
   .footer-content,
   .fcai-status-indicator,
-  .header-float-btn,
-  .undo-bar
+  .header-float-btn
 ) {
   border-color: var(--glass-border);
 }

@@ -105,65 +105,60 @@ html[lang="ar"] .app-title {
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-/* Undo bar – centered; equal spacing so circle/button align with left/right edge radius */
+/* Undo bar – centered without transform (preserves backdrop-filter blur in Chromium) */
 .undo-bar {
   position: fixed;
   top: var(--space-lg);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: calc(100vw - 2 * var(--space-md));
   z-index: var(--z-toast);
   display: flex;
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-sm);
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06);
   animation: undoBarEnter 0.4s var(--ease-out) forwards;
 }
 
-[dir="rtl"] .undo-bar {
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
+@supports not ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
+  .undo-bar {
+    background: rgba(255, 255, 255, 0.95);
+  }
 }
 
 .undo-bar-exit {
-  animation: undoBarExit 0.4s var(--ease-in) forwards;
+  animation: undoBarExit 0.35s var(--ease-in) forwards;
   pointer-events: none;
 }
 
 @keyframes undoBarEnter {
   from {
-    transform: translate(-50%, -100%);
+    opacity: 0;
+    top: -60px;
   }
   to {
-    transform: translate(-50%, 0);
+    opacity: 1;
+    top: var(--space-lg);
   }
-}
-
-[dir="rtl"] .undo-bar-exit {
-  animation: undoBarExitRtl 0.4s var(--ease-in) forwards;
 }
 
 @keyframes undoBarExit {
   from {
-    transform: translate(-50%, 0);
+    opacity: 1;
+    top: var(--space-lg);
   }
   to {
-    transform: translate(-50%, -100%);
-  }
-}
-
-@keyframes undoBarExitRtl {
-  from {
-    transform: translate(-50%, 0);
-  }
-  to {
-    transform: translate(-50%, -100%);
+    opacity: 0;
+    top: -60px;
   }
 }
 
@@ -233,6 +228,35 @@ html[lang="ar"] .app-title {
     padding: var(--space-sm) var(--space-md);
     font-size: var(--text-sm);
     max-width: calc(100vw - 2 * var(--space-md));
+  }
+
+  .undo-bar {
+    top: var(--space-md);
+    padding: var(--space-xs) var(--space-sm);
+    gap: var(--space-sm);
+    max-width: calc(100vw - 2 * var(--space-md));
+  }
+
+  @keyframes undoBarEnter {
+    from {
+      opacity: 0;
+      top: -60px;
+    }
+    to {
+      opacity: 1;
+      top: var(--space-md);
+    }
+  }
+
+  @keyframes undoBarExit {
+    from {
+      opacity: 1;
+      top: var(--space-md);
+    }
+    to {
+      opacity: 0;
+      top: -60px;
+    }
   }
 }
 

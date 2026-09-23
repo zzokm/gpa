@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
+import type { CSSProperties } from 'react'
 import { Container } from 'react-bootstrap'
 import { LocaleProvider, useLocale } from '../src/i18n/LocaleContext'
 import LanguageSwitcher from '../src/components/LanguageSwitcher'
@@ -28,6 +29,11 @@ import {
 } from '../src/analytics'
 
 migrateStorageIfNeeded()
+
+const undoBarGlassStyle: CSSProperties = {
+  backdropFilter: 'blur(20px) saturate(1.8)',
+  WebkitBackdropFilter: 'blur(20px) saturate(1.8)',
+}
 
 function loadCoursesFromStorage(): { courses: Course[]; error?: string } {
   if (typeof window === 'undefined') return { courses: [] }
@@ -266,7 +272,12 @@ function HomeContent() {
           </div>
         )}
         {undoBarVisible && (
-          <div className={`undo-bar ${undoExiting ? 'undo-bar-exit' : ''}`} role="status" aria-live="polite">
+          <div
+            className={`undo-bar ${undoExiting ? 'undo-bar-exit' : ''}`}
+            style={undoBarGlassStyle}
+            role="status"
+            aria-live="polite"
+          >
             <div className="undo-bar-progress-wrap">
               <svg className="undo-bar-circle" viewBox="0 0 36 36">
                 <path
