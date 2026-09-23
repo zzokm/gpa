@@ -3,6 +3,8 @@
 **Your GPA, one tap away.**  
 A modern, friendly calculator built for Faculty of Computer and Artificial Intelligence (FCAI) students at Cairo University. Add courses, pick grades, see your GPA update in real time — and get a clear picture of where you stand.
 
+Now fully supports the new college website portal: [**MyU** (https://myu.cu.edu.eg/)](https://myu.cu.edu.eg/).
+
 ![GPA Calculator Screenshot](assets/screenshot.png)
 
 ---
@@ -13,9 +15,10 @@ A modern, friendly calculator built for Faculty of Computer and Artificial Intel
 - **Letter grades A+ to F** — Choose your grade; the app uses the official FCAI 4.0 scale.
 - **Smooth credit-hour picker** — A neat rotating control (0–3 hours) with clear animations.
 - **Live GPA** — Your GPA updates as you add or change courses, with a simple “Excellent / Good / Acceptable” style label.
-- **Import from the portal** — Paste your registered courses from the FCAI portal and let the app sort them by level and term.
+- **Import from the new college portal** — Fully supports the new college website portal ([**MyU**](https://myu.cu.edu.eg/) — [https://myu.cu.edu.eg/](https://myu.cu.edu.eg/)). Simply log in to your college account, navigate to **النتائج الدراسية** (Study Results), copy the HTML, and let the app instantly parse and group all your semesters, courses, and grades.
 - **Groups that make sense** — Courses grouped by level and term; expand or collapse and see group stats (GPA, credits, pass/fail).
 - **Undo “Clear All”** — Cleared everything by mistake? A short countdown bar lets you bring your list back with one click.
+- **Live College Portal Status** — An indicator shows whether the college portal ([https://myu.cu.edu.eg/](https://myu.cu.edu.eg/)) is online or experiencing downtime.
 - **English & Arabic** — Switch language with the globe icon; the app supports Egyptian Arabic (ar-EG) with the right fonts.
 - **Stays on your device** — Your courses and preferences are saved in your browser so you can pick up where you left off.
 - **Looks good everywhere** — Clean, glass-style UI and a subtle animated background; works on phones and desktops.
@@ -31,7 +34,12 @@ A modern, friendly calculator built for Faculty of Computer and Artificial Intel
 
 ## 📖 How to use
 
-Click the **How to** button (top left on the [site](https://gpa.zokm.me)) for the full step-by-step guide.
+1. Open the [**MyU College Portal**](https://myu.cu.edu.eg/) ([https://myu.cu.edu.eg/](https://myu.cu.edu.eg/)).
+2. Log in to your college account and head to **النتائج الدراسية** (Study Results).
+3. Copy the HTML from the page (using the Copy HTML browser extension on Desktop/Lemur or the iOS Shortcut).
+4. Click **Import Courses** on the [GPA Calculator](https://gpa.zokm.me), paste the HTML, and click Import!
+
+Click the **How to** button (top left on the site) for device-specific step-by-step instructions (Desktop, Android, and iOS).
 
 ---
 
