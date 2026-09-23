@@ -132,9 +132,10 @@ $RECYCLE.BIN/
 # ===================================
 # Documentation & Notes
 # ===================================
-# Markdown files (except README)
+# Markdown files (except README and TECHNICAL)
 *.md
-README.md
+!README.md
+!TECHNICAL.md
 !CHANGELOG.md
 !CONTRIBUTING.md
 !LICENSE.md
