@@ -19,6 +19,7 @@ html[lang="ar"] .grade-ltr,
 /* Modern design system with Bricolage Grotesque font */
 
 :root {
+  --font-plus-jakarta-sans: 'Plus Jakarta Sans', sans-serif;
   /* Primary Color Palette */
   --primary-50: #fef7f3;
   --primary-100: #fdeee7;

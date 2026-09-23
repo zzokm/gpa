@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Bricolage_Grotesque, Rubik } from 'next/font/google'
+import { Bricolage_Grotesque, Rubik, Plus_Jakarta_Sans } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './globals.css'
 import './ambient-backdrop.css'
@@ -14,6 +14,12 @@ const bricolage = Bricolage_Grotesque({
 const rubik = Rubik({
   subsets: ['latin', 'arabic'],
   variable: '--font-rubik',
+  display: 'swap',
+})
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta-sans',
   display: 'swap',
 })
 
@@ -36,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${rubik.variable}`}>
+    <html lang="en" className={`${bricolage.variable} ${rubik.variable} ${plusJakartaSans.variable}`}>
       <body>
         {children}
         <AnalyticsScripts />
