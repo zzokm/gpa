@@ -53,7 +53,50 @@ describe('courseParser', () => {
       const courses = parseCoursesFromHtml(fixtureHtml)
       expect(courses).toHaveLength(25)
 
-      // Test specific courses from different semesters
+      // Test chronological order of courses
+      expect(courses[0].name).toBe('Creative Thinking & Communication Skills')
+      expect(courses[0].level).toBe('First Level')
+      expect(courses[0].term).toBe('First Term')
+
+      expect(courses[courses.length - 1].name).toBe('Web Technology')
+      expect(courses[courses.length - 1].level).toBe('Second Level')
+      expect(courses[courses.length - 1].term).toBe('Second Term')
+
+      // Logic Design (code IT212) was taken in First Level, Second Term (2024-2025)
+      const logicDesign = courses.find((c) => c.name === 'Logic Design')
+      expect(logicDesign).toBeDefined()
+      expect(logicDesign).toMatchObject({
+        name: 'Logic Design',
+        hours: 3,
+        grade: 'C+',
+        term: 'Second Term',
+        level: 'First Level',
+        isImported: true,
+      })
+
+      // Social Issues (code HU117) was taken in Second Level, Second Term (2025-2026)
+      const socialIssues = courses.find((c) => c.name === 'Social Issues')
+      expect(socialIssues).toBeDefined()
+      expect(socialIssues).toMatchObject({
+        name: 'Social Issues',
+        hours: 0,
+        grade: 'C+',
+        term: 'Second Term',
+        level: 'Second Level',
+        isImported: true,
+      })
+
+      // Mathematics-2 (code MA113) was taken in Second Level, First Term (2025-2026)
+      const math2 = courses.find((c) => c.name === 'Mathematics-2')
+      expect(math2).toBeDefined()
+      expect(math2).toMatchObject({
+        name: 'Mathematics-2',
+        hours: 3,
+        grade: 'D-',
+        term: 'First Term',
+        level: 'Second Level',
+      })
+
       const management = courses.find((c) => c.name === 'Fundamentals of Management')
       expect(management).toBeDefined()
       expect(management).toMatchObject({
@@ -65,27 +108,6 @@ describe('courseParser', () => {
         isImported: true,
       })
 
-      const socialIssues = courses.find((c) => c.name === 'Social Issues')
-      expect(socialIssues).toBeDefined()
-      expect(socialIssues).toMatchObject({
-        name: 'Social Issues',
-        hours: 0,
-        grade: 'C+',
-        term: 'Second Term',
-        level: 'First Level',
-        isImported: true,
-      })
-
-      const dataStructures = courses.find((c) => c.name === 'Data Structures')
-      expect(dataStructures).toBeDefined()
-      expect(dataStructures).toMatchObject({
-        name: 'Data Structures',
-        hours: 3,
-        grade: 'C',
-        term: 'Second Term',
-        level: 'Second Level',
-      })
-
       const probabilitySummer = courses.find((c) => c.name === 'Probability and Statistics-1')
       expect(probabilitySummer).toBeDefined()
       expect(probabilitySummer).toMatchObject({
@@ -95,16 +117,53 @@ describe('courseParser', () => {
         term: 'Summer Term',
         level: 'First Level',
       })
+    })
 
-      const cs111 = courses.find((c) => c.name === 'Fundamentals of Computer Science')
-      expect(cs111).toBeDefined()
-      expect(cs111).toMatchObject({
-        name: 'Fundamentals of Computer Science',
-        hours: 3,
-        grade: 'A',
-        term: 'First Term',
-        level: 'First Level',
-      })
+    it('correctly maps Logic Design to First Level Second Term and orders semesters chronologically', () => {
+      const courses = parseCoursesFromHtml(fixtureHtml)
+
+      const logicDesign = courses.find((c) => c.name === 'Logic Design')
+      expect(logicDesign).toBeDefined()
+      expect(logicDesign?.level).toBe('First Level')
+      expect(logicDesign?.term).toBe('Second Term')
+
+      const levelTermPairs = courses.map((c) => `${c.level} - ${c.term}`)
+      const uniqueOrder = Array.from(new Set(levelTermPairs))
+      expect(uniqueOrder).toEqual([
+        'First Level - First Term',
+        'First Level - Second Term',
+        'First Level - Summer Term',
+        'Second Level - First Term',
+        'Second Level - Second Term',
+      ])
+    })
+
+    it('parses myuhtml.html when present with exact level, term, and order', () => {
+      const myuHtmlPath = path.resolve(__dirname, '../../../myuhtml.html')
+      if (fs.existsSync(myuHtmlPath)) {
+        const myuHtml = fs.readFileSync(myuHtmlPath, 'utf8')
+        const courses = parseCoursesFromHtml(myuHtml)
+        expect(courses).toHaveLength(25)
+
+        const logicDesign = courses.find((c) => c.name === 'Logic Design')
+        expect(logicDesign).toMatchObject({
+          name: 'Logic Design',
+          level: 'First Level',
+          term: 'Second Term',
+          grade: 'C+',
+          hours: 3,
+        })
+
+        const levelTermPairs = courses.map((c) => `${c.level} - ${c.term}`)
+        const uniqueOrder = Array.from(new Set(levelTermPairs))
+        expect(uniqueOrder).toEqual([
+          'First Level - First Term',
+          'First Level - Second Term',
+          'First Level - Summer Term',
+          'Second Level - First Term',
+          'Second Level - Second Term',
+        ])
+      }
     })
   })
 

@@ -40,11 +40,27 @@ interface GroupStats {
 const GROUP_STATE_KEY = STORAGE_KEYS.GROUP_STATES;
 const MANUAL_GROUP_KEY = 'manual-courses';
 
+const LEVEL_ORDER: Record<string, number> = {
+  'First Level': 1,
+  'Second Level': 2,
+  'Third Level': 3,
+  'Fourth Level': 4,
+};
+
 const TERM_ORDER: Record<string, number> = {
   'First Term': 1,
   'Second Term': 2,
   'Summer Term': 3,
 };
+
+function sortLevels(levels: string[]): string[] {
+  return [...levels].sort((a, b) => {
+    const orderA = LEVEL_ORDER[a] ?? 99;
+    const orderB = LEVEL_ORDER[b] ?? 99;
+    if (orderA !== orderB) return orderA - orderB;
+    return a.localeCompare(b);
+  });
+}
 
 function sortTerms(terms: string[]): string[] {
   return [...terms].sort((a, b) => {
@@ -56,7 +72,7 @@ function sortTerms(terms: string[]): string[] {
 }
 
 function getLatestTermKey(nested: NestedGroupedCourses): string | null {
-  const levels = Object.keys(nested).sort();
+  const levels = sortLevels(Object.keys(nested));
   if (levels.length === 0) return null;
   const lastLevel = levels[levels.length - 1];
   const terms = sortTerms(Object.keys(nested[lastLevel]));
@@ -78,21 +94,19 @@ function applyDefaultGroupStates(
     states[MANUAL_GROUP_KEY] = true;
   }
 
-  Object.keys(nested)
-    .sort()
-    .forEach((level) => {
-      const levelKey = `level-${level}`;
-      if (!(levelKey in states)) {
-        states[levelKey] = true;
-      }
+  sortLevels(Object.keys(nested)).forEach((level) => {
+    const levelKey = `level-${level}`;
+    if (!(levelKey in states)) {
+      states[levelKey] = true;
+    }
 
-      sortTerms(Object.keys(nested[level])).forEach((term) => {
-        const termKey = `term-${level}-${term}`;
-        if (!(termKey in states)) {
-          states[termKey] = collapseTerms ? termKey === latestTermKey : true;
-        }
-      });
+    sortTerms(Object.keys(nested[level])).forEach((term) => {
+      const termKey = `term-${level}-${term}`;
+      if (!(termKey in states)) {
+        states[termKey] = collapseTerms ? termKey === latestTermKey : true;
+      }
     });
+  });
 
   return states;
 }
@@ -441,7 +455,7 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
       )}
 
       {/* Render grouped imported courses by level */}
-      {Object.keys(nestedGroupedCourses).sort().map(level => {
+      {sortLevels(Object.keys(nestedGroupedCourses)).map(level => {
         const levelCourses = getLevelCourses(level);
         const levelStats = calculateGroupStats(levelCourses);
         const isLevelExpanded = isGroupExpanded(`level-${level}`);
