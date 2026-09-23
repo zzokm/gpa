@@ -6,7 +6,7 @@ test.describe('smoke', () => {
     await expect(page.getByRole('heading', { name: 'GPA Calculator' })).toBeVisible()
     const fcaiLink = page.locator('.fcai-status-indicator')
     await expect(fcaiLink).toBeVisible()
-    await expect(fcaiLink).toHaveAttribute('href', 'http://193.227.14.58/')
+    await expect(fcaiLink).toHaveAttribute('href', 'https://myu.cu.edu.eg/')
     await expect(fcaiLink).toHaveAttribute('target', '_blank')
   })
 
