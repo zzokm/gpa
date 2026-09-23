@@ -49,6 +49,7 @@ storybook-static/
 *.temp
 .temp/
 newsite.html
+myuhtml.html
 tmp/
 .eslintcache
 .prettiercache

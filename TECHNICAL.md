@@ -183,11 +183,14 @@ The parser extracts courses, grades, semesters, and hours directly from HTML pas
      - `td[2]`: Credit Hours formatted with European/Arabic decimal comma (e.g. `2,0`, `3,0`, or empty `""` for non-credit courses).
      - `td[3]`: Numerical Mark / Percentage (e.g. `95`, `72`).
      - `td[4]`: Letter Grade (e.g. `A`, `C+`, `B+`, `A-`, `D-`).
-   - **Academic Level Inference**: Automatically inferred from the course code prefix digit:
-     - `1xx` → `First Level`
-     - `2xx` → `Second Level`
-     - `3xx` → `Third Level`
-     - `4xx` → `Fourth Level`
+   - **Academic Level & Chronological Ordering**:
+     - Academic years (e.g. `2024-2025`, `2025-2026`) are parsed directly from `.card-title` and sorted chronologically:
+       - Earliest academic year (e.g. `2024-2025`) → `First Level` (First Term, Second Term, Summer Term)
+       - Subsequent academic year (e.g. `2025-2026`) → `Second Level` (First Term, Second Term, Summer Term)
+       - Subsequent academic year (e.g. `2026-2027`) → `Third Level`
+       - Subsequent academic year (e.g. `2027-2028`) → `Fourth Level`
+     - Courses taken within that semester (including cross-level catalog codes like Logic Design `IT212` in First Level Second Term or `HU117` in Second Level Second Term) are accurately attributed to the semester in which they were taken.
+     - Single-card snippets fall back to majority course-code level or explicit title indicators.
    - **Standalone Table Support**: If a user selects and pastes only `<table>` or `.ls-table` rows without `.card` wrappers, the parser falls back to row-by-row code matching.
 2. **Legacy Portal Fallback**:
    - Detects `table.table.table-striped.col-md-12` 12-column layouts from the deprecated portal, preserving backward compatibility.
