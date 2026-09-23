@@ -34,7 +34,7 @@
 .footer-left {
   display: flex;
   align-items: center;
-  flex: 1;
+  flex: 1 1 0;
   justify-content: flex-start;
   min-width: 0;
 }
@@ -75,6 +75,7 @@
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
+  margin: 0 auto;
 }
 
 .footer-explore-btn {
@@ -94,7 +95,7 @@
   line-height: 1;
   text-decoration: none;
   transition: var(--transition-base);
-  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.25), 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   letter-spacing: -0.01em;
 }
 
@@ -116,7 +117,7 @@
   background: #0f172a;
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 14px -2px rgba(15, 23, 42, 0.35);
+  box-shadow: none;
   transform: translateY(-1px);
 }
 
@@ -127,11 +128,13 @@
 
 .footer-explore-btn:active {
   transform: translateY(0);
+  box-shadow: none;
 }
 
 .footer-explore-btn:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
+  box-shadow: none;
 }
 
 /* Ensure font is Plus Jakarta Sans across RTL / Arabic language wrappers */
@@ -146,7 +149,8 @@ html[lang="ar"] .footer-explore-btn-label,
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  flex: 0 0 auto;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .footer-star-btn {
@@ -250,11 +254,14 @@ html[lang="ar"] .footer-explore-btn-label,
     width: 100%;
     display: flex;
     justify-content: center;
+    margin: 0 auto;
   }
 
   .footer-left,
   .footer-right {
     justify-content: center;
+    width: 100%;
+    flex: 0 0 auto;
   }
 }
 
