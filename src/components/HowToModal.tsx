@@ -27,8 +27,7 @@ interface HowToModalProps {
 
 const COPY_HTML_EXTENSION_URL =
   'https://chromewebstore.google.com/detail/copy-html/indfogjkdbmkihaohndcnkoaheopbhjf?hl=en'
-const REGISTERED_COURSES_URL = 'http://newecom.fci.cu.edu.eg/#/courses-per-students'
-const REGISTERED_COURSES_ALT_URL = 'http://193.227.14.58/'
+const MYU_PORTAL_URL = 'https://myu.cu.edu.eg/'
 const LEMUR_BROWSER_PLAY_STORE_URL =
   'https://play.google.com/store/apps/details?id=com.lemurbrowser.exts'
 const IOS_COPY_HTML_SHORTCUT_URL =
@@ -140,15 +139,15 @@ export default function HowToModal({ show, onHide, entryPoint = 'fab', stacked =
               </li>
               <li>
                 {t('howTo.desktop.open')}{' '}
-                <a href={REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_primary')}>
-                  {t('import.registeredCourses')}
+                <a href={MYU_PORTAL_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('myu_portal')}>
+                  {t('howTo.portalLink')}
                 </a>{' '}
-                {t('howTo.orAlternative')}{' '}
-                <a href={REGISTERED_COURSES_ALT_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_alt')}>
-                  {t('howTo.alternativeLink')}
-                </a>{' '}
+                (<a href={MYU_PORTAL_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('myu_portal_bracket')}>
+                  https://myu.cu.edu.eg/
+                </a>){' '}
                 {t('howTo.desktop.openSuffix')}
               </li>
+              <li>{t('howTo.loginAndNavigate')}</li>
               <li>{t('howTo.desktop.tapCopy')}</li>
               <li>{t('howTo.desktop.paste')}</li>
             </ol>
@@ -170,15 +169,15 @@ export default function HowToModal({ show, onHide, entryPoint = 'fab', stacked =
               </li>
               <li>
                 {t('howTo.android.step3Prefix')}{' '}
-                <a href={REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_primary')}>
-                  {t('import.registeredCourses')}
+                <a href={MYU_PORTAL_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('myu_portal')}>
+                  {t('howTo.portalLink')}
                 </a>{' '}
-                {t('howTo.orAlternative')}{' '}
-                <a href={REGISTERED_COURSES_ALT_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_alt')}>
-                  {t('howTo.alternativeLink')}
-                </a>{' '}
+                (<a href={MYU_PORTAL_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('myu_portal_bracket')}>
+                  https://myu.cu.edu.eg/
+                </a>){' '}
                 {t('howTo.android.step3Suffix')}
               </li>
+              <li>{t('howTo.loginAndNavigate')}</li>
               <li>{t('howTo.android.step4')}</li>
               <li>{t('howTo.desktop.paste')}</li>
             </ol>
@@ -194,15 +193,15 @@ export default function HowToModal({ show, onHide, entryPoint = 'fab', stacked =
               <li>{t('howTo.ios.step2')}</li>
               <li>
                 {t('howTo.ios.step3Prefix')}{' '}
-                <a href={REGISTERED_COURSES_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_primary')}>
-                  {t('import.registeredCourses')}
+                <a href={MYU_PORTAL_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('myu_portal')}>
+                  {t('howTo.portalLink')}
                 </a>{' '}
-                {t('howTo.orAlternative')}{' '}
-                <a href={REGISTERED_COURSES_ALT_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('fcai_registered_courses_alt')}>
-                  {t('howTo.alternativeLink')}
-                </a>{' '}
+                (<a href={MYU_PORTAL_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackLink('myu_portal_bracket')}>
+                  https://myu.cu.edu.eg/
+                </a>){' '}
                 {t('howTo.ios.step3Suffix')}
               </li>
+              <li>{t('howTo.loginAndNavigate')}</li>
               <li>{t('howTo.ios.step4')}</li>
               <li>{t('howTo.ios.step5')}</li>
               <li>{t('howTo.desktop.paste')}</li>
