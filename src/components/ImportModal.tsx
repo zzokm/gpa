@@ -151,19 +151,12 @@ const ImportModal: React.FC<ImportModalProps> = ({ show, entryPoint = 'other', o
               onClick={() => track('import_registered_courses_link_click')}
             >
               {t('import.registeredCourses')}
-            </a>{' '}
-            (<a
-              href={FCAI_REGISTERED_COURSES_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => track('import_registered_courses_link_click')}
-            >
-              https://myu.cu.edu.eg/
-            </a>){' '}
+            </a>
             {t('import.descriptionSuffix')}
             {onOpenHowTo && (
               <>
                 {' '}
+                {t('import.checkHowTo') && <>{t('import.checkHowTo')}{' '}</>}
                 <button
                   type="button"
                   className="how-to-link"
