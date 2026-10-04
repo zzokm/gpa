@@ -228,53 +228,45 @@ select {
   font: inherit;
 }
 
-/* Button Styles - Enhanced with Glassmorphism Elements */
+/* Button Styles - Standardized Solid Aesthetic with Smooth Micro-interactions */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-xl);
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  padding: 0.625rem 1.25rem;
+  background-color: var(--primary-500);
   color: var(--white);
-  border: none;
+  border: 2px solid var(--primary-500);
   border-radius: var(--radius-md);
   font-size: var(--text-base);
   font-weight: 650;
+  line-height: 1.25;
   cursor: pointer;
-  transition: var(--transition-base);
-  /* No shadow for glassmorphism */
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
-  letter-spacing: 0.025em;
-  min-height: 40px;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: var(--transition-slow);
-}
-
-.btn-primary:hover::before {
-  left: 100%;
+  letter-spacing: -0.01em;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-  /* No shadow for glassmorphism */
+  background-color: var(--primary-600);
+  border-color: var(--primary-600);
+  color: var(--white);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.28);
 }
 
 .btn-primary:active {
+  background-color: var(--primary-700);
+  border-color: var(--primary-700);
   transform: translateY(0);
-  /* No shadow for glassmorphism */
+  box-shadow: 0 1px 3px rgba(255, 121, 85, 0.2);
 }
 
 .btn-secondary {
@@ -282,27 +274,41 @@ select {
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-xl);
-  background: rgba(255, 255, 255, 0.12);
+  padding: 0.625rem 1.25rem;
+  background-color: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  color: var(--primary-color);
-  border: 2px solid rgba(255, 121, 85, 0.6);
+  color: var(--primary-600);
+  border: 2px solid var(--primary-500);
   border-radius: var(--radius-md);
   font-size: var(--text-base);
   font-weight: 650;
+  line-height: 1.25;
   cursor: pointer;
-  transition: var(--transition-base);
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
-  letter-spacing: 0.025em;
-  min-height: 40px;
+  letter-spacing: -0.01em;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .btn-secondary:hover {
-  background: var(--primary-color);
+  background-color: var(--primary-500);
+  border-color: var(--primary-500);
   color: var(--white);
-  /* No shadow for glassmorphism */
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.22);
+}
+
+.btn-secondary:active {
+  background-color: var(--primary-600);
+  border-color: var(--primary-600);
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(255, 121, 85, 0.16);
 }
 
 .button-group {
@@ -755,22 +761,39 @@ body.modal-open .app-root {
 .modal-footer .btn-danger {
   min-width: 7.5rem;
   min-height: 44px;
+  font-size: var(--text-base);
+  font-weight: 650;
+  line-height: 1.25;
 }
 
 .modal-footer .btn-secondary {
-  background: var(--gray-100);
+  background-color: var(--gray-100);
   border: 1px solid var(--border-color);
   color: var(--text-color);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  font-weight: 600;
+  font-size: var(--text-base);
+  font-weight: 650;
+  line-height: 1.25;
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-footer .btn-secondary:hover {
-  background: var(--gray-200);
+  background-color: var(--gray-200);
   border-color: var(--gray-300);
-  color: var(--text-color);
-  transform: none;
+  color: var(--gray-900);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.modal-footer .btn-secondary:active {
+  background-color: var(--gray-300);
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .modal-content.how-to-modal {

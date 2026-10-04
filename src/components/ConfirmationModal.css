@@ -30,7 +30,7 @@
 
 .confirmation-modal .modal-footer .btn-danger {
   margin: 0;
-  border: none;
+  border: 2px solid #dc2626;
   font-weight: 650;
 }
 
@@ -39,27 +39,40 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-xl);
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  padding: 0.625rem 1.25rem;
+  background-color: #dc2626;
   color: var(--white);
-  border: none;
+  border: 2px solid #dc2626;
   border-radius: var(--radius-md);
   font-size: var(--text-base);
   font-weight: 650;
+  line-height: 1.25;
   cursor: pointer;
-  transition: var(--transition-base);
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
   min-height: 44px;
   min-width: 7.5rem;
+  box-sizing: border-box;
 }
 
 .btn-danger:hover {
-  background: linear-gradient(135deg, #b91c1c, #991b1b);
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.28);
 }
 
 .btn-danger:active {
-  transform: translateY(1px);
+  background-color: #991b1b;
+  border-color: #991b1b;
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.2);
 }
 
 .btn-danger:focus-visible {

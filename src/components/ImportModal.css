@@ -49,24 +49,34 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
-  min-height: 44px;
-  min-width: 44px;
-  background: var(--white);
+  padding: var(--space-xs) var(--space-md);
+  min-height: 38px;
+  background-color: var(--white);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 650;
   color: var(--text-secondary);
   cursor: pointer;
   box-shadow: var(--shadow-xs);
-  transition: var(--transition-base);
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .paste-btn:hover {
-  border-color: rgba(255, 121, 85, 0.45);
+  border-color: rgba(255, 121, 85, 0.6);
   color: var(--primary-color);
-  background: var(--primary-50);
+  background-color: var(--primary-50);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.paste-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .paste-btn:focus-visible {
@@ -127,6 +137,41 @@
 
 .import-modal .modal-footer .button-group {
   justify-content: flex-end;
+}
+
+.import-modal .modal-footer .btn-primary {
+  background-color: var(--primary-500);
+  border: 2px solid var(--primary-500);
+  color: var(--white);
+  font-size: var(--text-base);
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-md);
+  min-height: 44px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.import-modal .modal-footer .btn-primary:hover {
+  background-color: var(--primary-600);
+  border-color: var(--primary-600);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.28);
+}
+
+.import-modal .modal-footer .btn-primary:active {
+  background-color: var(--primary-700);
+  border-color: var(--primary-700);
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(255, 121, 85, 0.2);
 }
 
 @media (max-width: 640px) {

@@ -35,7 +35,7 @@ describe('Footer', () => {
   it('renders creator and star links with valid targets', () => {
     renderWithLocale(<Footer />)
 
-    const creatorLink = screen.getByRole('link', { name: /made by yehia/i })
+    const creatorLink = screen.getByRole('link', { name: /yehia elzokm/i })
     expect(creatorLink).toBeInTheDocument()
     expect(creatorLink).toHaveAttribute('href', 'https://github.com/zzokm')
     expect(creatorLink).toHaveAttribute('target', '_blank')

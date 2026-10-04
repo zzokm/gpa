@@ -15,12 +15,23 @@
   box-shadow: var(--shadow-xs);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  transition: var(--transition-base);
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .header-float-btn:hover {
-  background: rgba(255, 255, 255, 0.75);
-  border-color: rgba(255, 121, 85, 0.4);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 121, 85, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.header-float-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .header-float-btn-inner {
@@ -36,8 +47,8 @@
   border: none;
   background: transparent;
   color: var(--text-color);
-  font-size: var(--text-sm);
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
   -webkit-appearance: none;
   appearance: none;

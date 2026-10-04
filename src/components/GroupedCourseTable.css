@@ -297,33 +297,48 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-weight: 700;
+  font-weight: 650;
   font-family: var(--font-bricolage), sans-serif;
-  font-size: 0.9rem;
-  padding: 0.6rem 1.2rem;
+  font-size: var(--text-base);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  padding: 0.625rem 1.25rem;
+  min-height: 44px;
+  box-sizing: border-box;
   
   /* Appearance */
-  color: #ff7955;
-  background: transparent;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: var(--radius-lg); /* Using the same radius as group headers */
+  color: var(--primary-600);
+  background-color: rgba(255, 255, 255, 0.45);
+  border: 2px solid rgba(255, 121, 85, 0.5);
+  border-radius: var(--radius-md);
   
   /* Glass Effect */
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   box-shadow: none;
   
-  /* Behavior */
+  /* Behavior & Animation */
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reset-button:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background-color: var(--primary-500);
+  border-color: var(--primary-500);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.22);
 }
 
 .reset-button:active {
-  background: rgba(255, 255, 255, 0.7);
+  background-color: var(--primary-600);
+  border-color: var(--primary-600);
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(255, 121, 85, 0.16);
 }
 
 html[lang="ar"] .reset-button,
@@ -333,26 +348,22 @@ html[lang="ar"] .reset-button,
 
 .reset-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 121, 85, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 121, 85, 0.3);
 }
 
 .reset-button svg {
   width: 16px;
   height: 16px;
-  color: #ff7955; /* Match text color */
-}
-
-/* Responsive styles for reset button */
-.reset-button {
-  min-height: 44px;
+  color: currentColor;
+  transition: color 0.2s ease;
 }
 
 @media (max-width: 768px) {
   .reset-button {
-    font-size: var(--text-sm);
-    padding: var(--space-sm) var(--space-md);
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
     gap: var(--space-xs);
-    min-height: 44px;
+    min-height: 42px;
   }
   
   .reset-button svg {
@@ -363,9 +374,9 @@ html[lang="ar"] .reset-button,
 
 @media (max-width: 480px) {
   .reset-button {
-    font-size: var(--text-sm);
-    padding: var(--space-sm) var(--space-md);
-    min-height: 44px;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    min-height: 42px;
   }
   
   .reset-button svg {

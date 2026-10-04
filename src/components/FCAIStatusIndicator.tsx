@@ -84,6 +84,7 @@ export default function FCAIStatusIndicator() {
       target="_blank"
       rel="noopener noreferrer"
       className="fcai-status-indicator"
+      dir="ltr"
       aria-live="polite"
       aria-label={`${statusLabel}. ${t('table.fcaiWebsiteOpen')}`}
       title={t('table.fcaiWebsiteOpen')}
@@ -94,7 +95,7 @@ export default function FCAIStatusIndicator() {
           online === null ? 'fcai-status-unknown' : online ? 'fcai-status-online' : 'fcai-status-offline'
         }`}
       />
-      <span className="fcai-status-text">{t('table.fcaiWebsite')}</span>
+      <span className="fcai-status-text" dir="auto">{t('table.fcaiWebsite')}</span>
       <FaExternalLinkAlt className="fcai-status-link-icon" aria-hidden />
     </a>
     </>

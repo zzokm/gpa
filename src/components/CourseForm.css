@@ -33,32 +33,63 @@
 .course-form-compact .btn-secondary {
   width: 100%;
   min-width: 0;
-  min-height: 44px;
+  min-height: 46px;
   height: auto;
-  padding: var(--space-xs) var(--space-md);
+  padding: 0.625rem 1.25rem;
   box-sizing: border-box;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0;
+  font-size: var(--text-base);
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .course-form-compact .btn-primary {
-  border: 2px solid transparent;
+  background-color: var(--primary-500);
+  border: 2px solid var(--primary-500);
+  color: var(--white);
+}
+
+.course-form-compact .btn-primary:hover {
+  background-color: var(--primary-600);
+  border-color: var(--primary-600);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.28);
+}
+
+.course-form-compact .btn-primary:active {
+  background-color: var(--primary-700);
+  border-color: var(--primary-700);
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(255, 121, 85, 0.2);
 }
 
 .course-form-compact .btn-secondary {
-  background: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.45);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border: 2px solid rgba(255, 121, 85, 0.6);
+  border: 2px solid var(--primary-500);
   color: var(--primary-600);
 }
 
 .course-form-compact .btn-secondary:hover {
-  background: var(--primary-500);
+  background-color: var(--primary-500);
   border-color: var(--primary-500);
   color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.22);
+}
+
+.course-form-compact .btn-secondary:active {
+  background-color: var(--primary-600);
+  border-color: var(--primary-600);
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(255, 121, 85, 0.16);
 }
 
 .course-form-collapse-btn {
@@ -280,30 +311,62 @@
 .course-form-actions .btn-primary,
 .course-form-actions .btn-secondary {
   flex: 1 1 12rem;
-  min-height: 44px;
-  padding: var(--space-xs) var(--space-md);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: 0;
+  min-height: 46px;
+  padding: 0.625rem 1.25rem;
+  font-size: var(--text-base);
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   box-sizing: border-box;
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .course-form-actions .btn-primary {
-  border: 2px solid transparent;
+  background-color: var(--primary-500);
+  border: 2px solid var(--primary-500);
+  color: var(--white);
+}
+
+.course-form-actions .btn-primary:hover {
+  background-color: var(--primary-600);
+  border-color: var(--primary-600);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.28);
+}
+
+.course-form-actions .btn-primary:active {
+  background-color: var(--primary-700);
+  border-color: var(--primary-700);
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(255, 121, 85, 0.2);
 }
 
 .course-form-actions .btn-secondary {
-  background: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.45);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border: 2px solid rgba(255, 121, 85, 0.6);
+  border: 2px solid var(--primary-500);
   color: var(--primary-600);
 }
 
 .course-form-actions .btn-secondary:hover {
-  background: var(--primary-500);
+  background-color: var(--primary-500);
   border-color: var(--primary-500);
   color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 121, 85, 0.22);
+}
+
+.course-form-actions .btn-secondary:active {
+  background-color: var(--primary-600);
+  border-color: var(--primary-600);
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(255, 121, 85, 0.16);
 }
 
 [dir="rtl"] .form-label {
@@ -351,11 +414,12 @@
   .course-form-compact .btn-secondary {
     width: 100%;
     min-width: 0;
-    min-height: 36px;
-    height: 36px;
+    min-height: 42px;
+    height: 42px;
     padding: 0 var(--space-md);
-    font-size: var(--text-sm);
-    letter-spacing: 0;
+    font-size: 0.95rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
   }
 
   .course-form-actions {
@@ -369,11 +433,12 @@
     flex: 1 1 0;
     width: auto;
     min-width: 0;
-    min-height: 36px;
-    height: 36px;
+    min-height: 42px;
+    height: 42px;
     padding: 0 var(--space-md);
-    font-size: var(--text-sm);
-    letter-spacing: 0;
+    font-size: 0.95rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
   }
 }
 
