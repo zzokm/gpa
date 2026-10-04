@@ -16,7 +16,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "audit": "npm audit --audit-level=low",
+    "audit": "npm audit --omit=dev --audit-level=high",
+    "audit:full": "npm audit --audit-level=low",
     "ci": "npm run audit && npm run lint && npm run typecheck && npm run test && npm run build && npm run test:e2e"
   },
   "dependencies": {

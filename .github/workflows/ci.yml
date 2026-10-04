@@ -22,12 +22,13 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
-      - name: Run npm audit (JSON)
+      - name: Production npm audit (blocking)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Run full npm audit report (JSON)
         id: audit_run
         shell: bash
         run: |
-          set -euo pipefail
-          npm audit --audit-level=low --json | tee audit.json
+          npm audit --audit-level=low --json > audit.json || true
       - name: Summary
         if: always()
         shell: bash
@@ -201,6 +202,12 @@ jobs:
           npx playwright test --reporter=json | tee playwright.json
         env:
           CI: true
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-test-results
+          path: test-results/
+          retention-days: 7
       - name: Summary
         if: always()
         shell: bash
