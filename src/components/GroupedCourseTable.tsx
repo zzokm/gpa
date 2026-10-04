@@ -345,8 +345,8 @@ const GroupedCourseTable: React.FC<GroupedCourseTableProps> = ({
   const manualStats = calculateGroupStats(manualCourses);
   const isManualExpanded = isGroupExpanded(MANUAL_GROUP_KEY);
 
-  const renderCourseRow = (course: Course) => (
-    <tr key={course.id} className="course-row">
+  const renderCourseRow = (course: Course, index: number) => (
+    <tr key={course.id ?? `${course.name}-${course.term ?? ''}-${course.level ?? ''}-${index}`} className="course-row">
       <td className="course-name">{course.name}</td>
       <td className="course-hours">
         <CreditHoursDropdown
