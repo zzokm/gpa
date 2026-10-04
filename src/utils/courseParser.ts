@@ -60,6 +60,35 @@ export function normalizeArabicNumerals(str: string): string {
   return str.replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
 }
 
+const COURSE_NAME_CANONICAL_MAP: Record<string, string> = {
+  'Creative Thinking & Communication Skills': 'Creative Thinking and Communication Skills',
+  'Mathematics-1': 'Math-1',
+  'Mathematics-2': 'Math-2',
+  'Introduction to Operations Reserch and Decision Support':
+    'Introduction to Operations Research and Decision Support',
+  'Probability and Statistics - 1': 'Probability and Statistics-1',
+}
+
+const COURSE_CODE_CANONICAL_MAP: Record<string, string> = {
+  HU113: 'Creative Thinking and Communication Skills',
+  MA111: 'Math-1',
+  MA113: 'Math-2',
+  DS211: 'Introduction to Operations Research and Decision Support',
+  ST121: 'Probability and Statistics-1',
+}
+
+export function normalizeCourseName(name: string, code?: string): string {
+  const trimmed = name.trim()
+  const upperCode = code ? code.trim().toUpperCase() : ''
+  if (upperCode && COURSE_CODE_CANONICAL_MAP[upperCode]) {
+    return COURSE_CODE_CANONICAL_MAP[upperCode]
+  }
+  if (COURSE_NAME_CANONICAL_MAP[trimmed]) {
+    return COURSE_NAME_CANONICAL_MAP[trimmed]
+  }
+  return trimmed
+}
+
 export function parseLevelFromCode(code: string): Level | undefined {
   const match = code.match(/^[A-Za-z]+([1-4])/)
   if (!match) return undefined
@@ -67,13 +96,18 @@ export function parseLevelFromCode(code: string): Level | undefined {
 }
 
 export function parseTermFromText(text: string): Term | undefined {
-  if (text.includes('الأول') || /first/i.test(text)) {
+  if (text.includes('الأول') || /first/i.test(text) || /fall|autumn|خريف/i.test(text)) {
     return 'First Term'
   }
-  if (text.includes('الثانى') || text.includes('الثاني') || /second/i.test(text)) {
+  if (
+    text.includes('الثانى') ||
+    text.includes('الثاني') ||
+    /second/i.test(text) ||
+    /spring|ربيع/i.test(text)
+  ) {
     return 'Second Term'
   }
-  if (text.includes('الصيفي') || text.includes('صيفي') || /summer/i.test(text)) {
+  if (text.includes('الصيفي') || text.includes('صيفي') || /summer|صيف/i.test(text)) {
     return 'Summer Term'
   }
   return undefined
@@ -159,11 +193,13 @@ export function parseCoursesFromHtml(pastedHTML: string): Course[] {
         if (tds.length < 5) return
 
         const code = tds[0]?.textContent?.trim() || ''
-        const name = tds[1]?.textContent?.trim() || ''
+        const rawName = tds[1]?.textContent?.trim() || ''
         const rawHours = tds[2]?.textContent?.trim()?.replace(',', '.') || ''
         const gradeText = tds[4]?.textContent?.trim() || ''
 
-        if (!name) return
+        if (!rawName) return
+
+        const name = normalizeCourseName(rawName, code)
 
         let hours = 0
         if (rawHours) {
@@ -255,8 +291,8 @@ export function parseCoursesFromHtml(pastedHTML: string): Course[] {
             name: rc.name,
             hours: rc.hours,
             grade: rc.grade,
-            term: card.term,
-            level: card.level,
+            term: card.term || 'First Term',
+            level: card.level || 'First Level',
             isImported: true,
           })
         })
@@ -277,12 +313,14 @@ export function parseCoursesFromHtml(pastedHTML: string): Course[] {
       if (tds.length < 5) return
 
       const code = tds[0]?.textContent?.trim() || ''
-      const name = tds[1]?.textContent?.trim() || ''
+      const rawName = tds[1]?.textContent?.trim() || ''
       const rawHours = tds[2]?.textContent?.trim()?.replace(',', '.') || ''
       const gradeText = tds[4]?.textContent?.trim() || ''
 
       // Validate that this row matches MyU schema (code matches prefix + numbers)
-      if (!name || !/^[A-Za-z]+\d+/.test(code)) return
+      if (!rawName || !/^[A-Za-z]+\d+/.test(code)) return
+
+      const name = normalizeCourseName(rawName, code)
 
       let hours = 0
       if (rawHours) {
@@ -303,7 +341,8 @@ export function parseCoursesFromHtml(pastedHTML: string): Course[] {
         name,
         hours,
         grade,
-        level,
+        term: 'First Term',
+        level: level || 'First Level',
         isImported: true,
       })
     })
@@ -321,7 +360,8 @@ export function parseCoursesFromHtml(pastedHTML: string): Course[] {
       const data = row.getElementsByTagName('td')
       if (data.length === 0) return
 
-      const courseName = data[1] ? data[1].textContent?.trim() || '' : ''
+      const rawCourseName = data[1] ? data[1].textContent?.trim() || '' : ''
+      const courseName = normalizeCourseName(rawCourseName)
       const courseHours = data[3] ? data[3].textContent?.trim() || '' : ''
       let courseGrade: Grade | null = null
       let courseTerm: Term | undefined = undefined
@@ -360,8 +400,8 @@ export function parseCoursesFromHtml(pastedHTML: string): Course[] {
             name: courseName,
             hours: normalizeCreditHours(hours),
             grade: courseGrade,
-            term: courseTerm,
-            level: courseLevel,
+            term: courseTerm || 'First Term',
+            level: courseLevel || 'First Level',
             isImported: true,
           })
         }
@@ -383,14 +423,19 @@ export function parseCoursesFromHtml(pastedHTML: string): Course[] {
 export function mergeImportedCourses(importedCourses: Course[], currentCourses: Course[]): Course[] {
   const courseMap = new Map<string, Course>()
   currentCourses.forEach((course) => {
-    courseMap.set(course.name, course)
+    const key = normalizeCourseName(course.name)
+    courseMap.set(key, course)
   })
 
   const resultCourses: Course[] = []
 
   importedCourses.forEach((importedCourse) => {
-    resultCourses.push(importedCourse)
-    courseMap.delete(importedCourse.name)
+    const normalizedName = normalizeCourseName(importedCourse.name)
+    resultCourses.push({
+      ...importedCourse,
+      name: normalizedName,
+    })
+    courseMap.delete(normalizedName)
   })
 
   courseMap.forEach((course) => {

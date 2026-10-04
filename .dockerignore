@@ -13,3 +13,7 @@ docker-compose.yml
 coverage
 .vscode
 .idea
+newsite.html
+myuhtml.html
+expected courses.json
+expected*.json

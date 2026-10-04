@@ -30,18 +30,24 @@ describe('courseParser', () => {
     it('detects First Term from Arabic and English', () => {
       expect(parseTermFromText('الأول 2025-2026')).toBe('First Term')
       expect(parseTermFromText('First Term 2025')).toBe('First Term')
+      expect(parseTermFromText('Fall 2024-2025')).toBe('First Term')
+      expect(parseTermFromText('Autumn 2024-2025')).toBe('First Term')
+      expect(parseTermFromText('خريف 2024-2025')).toBe('First Term')
     })
 
     it('detects Second Term from Arabic and English', () => {
       expect(parseTermFromText('الثانى 2025-2026')).toBe('Second Term')
       expect(parseTermFromText('الثاني 2025-2026')).toBe('Second Term')
       expect(parseTermFromText('Second Semester')).toBe('Second Term')
+      expect(parseTermFromText('Spring 2024-2025')).toBe('Second Term')
+      expect(parseTermFromText('ربيع 2024-2025')).toBe('Second Term')
     })
 
     it('detects Summer Term from Arabic and English', () => {
       expect(parseTermFromText('الصيفي 2024-2025')).toBe('Summer Term')
       expect(parseTermFromText('صيفي')).toBe('Summer Term')
       expect(parseTermFromText('Summer 2024')).toBe('Summer Term')
+      expect(parseTermFromText('صيف 2024')).toBe('Summer Term')
     })
   })
 
@@ -54,7 +60,7 @@ describe('courseParser', () => {
       expect(courses).toHaveLength(25)
 
       // Test chronological order of courses
-      expect(courses[0].name).toBe('Creative Thinking & Communication Skills')
+      expect(courses[0].name).toBe('Creative Thinking and Communication Skills')
       expect(courses[0].level).toBe('First Level')
       expect(courses[0].term).toBe('First Term')
 
@@ -86,11 +92,11 @@ describe('courseParser', () => {
         isImported: true,
       })
 
-      // Mathematics-2 (code MA113) was taken in Second Level, First Term (2025-2026)
-      const math2 = courses.find((c) => c.name === 'Mathematics-2')
+      // Math-2 (code MA113) was taken in Second Level, First Term (2025-2026)
+      const math2 = courses.find((c) => c.name === 'Math-2')
       expect(math2).toBeDefined()
       expect(math2).toMatchObject({
-        name: 'Mathematics-2',
+        name: 'Math-2',
         hours: 3,
         grade: 'D-',
         term: 'First Term',
@@ -268,6 +274,69 @@ describe('courseParser', () => {
 
       const manual = merged.find((c) => c.name === 'Manual Course')
       expect(manual).toBeDefined()
+    })
+
+    it('deduplicates course names with aliases across imports and current courses', () => {
+      const current: Course[] = [
+        { name: 'Mathematics-1', hours: 3, grade: 'C' },
+        { name: 'Creative Thinking & Communication Skills', hours: 2, grade: 'B' },
+      ]
+      const imported: Course[] = [
+        { name: 'Math-1', hours: 3, grade: 'A', isImported: true },
+        { name: 'Creative Thinking and Communication Skills', hours: 2, grade: 'A+', isImported: true },
+      ]
+
+      const merged = mergeImportedCourses(imported, current)
+      expect(merged).toHaveLength(2)
+      expect(merged[0].name).toBe('Math-1')
+      expect(merged[0].grade).toBe('A')
+      expect(merged[1].name).toBe('Creative Thinking and Communication Skills')
+      expect(merged[1].grade).toBe('A+')
+    })
+  })
+
+  describe('English semester card parsing', () => {
+    it('parses cards with English semester titles like Fall and Spring', () => {
+      const sample = `
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Fall 2024-2025</h4>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>CS111</td>
+                <td>Fundamentals of Computer Science</td>
+                <td>3,0</td>
+                <td>90</td>
+                <td>A</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Spring 2024-2025</h4>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr>
+                <td>CS112</td>
+                <td>Structured Programming</td>
+                <td>3,0</td>
+                <td>85</td>
+                <td>B</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `
+      const courses = parseCoursesFromHtml(sample)
+      expect(courses).toHaveLength(2)
+      expect(courses[0].term).toBe('First Term')
+      expect(courses[0].level).toBe('First Level')
+      expect(courses[1].term).toBe('Second Term')
+      expect(courses[1].level).toBe('First Level')
     })
   })
 })

@@ -130,8 +130,10 @@ function groupStatesEqual(a: GroupState, b: GroupState): boolean {
 function buildGroupStructureKey(courses: Course[]): string {
   const keys = new Set<string>();
   courses.forEach((course) => {
-    if (course.isImported && course.level && course.term) {
-      keys.add(`${course.level}|${course.term}`);
+    if (course.isImported) {
+      const level = course.level || 'First Level';
+      const term = course.term || 'First Term';
+      keys.add(`${level}|${term}`);
     }
   });
   return [...keys].sort().join('||');
@@ -141,14 +143,16 @@ function buildNestedGroupedCourses(courses: Course[]): NestedGroupedCourses {
   const grouped: NestedGroupedCourses = {};
 
   courses.forEach((course) => {
-    if (course.isImported && course.level && course.term) {
-      if (!grouped[course.level]) {
-        grouped[course.level] = {};
+    if (course.isImported) {
+      const level = course.level || 'First Level';
+      const term = course.term || 'First Term';
+      if (!grouped[level]) {
+        grouped[level] = {};
       }
-      if (!grouped[course.level][course.term]) {
-        grouped[course.level][course.term] = [];
+      if (!grouped[level][term]) {
+        grouped[level][term] = [];
       }
-      grouped[course.level][course.term].push(course);
+      grouped[level][term].push({ ...course, level, term });
     }
   });
 

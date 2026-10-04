@@ -50,6 +50,8 @@ storybook-static/
 .temp/
 newsite.html
 myuhtml.html
+expected courses.json
+expected*.json
 tmp/
 .eslintcache
 .prettiercache

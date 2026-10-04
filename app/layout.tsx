@@ -42,8 +42,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${rubik.variable} ${plusJakartaSans.variable}`}>
-      <body>
+    <html lang="en" className={`${bricolage.variable} ${rubik.variable} ${plusJakartaSans.variable}`} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         {children}
         <AnalyticsScripts />
       </body>

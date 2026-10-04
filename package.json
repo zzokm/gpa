@@ -20,12 +20,12 @@
     "ci": "npm run audit && npm run lint && npm run typecheck && npm run test && npm run build && npm run test:e2e"
   },
   "dependencies": {
-    "@next/third-parties": "^16.3.5",
+    "@next/third-parties": "^16.3.8",
     "@types/bootstrap": "^5.2.10",
     "@types/three": "^0.186.0",
     "bootstrap": "^5.3.6",
     "motion": "^12.42.2",
-    "next": "^16.3.5",
+    "next": "^16.3.8",
     "react": "^19.3.0",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.3.0",
@@ -47,7 +47,7 @@
     "@vitejs/plugin-react": "^4.4.1",
     "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^9.0.0",
-    "eslint-config-next": "^16.3.5",
+    "eslint-config-next": "^16.3.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-vitest": "^0.5.4",
